@@ -12,6 +12,8 @@ public class InputManager : MonoBehaviour {
 
 	static Transform debug_FalseTouch;
 
+	static bool isTouch, isTouchDouble;
+
 	//static InputManager() {
 	//	InputManager m = new GameObject("[InputManager]").AddComponent<InputManager>();
 	//}
@@ -38,7 +40,7 @@ public class InputManager : MonoBehaviour {
 		pos = new Vector2();
 
 		if(Application.isEditor) {
-			if(!Input.GetMouseButtonDown(0)) return false;
+			if(!Input.GetMouseButton(0)) return false;
 
 			pos = Input.mousePosition;
 		}
@@ -50,7 +52,7 @@ public class InputManager : MonoBehaviour {
 
 		Debug.Log("Touch " + pos);
 
-		return true;
+		return isTouch = true;
 	}
 
 	public static bool GetInputDouble(out Vector2[] pos) {
@@ -58,7 +60,7 @@ public class InputManager : MonoBehaviour {
 		pos = new Vector2[2];
 
 		if(Application.isEditor) {
-			if(!Input.GetMouseButtonDown(0)) return false;
+			if(!Input.GetMouseButton(0)) return false;
 
 			pos[0] = Input.mousePosition;
 			pos[1] = Camera.main.WorldToScreenPoint(debug_FalseTouch.position);
@@ -72,8 +74,14 @@ public class InputManager : MonoBehaviour {
 
 		Debug.Log("TouchD " + pos[0] + " " + pos[1]);
 
-		return true;
+		return isTouchDouble = true;
 	}
+
+	public static bool GetInputUp(out Vector2 pos) {
+
+		return (GetInput(out pos) && !isTouch);
+	}
+
 
 	public void DebugGetInput() {
 
