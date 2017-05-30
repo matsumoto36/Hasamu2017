@@ -11,14 +11,14 @@ public class StageGenerator : MonoBehaviour {
 
 		//後にCSVから読み込む
 		int[,] map = new int[,] {
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0},
-			{0, 0, 0, 0, 0, 3, 0, 2, 2, 1, 0},
-			{0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 0},
-			{0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+			{0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 1},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+			{0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+			{0, 0, 0, 0, 3, 4, 5, 6, 0, 1, 0, 1},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
 		//マップを生成
@@ -90,6 +90,15 @@ public class StageGenerator : MonoBehaviour {
 						break;
 					case 3:
 						p = g.AddComponent<PieceBomb>();
+						break;
+					case 4:
+						p = g.AddComponent<PieceBlockNormal>();
+						break;
+					case 5:
+						p = g.AddComponent<PieceBlockFire>();
+						break;
+					case 6:
+						p = g.AddComponent<PieceBlockCold>();
 						break;
 					default:
 						p = g.AddComponent<Piece>();

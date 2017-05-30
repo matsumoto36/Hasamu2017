@@ -15,9 +15,8 @@ public class Piece : MonoBehaviour {
 	SpriteRenderer _renderer;	//自分の画像
 
 	// Use this for initialization
-	void Start () {
+	public void Start () {
 		_renderer = GetComponent<SpriteRenderer>();
-
 		SpriteLoad();
 	}
 	

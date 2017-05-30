@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PieceFire : MonoBehaviour
+public class PieceBlockFire : Piece, IExecutable
 {
-    public Vector2 point;
 
-	// Use this for initialization
-	void Start ()
-    {
-        		
-	}
-	
 	// Update is called once per frame
 	void Update ()
     {
+
+	}
+
+	public void Action() 
+	{
 
 	}
 }
