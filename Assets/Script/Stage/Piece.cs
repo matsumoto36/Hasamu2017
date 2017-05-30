@@ -7,10 +7,12 @@ using UnityEngine;
 /// </summary>
 public class Piece : MonoBehaviour {
 
-	public int id;
-	public int subId;
+	public int id;				//自分のID
+	public int subId;			//アニメーション用のサブID
 
-	SpriteRenderer _renderer;
+	public Vector2 position;	//ステージ上の位置
+
+	SpriteRenderer _renderer;	//自分の画像
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +26,9 @@ public class Piece : MonoBehaviour {
 		
 	}
 
+	/// <summary>
+	/// 画像を持ってくる
+	/// </summary>
 	void SpriteLoad() {
 		_renderer.sprite = ResourceLoader.GetChips(MapChipType.MainChip)[id];
 	}

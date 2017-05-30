@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StageGenerator : MonoBehaviour {
 
-	public Piece[,] generatedStage;
+	static Piece[,] generatedStage;
 
 	// Use this for initialization
 	void Start () {
@@ -25,7 +25,40 @@ public class StageGenerator : MonoBehaviour {
 		GenerateMap(map);
 	}
 
+	/// <summary>
+	/// ピースを移動する
+	/// </summary>
+	/// <returns>移動できたか</returns>
+	public static bool SetPiecePosition(Piece piece, Vector2 newPos) {
 
+		Debug.Log("newPos" + newPos);
+		newPos = new Vector2((int)(newPos.x + 0.5), (int)(newPos.y + 0.5));
+
+		//範囲外ならキャンセル
+		if(0 > newPos.x) return false;
+		if(0 > newPos.y) return false;
+		if(generatedStage.GetLength(1) <= newPos.x) return false;
+		if(generatedStage.GetLength(0) <= newPos.y) return false;
+
+		int arrX = (int)newPos.x;
+		int arrY = generatedStage.GetLength(0) - (int)newPos.y - 1;
+
+		Debug.Log("arr(" + arrX + "," + arrY);
+
+		//存在してたらキャンセル
+		if(generatedStage[arrY, arrX]) return false;
+
+		generatedStage[arrY, arrX] = piece;
+		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
+
+		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
+		piece.position = new Vector2(arrX, arrY);
+
+		
+
+		Debug.Log("Moved" + newPos);
+		return true;
+	}
 
 	/// <summary>
 	/// マップを生成
@@ -42,7 +75,31 @@ public class StageGenerator : MonoBehaviour {
 		for(int i = 0;i < height;i++) {
 			for(int j = 0;j < width;j++) {
 
-				Piece p = new GameObject("[stage " + (height - (i + 1)) + " " + j + " ]").AddComponent<Piece>();
+				GameObject g = new GameObject("[stage " + j + " " + (height - (i + 1)) + " ]");
+				Piece p = null;
+
+				int id = map[height - (i + 1), j];
+
+				switch(id) {
+					case 0:
+						Destroy(g);
+						break;
+					case 1:
+					case 2:
+						p = g.AddComponent<Piece>();
+						break;
+					case 3:
+						p = g.AddComponent<PieceBomb>();
+						break;
+					default:
+						p = g.AddComponent<Piece>();
+						break;
+				}
+
+				generatedStage[(height - (i + 1)), j] = p;
+
+				if(!p) continue;
+				
 				SpriteRenderer spr = p.gameObject.AddComponent<SpriteRenderer>();
 				BoxCollider2D col = p.gameObject.AddComponent<BoxCollider2D>();
 
@@ -50,12 +107,11 @@ public class StageGenerator : MonoBehaviour {
 
 				p.transform.SetParent(transform);
 				p.transform.position = new Vector3(j * chipSize, i * chipSize, 0.0f);
-				
-				p.id = map[height - (i + 1), j];
+
+				p.id = id;
+				p.position = new Vector2(j, (height - (i + 1)));
 				spr.sortingOrder = p.id;
 				col.size = new Vector2(1, 1) * chipSize;
-
-				generatedStage[height - (i + 1), j] = p;
 			}
 		}
 

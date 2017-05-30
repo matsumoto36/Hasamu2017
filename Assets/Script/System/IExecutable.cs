@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 interface IExecutable {
 
+	/// <summary>
+	/// はさまれているときに毎フレーム呼ばれる
+	/// </summary>
 	void Action();
 
 }

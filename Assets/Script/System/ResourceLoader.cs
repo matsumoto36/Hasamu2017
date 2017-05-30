@@ -10,7 +10,6 @@ public enum MapChipType {
 public class ResourceLoader : MonoBehaviour {
 
 	const int MAPCHIPWIDTH = 4;
-	const float PIXELPERUNIT = 100;
 
 	static List<Sprite[]> mapChipList;
 	public Sprite[] mapChipSrc;
@@ -35,7 +34,7 @@ public class ResourceLoader : MonoBehaviour {
 
 		mapChipList = new List<Sprite[]>();
 		for(int i = 0;i < mapChipSrc.Length;i++) {
-			mapChipList.Add(Split(mapChipSrc[i], MAPCHIPWIDTH, PIXELPERUNIT, System.Enum.GetName(typeof(MapChipType), i)));
+			mapChipList.Add(Split(mapChipSrc[i], MAPCHIPWIDTH, System.Enum.GetName(typeof(MapChipType), i)));
 		}
 
 		Debug.Log("All MapChip Loaded.");
@@ -55,10 +54,9 @@ public class ResourceLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="src">元のスプライト</param>
 	/// <param name="sqCount">一辺の分割数</param>
-	/// <param name="pixPUnit">PixelPerUnit</param>
 	/// <param name="name">おなまえ</param>
-	/// <returns></returns>
-	Sprite[] Split(Sprite src, int sqCount, float pixPUnit, string name) {
+	/// <returns>分割されたスプライト</returns>
+	Sprite[] Split(Sprite src, int sqCount, string name) {
 
 		Sprite[] sprRet = new Sprite[sqCount * sqCount];
 
@@ -70,7 +68,7 @@ public class ResourceLoader : MonoBehaviour {
 
 				Rect r = new Rect(new Vector2(j * pixelSize.x, tex.height - (i + 1) * pixelSize.y), pixelSize);
 
-				sprRet[i * 4 + j] = Sprite.Create(tex, r, new Vector2(0.5f, 0.5f), pixPUnit);
+				sprRet[i * 4 + j] = Sprite.Create(tex, r, new Vector2(0.5f, 0.5f), pixelSize.x);
 				sprRet[i * 4 + j].name = name + " " + (i * 4 + j);
 			}
 		}

@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 偽のタッチ情報を送るためのクラス
+/// </summary>
 public class FalseTouch : MonoBehaviour {
 
 	public Transform fulcrum;
 
 	// Use this for initialization
 	void Start () {
-		
+
+		if(!Application.isEditor) {
+			fulcrum.gameObject.SetActive(false);
+			gameObject.SetActive(false);
+		}
+
 	}
 	
 	// Update is called once per frame
