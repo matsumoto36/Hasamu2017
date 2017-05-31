@@ -63,7 +63,6 @@ public class StageGenerator : MonoBehaviour {
 	/// <returns>移動できたか</returns>
 	public static bool SetPiecePosition(Piece piece, Vector2 newPos) {
 
-		Debug.Log("newPos" + newPos);
 		newPos = new Vector2((int)(newPos.x + 0.5), (int)(newPos.y + 0.5));
 
 		//範囲外ならキャンセル
@@ -71,8 +70,6 @@ public class StageGenerator : MonoBehaviour {
 
 		int arrX = (int)newPos.x;
 		int arrY = generatedStage.GetLength(0) - (int)newPos.y - 1;
-
-		Debug.Log("arr(" + arrX + "," + arrY);
 
 		//存在してたらキャンセル
 		if(generatedStage[arrY, arrX]) return false;
@@ -83,7 +80,7 @@ public class StageGenerator : MonoBehaviour {
 		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
 		piece.position = new Vector2(arrX, arrY);
 
-		Debug.Log("Moved" + newPos);
+		//Debug.Log("Moved" + newPos);
 		return true;
 	}
 

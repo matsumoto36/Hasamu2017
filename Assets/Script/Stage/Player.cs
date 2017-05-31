@@ -35,6 +35,8 @@ public class Player : MonoBehaviour {
 				//IDが同じでなければキャンセル
 				if(currentPiece[0].id != currentPiece[1].id) return;
 				isAction = true;
+
+				AudioManager.Play(SEType.Tap, 1);
 			}
 
 			//移動
@@ -47,7 +49,6 @@ public class Player : MonoBehaviour {
 		}
 
 		if(InputManager.GetInputUpDouble()) {
-			Debug.Log("Up");
 			isAction = false;
 		}
 
