@@ -15,8 +15,8 @@ public class Piece : MonoBehaviour {
 	public SpriteRenderer _renderer;	//自分の画像
 
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () {           
+
 	}
 
 	/// <summary>
