@@ -7,7 +7,6 @@ using UnityEngine;
 /// </summary>
 public class Player : MonoBehaviour {
 
-
 	public bool isAction = false;
 	Piece[] currentPiece = new Piece[2];
 
