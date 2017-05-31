@@ -8,9 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Murata/Scene's/Game.unity
     guid: ea3582c80074d184fb2cc4f1a2520a2f
-  - enabled: 0
-    path: Assets/Murata/Title.unity
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Murata/Scene's/Title.unity
+    guid: 944b562fb7f9b544ebd3b536ef07a139
+  - enabled: 1
+    path: Assets/Murata/Scene's/Clear.unity
+    guid: 17f34b132b5a58e40b9f9caacfad58a9
+  - enabled: 1
+    path: Assets/Murata/Scene's/Over.unity
+    guid: 48cfea368490dd746b9d31ce8e60e8d8
+  - enabled: 1
+    path: Assets/Murata/Scene's/Menu.unity
     guid: 00000000000000000000000000000000
