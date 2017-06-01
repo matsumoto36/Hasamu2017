@@ -13,17 +13,15 @@ public class StageGenerator : MonoBehaviour {
 
 		//後にCSVから読み込む
 		int[,] map = new int[,] {
-			{0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 1},
-			{0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1},
-			{0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
-			{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-			{1, 1, 1, 0, 3, 4, 5, 6, 0, 1, 0, 1},
-			{1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{0, 0, 0, 0, 0, 0, 2, 2, 2},
+			{0, 0, 1, 1, 1, 1, 1, 1, 0},
+			{0, 0, 0, 1, 0, 0, 0, 0, 0},
+			{1, 0, 0, 0, 3, 4, 5, 6, 0},
+			{1, 0, 0, 0, 0, 0, 0, 0, 0},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
-		
+		myTrans = gameObject.transform;
 
 		//マップを生成
 		GenerateMap(map);
@@ -76,7 +74,7 @@ public class StageGenerator : MonoBehaviour {
 		p.id = id;
 		p.position = position;
 		p._renderer = spr;
-		spr.sortingOrder = p.id;
+		spr.sortingOrder = GetOrderInLayer(p.id);
 		col.size = new Vector2(1, 1);
 
 		//画像をロード
@@ -164,7 +162,7 @@ public class StageGenerator : MonoBehaviour {
 				int id = map[height - (i + 1), j];
 				Vector2 position = new Vector2(j, (height - (i + 1)));
 				//ピースを作成
-				Piece p = CreatePiece(position, id);
+				CreatePiece(position, id);
 			}
 		}
 
@@ -227,11 +225,22 @@ public class StageGenerator : MonoBehaviour {
 	}
 
 
-	//static int GetOrderInLayer(int id) {
+	static int GetOrderInLayer(int id) {
 
-	//	switch(id) {
-	//		case 0;
-	//			break;
-	//	}
-	//}
+		switch(id) {
+			case 0:
+				return id;
+			case 1:
+				return 3;
+			case 2:
+				return 1;
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				return 4;
+			default:
+				return -1;
+		}
+	}
 }
