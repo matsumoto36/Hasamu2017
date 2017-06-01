@@ -6,6 +6,7 @@ public class StageGenerator : MonoBehaviour {
 
 	static Transform myTrans;
 	static Piece[,] generatedStage;
+	static bool isGanerate;
 
 	// Use this for initialization
 	void Start () {
@@ -78,6 +79,9 @@ public class StageGenerator : MonoBehaviour {
 		spr.sortingOrder = p.id;
 		col.size = new Vector2(1, 1);
 
+		//画像をロード
+		if(isGanerate) p.SpriteLoad();
+
 		return p;
 	}
 
@@ -147,6 +151,7 @@ public class StageGenerator : MonoBehaviour {
 	/// <param name="map">マップのデータ</param>
 	public static void GenerateMap(int[,] map) {
 
+		isGanerate = false;
 		System.DateTime dt = System.DateTime.Now;
 
 		int width = map.GetLength(1);
@@ -174,6 +179,8 @@ public class StageGenerator : MonoBehaviour {
 
 		System.TimeSpan ts = System.DateTime.Now - dt;
 		Debug.Log("Map Generated. time: " + ts.Milliseconds + "ms");
+		isGanerate = true;
+
 
 		Camera.main.transform.position = new Vector3((width - 1f) / 2, (height - 1f) / 2, -1);
 	}
