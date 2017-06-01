@@ -19,15 +19,6 @@ public class ResourceLoader : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 指定したマップチップの一辺のサイズを取得
-	/// </summary>
-	/// <param name="type">マップチップのタイプ</param>
-	/// <returns>サイズ</returns>
-	public static float GetChipSize(MapChipType type) {
-		return mapChipList[(int)type][0].bounds.size.x;
-	}
-
-	/// <summary>
 	/// マップチップをロードする
 	/// </summary>
 	void LoadChip() {
