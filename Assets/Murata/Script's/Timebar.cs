@@ -18,7 +18,6 @@ public class Timebar : MonoBehaviour
     }
     void Update()
     {
-
         //１秒に１ずつ減らしていく
         time -= Time.deltaTime * Decpersec;
         //マイナスは表示しない
