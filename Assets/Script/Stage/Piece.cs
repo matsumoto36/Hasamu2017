@@ -7,16 +7,18 @@ using UnityEngine;
 /// </summary>
 public class Piece : MonoBehaviour {
 
-	public int id;						//自分のID
-	public int subId;					//アニメーション用のサブID
+    public int id;                      //自分のID
+    public int subId;                   //アニメーション用のサブID
 
-	public Vector2 position;			//ステージ上の位置
+    public Vector2 position;            //ステージ上の位置
 
-	public SpriteRenderer _renderer;	//自分の画像
+    public SpriteRenderer _renderer;	//自分の画像
 
-	// Update is called once per frame
-	void Update () {
-		
+    public Vector2[] checkPos = new Vector2[4];
+
+    // Update is called once per frame
+    void Update () {           
+
 	}
 
 	/// <summary>
@@ -63,7 +65,7 @@ public class Piece : MonoBehaviour {
 		//Debug.Log(position);
 
 		//取得用位置を格納
-		Vector2[] checkPos = new Vector2[] {
+		checkPos = new Vector2[] {
 			new Vector2(position.x, position.y - 1),
 			new Vector2(position.x - 1, position.y),
 			new Vector2(position.x, position.y + 1),

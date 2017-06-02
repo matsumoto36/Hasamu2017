@@ -6,23 +6,22 @@ public class StageGenerator : MonoBehaviour {
 
 	static Transform myTrans;
 	static Piece[,] generatedStage;
+	static bool isGanerate;
 
 	// Use this for initialization
 	void Start () {
 
 		//後にCSVから読み込む
 		int[,] map = new int[,] {
-			{0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 1},
-			{0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1},
-			{0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
-			{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-			{1, 1, 1, 0, 3, 4, 5, 6, 0, 1, 0, 1},
-			{1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{0, 0, 0, 0, 0, 0, 2, 2, 2},
+			{0, 0, 1, 1, 1, 1, 1, 1, 0},
+			{0, 0, 0, 1, 0, 0, 0, 0, 0},
+			{1, 0, 0, 0, 3, 4, 5, 6, 0},
+			{1, 0, 0, 0, 0, 0, 0, 0, 0},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
-		
+		myTrans = gameObject.transform;
 
 		//マップを生成
 		GenerateMap(map);
@@ -33,14 +32,74 @@ public class StageGenerator : MonoBehaviour {
 	/// <summary>
 	/// ある地点のピースを取得する
 	/// </summary>
-	/// <param name="pos">座標</param>
+	/// <param name="position">座標</param>
 	/// <returns>ピース</returns>
-	public static Piece GetPiece(Vector2 pos) {
+	public static Piece GetPiece(Vector2 position) {
 		
 		//範囲外ならキャンセル
-		if(CheckStageBound(pos)) return null;
-		return generatedStage[(int)pos.y, (int)pos.x];
+		if(CheckStageBound(position)) return null;
+		return generatedStage[(int)position.y, (int)position.x];
 
+	}
+
+	/// <summary>
+	/// 新しくステージにピースを作成
+	/// </summary>
+	/// <param name="position">作る配列上の位置</param>
+	/// <returns>作成されたピース</returns>
+	public static Piece CreatePiece(Vector2 position, int id) {
+
+		//あったらキャンセル
+		if(generatedStage[(int)position.y, (int)position.x]) return null;
+
+		GameObject g = new GameObject("[stage " + position.x + " " + position.y + " ]");
+
+		//指定のクラスを取り付ける
+		Piece p = AttachPiece(g, id);
+		//空気なら終了
+		if(!p) return null;
+
+		generatedStage[(int)position.y, (int)position.x] = p;
+
+		SpriteRenderer spr = g.AddComponent<SpriteRenderer>();
+		BoxCollider2D col = g.AddComponent<BoxCollider2D>();
+
+		p.tag = "Piece";
+
+		p.transform.SetParent(myTrans);
+
+		Vector3 stagePosition = new Vector3(position.x, generatedStage.GetLength(0) - position.y - 1, 0.0f);
+		p.transform.position = stagePosition;
+
+		p.id = id;
+		p.position = position;
+		p._renderer = spr;
+		spr.sortingOrder = GetOrderInLayer(p.id);
+		col.size = new Vector2(1, 1);
+
+		//画像をロード
+		if(isGanerate) p.SpriteLoad();
+
+		return p;
+	}
+
+	/// <summary>
+	/// 指定のピースのIDを変更(新規作成)
+	/// !アタッチするクラスも変更されます
+	/// </summary>
+	/// <param name="piece">元のピース</param>
+	/// <param name="newID">新しいID</param>
+	/// <returns>作成されたピース</returns>
+	public static Piece EditPieceID(Piece piece, int newID) {
+
+		//空だったらキャンセル
+		if(!piece) return null;
+		//場所を保存
+		Vector2 position = piece.position;
+
+		Destroy(piece.gameObject);
+		//作成して返却
+		return CreatePiece(position, newID);
 	}
 
 	/// <summary>
@@ -63,7 +122,6 @@ public class StageGenerator : MonoBehaviour {
 	/// <returns>移動できたか</returns>
 	public static bool SetPiecePosition(Piece piece, Vector2 newPos) {
 
-		Debug.Log("newPos" + newPos);
 		newPos = new Vector2((int)(newPos.x + 0.5), (int)(newPos.y + 0.5));
 
 		//範囲外ならキャンセル
@@ -71,8 +129,6 @@ public class StageGenerator : MonoBehaviour {
 
 		int arrX = (int)newPos.x;
 		int arrY = generatedStage.GetLength(0) - (int)newPos.y - 1;
-
-		Debug.Log("arr(" + arrX + "," + arrY);
 
 		//存在してたらキャンセル
 		if(generatedStage[arrY, arrX]) return false;
@@ -83,7 +139,7 @@ public class StageGenerator : MonoBehaviour {
 		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
 		piece.position = new Vector2(arrX, arrY);
 
-		Debug.Log("Moved" + newPos);
+		//Debug.Log("Moved" + newPos);
 		return true;
 	}
 
@@ -93,67 +149,20 @@ public class StageGenerator : MonoBehaviour {
 	/// <param name="map">マップのデータ</param>
 	public static void GenerateMap(int[,] map) {
 
+		isGanerate = false;
 		System.DateTime dt = System.DateTime.Now;
 
 		int width = map.GetLength(1);
 		int height = map.GetLength(0);
 
-		float chipSize = ResourceLoader.GetChipSize(MapChipType.MainChip);
-
 		generatedStage = new Piece[height, width];
 		for(int i = 0;i < height;i++) {
 			for(int j = 0;j < width;j++) {
 
-				GameObject g = new GameObject("[stage " + j + " " + (height - (i + 1)) + " ]");
-				Piece p = null;
-
 				int id = map[height - (i + 1), j];
-
-				//idで取り付けクラスを分ける
-				switch(id) {
-					case 0:
-						Destroy(g);
-						break;
-					case 1:
-						p = g.AddComponent<PieceTentacle>();
-						break;
-					case 2:
-						p = g.AddComponent<Piece>();
-						break;
-					case 3:
-						p = g.AddComponent<PieceBomb>();
-						break;
-					case 4:
-						p = g.AddComponent<PieceBlockNormal>();
-						break;
-					case 5:
-						p = g.AddComponent<PieceBlockFire>();
-						break;
-					case 6:
-						p = g.AddComponent<PieceBlockCold>();
-						break;
-					default:
-						p = g.AddComponent<Piece>();
-						break;
-				}
-
-				generatedStage[(height - (i + 1)), j] = p;
-
-				if(!p) continue;
-				
-				SpriteRenderer spr = g.AddComponent<SpriteRenderer>();
-				BoxCollider2D col = g.AddComponent<BoxCollider2D>();
-
-				p.tag = "Piece";
-
-				p.transform.SetParent(myTrans);
-				p.transform.position = new Vector3(j * chipSize, i * chipSize, 0.0f);
-
-				p.id = id;
-				p.position = new Vector2(j, (height - (i + 1)));
-				p._renderer = spr;
-				spr.sortingOrder = p.id;
-				col.size = new Vector2(1, 1) * chipSize;
+				Vector2 position = new Vector2(j, (height - (i + 1)));
+				//ピースを作成
+				CreatePiece(position, id);
 			}
 		}
 
@@ -168,7 +177,70 @@ public class StageGenerator : MonoBehaviour {
 
 		System.TimeSpan ts = System.DateTime.Now - dt;
 		Debug.Log("Map Generated. time: " + ts.Milliseconds + "ms");
+		isGanerate = true;
 
-		Camera.main.transform.position = new Vector3((width - 1) * chipSize / 2, (height - 1) * chipSize / 2, -1);
+
+		Camera.main.transform.position = new Vector3((width - 1f) / 2, (height - 1f) / 2, -1);
+	}
+
+	/// <summary>
+	/// 指定のPieceクラスをアタッチ
+	/// </summary>
+	/// <param name="stageObj">アタッチするオブジェクト</param>
+	/// <param name="id">id</param>
+	/// <returns></returns>
+	static Piece AttachPiece(GameObject stageObj, int id) {
+
+		Piece piece = null;
+
+		//idで取り付けクラスを分ける
+		switch(id) {
+			case 0:
+				Destroy(stageObj);
+				break;
+			case 1:
+				piece = stageObj.AddComponent<PieceTentacle>();
+				break;
+			case 2:
+				piece = stageObj.AddComponent<Piece>();
+				break;
+			case 3:
+				piece = stageObj.AddComponent<PieceBomb>();
+				break;
+			case 4:
+				piece = stageObj.AddComponent<PieceBlockNormal>();
+				break;
+			case 5:
+				piece = stageObj.AddComponent<PieceBlockFire>();
+				break;
+			case 6:
+				piece = stageObj.AddComponent<PieceBlockCold>();
+				break;
+			default:
+				piece = stageObj.AddComponent<Piece>();
+				break;
+		}
+
+		return piece;
+	}
+
+
+	static int GetOrderInLayer(int id) {
+
+		switch(id) {
+			case 0:
+				return id;
+			case 1:
+				return 3;
+			case 2:
+				return 1;
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				return 4;
+			default:
+				return -1;
+		}
 	}
 }

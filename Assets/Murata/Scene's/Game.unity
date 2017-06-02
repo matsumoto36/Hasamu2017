@@ -191,7 +191,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 117040864}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -244,6 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efd4f51121bddd94d933678eef8343ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TimeOve: Over
 --- !u!114 &177981584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,10 +388,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 266121360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fc39712165816b4f9e254d256835234, type: 3}
+  m_Script: {fileID: 11500000, guid: 18d77651e9175b0438a876f6eb630b81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextScene: Title
+  DOORs: {fileID: 95829720685550498, guid: b28f2430e25e907458fd900bd0ffa8e9, type: 2}
+  DOOR: {fileID: 0}
+  nextScene: Clear
+  SceneDM: 
 --- !u!1 &441525448
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +536,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 266121365}
-        m_MethodName: OnClick
+        m_MethodName: OnCross
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
