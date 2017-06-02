@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DOORS : MonoBehaviour {
+public class DOORS : MonoBehaviour
+{
     public Animator DOORs;//2Dドア
     public GameObject DOOR;//飾り
+    public RectTransform Button;//ボタン
     Animator animator;//アニメーション
+
+    Animator canvasanimator;//Canvasのアニメーション
 
     void Start()
     {
+        canvasanimator = GetComponent<Animator>();
     }
 
     //シーン遷移
@@ -16,6 +21,7 @@ public class DOORS : MonoBehaviour {
     public void OnClick()
     {//Gameシーンに行きす。
         Invoke("DoorOpen",0.0f);
+        Button.position = new Vector3(960.0f, -120.0f, 0);
         Debug.Log("移動してきます。(開きました)");//移動確認
         Invoke("LoadScene", 5.0f);//呼び出し
     }
@@ -41,6 +47,7 @@ public class DOORS : MonoBehaviour {
         animator = door.GetComponent<Animator>();//アニメーション
         animator.SetFloat("Button", 0);//開く
         animator.SetBool("ISOpen", true);//アニメーション実行
+        canvasanimator.SetBool("CanvasButtonFlg", true);
     }
     void DoorCross()
     {//ドア閉じる

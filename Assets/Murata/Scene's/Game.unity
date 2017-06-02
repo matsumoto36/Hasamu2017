@@ -245,6 +245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TimeOve: Over
+  time: 60
+  Decpersec: 1
 --- !u!114 &177981584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,13 +390,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 266121360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18d77651e9175b0438a876f6eb630b81, type: 3}
+  m_Script: {fileID: 11500000, guid: a2ba1c71ec8ba30419b0823b2c3f4215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DOORs: {fileID: 95829720685550498, guid: b28f2430e25e907458fd900bd0ffa8e9, type: 2}
-  DOOR: {fileID: 0}
-  nextScene: Clear
-  SceneDM: 
+  DoorCanvas: {fileID: 95289047730669992, guid: acc140498c243824ea7677b0c049b1f8,
+    type: 2}
+  NexScene: Clear
+  NextToScene: 
 --- !u!1 &441525448
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,7 +538,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 266121365}
-        m_MethodName: OnCross
+        m_MethodName: OnCrossDoor
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
