@@ -12,19 +12,11 @@ public class ResourceLoader : MonoBehaviour {
 	const int MAPCHIPWIDTH = 4;
 
 	static List<Sprite[]> mapChipList;
+
 	public Sprite[] mapChipSrc;
 
 	void Awake() {
 		LoadChip();
-	}
-
-	/// <summary>
-	/// 指定したマップチップの一辺のサイズを取得
-	/// </summary>
-	/// <param name="type">マップチップのタイプ</param>
-	/// <returns>サイズ</returns>
-	public static float GetChipSize(MapChipType type) {
-		return mapChipList[(int)type][0].bounds.size.x;
 	}
 
 	/// <summary>
