@@ -10,7 +10,7 @@ public class Player : MonoBehaviour {
 	public static bool isAction = false;
 	public static Vector2[] pos = new Vector2[2];
 
-	Piece[] currentPiece = new Piece[2];
+	Tentacle[] currenTentacle = new Tentacle[2];
 
 	// Update is called once per frame
 	void Update () {
@@ -32,19 +32,29 @@ public class Player : MonoBehaviour {
 				//取得できなければキャンセル
 				if(!hits[0] || !hits[1]) return;
 
-				currentPiece[0] = hits[0].collider.GetComponent<Piece>();
-				currentPiece[1] = hits[1].collider.GetComponent<Piece>();
+				Piece p1 = hits[0].collider.GetComponent<Piece>();
+				Piece p2 = hits[1].collider.GetComponent<Piece>();
 
-				//IDが同じでなければキャンセル
-				if(currentPiece[0].id != currentPiece[1].id) return;
+				//位置が縦、横のどちらかが同じでなければキャンセル
+				if(p1.position.x == p2.position.x && p1.position.y == p2.position.y) return;
+				if(p1.position.x != p2.position.x && p1.position.y != p2.position.y) return;
+
+				//IDが同じでなければ、触手でなければキャンセル
+				if(p1.id != p2.id || p1.id != 1) return;
 				isAction = true;
 
+				//デバッグ用でSEを鳴らす
 				AudioManager.Play(SEType.Tap, 1);
+
+				//触手を生成
+				currenTentacle[0] = Tentacle.CreateTentacle(p1.position);
+				currenTentacle[1] = Tentacle.CreateTentacle(p2.position);
+
 			}
 
 			//移動
-			//StageGenerator.SetPiecePosition(currentPiece[0], new Vector2(pos[0].x, pos[0].y));
-			//StageGenerator.SetPiecePosition(currentPiece[1], new Vector2(pos[1].x, pos[1].y));
+			currenTentacle[0].transform.position = pos[0];
+			currenTentacle[1].transform.position = pos[1];
 
 		}
 		else if(InputManager.GetInput(out pos[0])) {
@@ -56,4 +66,6 @@ public class Player : MonoBehaviour {
 		}
 
 	}
+
+
 }

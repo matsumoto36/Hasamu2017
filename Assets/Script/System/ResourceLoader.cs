@@ -12,6 +12,7 @@ public class ResourceLoader : MonoBehaviour {
 	const int MAPCHIPWIDTH = 4;
 
 	static List<Sprite[]> mapChipList;
+
 	public Sprite[] mapChipSrc;
 
 	void Awake() {

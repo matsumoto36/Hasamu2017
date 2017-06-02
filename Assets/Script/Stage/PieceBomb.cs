@@ -11,16 +11,20 @@ public class PieceBomb : Piece, IExecutable
     public float coldtime = 0;
     float decpersec;
 
-    Timebar tmber = FindObjectOfType<Timebar>();
+	Timebar tmber;
 
     Piece[] p = new Piece[4];
+
+	void Start() {
+		tmber = FindObjectOfType<Timebar>();
+	}
 
     public void Update()
     {
         for (int i = 0; i < checkPos.Length; i++) 
         {
             p[i] = StageGenerator.GetPiece(checkPos[i]);
-
+			if(!p[i]) continue;
             switch(p[i].id)
             {
                 case 5:
@@ -46,6 +50,8 @@ public class PieceBomb : Piece, IExecutable
     ///</summary>
     public void hot()
     {
+		if(!tmber) return;
+
         decpersec = tmber.Decpersec;
         coldtime += Time.deltaTime;
         if (coldtime <= 3.0f)
@@ -59,7 +65,9 @@ public class PieceBomb : Piece, IExecutable
     /// </summary>
     public void cold()
     {
-        decpersec = tmber.Decpersec;
+		if(!tmber) return;
+
+		decpersec = tmber.Decpersec;
         coldtime += Time.deltaTime;
         if (coldtime <= 3.0f)
             tmber.Decpersec = 0.5f;
