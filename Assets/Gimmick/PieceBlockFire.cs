@@ -44,7 +44,7 @@ public class PieceBlockFire : Piece, IExecutable
 	}
 
     /// <summary>
-    /// 挟まれなう
+    /// 挟まれた場合にidを通常ブロックと同じ4にする
     /// </summary>
     void Sandwiched(int id)
     {
