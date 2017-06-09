@@ -8,7 +8,7 @@ public class CsvLoader : MonoBehaviour
     /// <summary>
     /// ステージの番号を受け取って該当するcsvを読み込む
     /// </summary>
-    public static int[,] StageLoad(string stageLevel, string stageNumber)
+    public static int[,] StageLoad(int stageLevel, int stageNumber)
     {
         TextAsset csv;
         List<string[]> csvDataS = new List<string[]>(); // CSVの中身を入れるリスト
