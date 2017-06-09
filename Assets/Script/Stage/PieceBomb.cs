@@ -11,13 +11,7 @@ public class PieceBomb : Piece, IExecutable
     public float coldtime = 0;
     float decpersec;
 
-	Timebar tmber;
-
     Piece[] p = new Piece[4];
-
-	void Start() {
-		tmber = FindObjectOfType<Timebar>();
-	}
 
     public void Update()
     {
@@ -50,14 +44,13 @@ public class PieceBomb : Piece, IExecutable
     ///</summary>
     public void hot()
     {
-		if(!tmber) return;
 
-        decpersec = tmber.Decpersec;
+        decpersec = Timebar.Decpersec;
         coldtime += Time.deltaTime;
         if (coldtime <= 3.0f)
-            tmber.Decpersec = 2;
+            Timebar.Decpersec = 2;
         else
-            tmber.Decpersec = decpersec;
+            Timebar.Decpersec = decpersec;
     }
 
     /// <summary>
@@ -65,13 +58,11 @@ public class PieceBomb : Piece, IExecutable
     /// </summary>
     public void cold()
     {
-		if(!tmber) return;
-
-		decpersec = tmber.Decpersec;
+		decpersec = Timebar.Decpersec;
         coldtime += Time.deltaTime;
         if (coldtime <= 3.0f)
-            tmber.Decpersec = 0.5f;
+            Timebar.Decpersec = 0.5f;
         else
-            tmber.Decpersec = decpersec;
+            Timebar.Decpersec = decpersec;
     }
 }
