@@ -5,43 +5,38 @@ using UnityEngine;
 
 public class CsvLoader : MonoBehaviour
 {
-    private static TextAsset csv;
-    private static List<int[]> csvDate = new List<int[]>();
-    private static int height = 0;
-
-
-	// Use this for initialization
-	void Start ()
-    {
-
-    }
-
     /// <summary>
     /// ステージの番号を受け取って該当するcsvを読み込む
     /// </summary>
-    public static int[,] StageLoad(string stageLevel, string stageNumber)
+    public static int[,] StageLoad(int stageLevel, int stageNumber)
     {
+        TextAsset csv;
+        List<string[]> csvDataS = new List<string[]>(); // CSVの中身を入れるリスト
+        int height = 0; // CSVの行数
+
+        //Resources内のCSVフォルダからcsvファイルを読み込んでList<string>に代入
         csv = Resources.Load("CSV/" + stageLevel + "-" + stageNumber) as TextAsset;
+        if (!csv) Debug.Log("ない！");
+        Debug.Log(stageLevel + "-" + stageNumber);
         StringReader reader = new StringReader(csv.text);
 
         while (reader.Peek() > -1)
         {
             string line = reader.ReadLine();
-
-            //一時的に保持
-            string[] bff = line.Split(',');
-            int[] list = new int[bff.Length];
-
-            //int型にキャスト
-            for (int i = 0; i < bff.Length; i++)
-            {
-                list[i] = int.Parse(bff[i]);
-            }
-
-            //マップデータに追加
-            csvDate.Add(list);
-            height++;
+            csvDataS.Add(line.Split(',')); // リストに入れる
+            height++; // 行数加算
         }
-        return null;
+ 
+        int[,] csvData = new int[csvDataS.Count, csvDataS[0].Length];
+
+        //List<string>をint二次元配列に変換
+        for (int i = 0; i < csvData.GetLength(0); i++)
+        {
+            for (int j = 0; j < csvData.GetLength(1); j++)
+            {
+                csvData[i, j] = int.Parse(csvDataS[i][j]);
+            }
+        }
+        return csvData;
     }
 }
