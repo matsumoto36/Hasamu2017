@@ -6,17 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Murata/Scene's/Clear.unity
+    path: Assets/Murata/Scenes/Clear.unity
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Murata/Scene's/Game.unity
+    path: Assets/Murata/Scenes/Game.unity
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Murata/Scene's/Menu.unity
+    path: Assets/Murata/Scenes/Menu.unity
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Murata/Scene's/Over.unity
+    path: Assets/Murata/Scenes/Over.unity
     guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Murata/Scene's/Title.unity
+    path: Assets/Murata/Scenes/Title.unity
     guid: 00000000000000000000000000000000
