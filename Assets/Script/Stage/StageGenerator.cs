@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StageGenerator : MonoBehaviour {
 
+	public static Vector2 stageSize;
+
 	static Transform myTrans;
 	static Piece[,] generatedStage;
 	static bool isGanerate;
@@ -13,11 +15,11 @@ public class StageGenerator : MonoBehaviour {
 
 		//後にCSVから読み込む
 		int[,] map = new int[,] {
-			{0, 0, 0, 0, 0, 0, 2, 2, 2},
-			{0, 0, 1, 1, 1, 1, 1, 1, 0},
+			{1, 1, 1, 0, 0, 0, 2, 2, 2},
+			{1, 0, 1, 1, 1, 1, 1, 1, 0},
 			{0, 0, 0, 1, 0, 0, 0, 0, 0},
-			{1, 0, 0, 0, 3, 4, 5, 6, 0},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 3, 4, 5, 6, 0},
+			{0, 1, 0, 0, 0, 0, 0, 1, 0},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
@@ -68,7 +70,7 @@ public class StageGenerator : MonoBehaviour {
 
 		p.transform.SetParent(myTrans);
 
-		Vector3 stagePosition = new Vector3(position.x, generatedStage.GetLength(0) - position.y - 1, 0.0f);
+		Vector3 stagePosition = position;
 		p.transform.position = stagePosition;
 
 		p.id = id;
@@ -103,6 +105,14 @@ public class StageGenerator : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// ステージから削除(オブジェクトは削除されない)
+	/// </summary>
+	/// <param name="piece">ピース</param>
+	public static void RemovePiece(Piece piece) {
+		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
+	}
+
+	/// <summary>
 	/// 配列の要素数を超えるかチェック
 	/// </summary>
 	/// <returns>超える = true</returns>
@@ -128,7 +138,7 @@ public class StageGenerator : MonoBehaviour {
 		if(CheckStageBound(newPos)) return false;
 
 		int arrX = (int)newPos.x;
-		int arrY = generatedStage.GetLength(0) - (int)newPos.y - 1;
+		int arrY = (int)newPos.y;
 
 		//存在してたらキャンセル
 		if(generatedStage[arrY, arrX]) return false;
@@ -154,13 +164,14 @@ public class StageGenerator : MonoBehaviour {
 
 		int width = map.GetLength(1);
 		int height = map.GetLength(0);
+		stageSize = new Vector2(width, height);
 
 		generatedStage = new Piece[height, width];
 		for(int i = 0;i < height;i++) {
 			for(int j = 0;j < width;j++) {
 
 				int id = map[height - (i + 1), j];
-				Vector2 position = new Vector2(j, (height - (i + 1)));
+				Vector2 position = new Vector2(j, i);
 				//ピースを作成
 				CreatePiece(position, id);
 			}

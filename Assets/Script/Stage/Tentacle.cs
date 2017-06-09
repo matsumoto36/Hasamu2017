@@ -7,29 +7,31 @@ using UnityEngine;
 /// </summary>
 public class Tentacle : MonoBehaviour {
 
-	public Vector2 angle;
-	public Vector2 initialPosition;
+	const int CHIPOFFSET = 5;		//使う画像のオフセット
 
-	int length = 0;
-	const int CHIPOFFSET = 5;
+	public Vector2 angle;			//生える向き
+	public Vector2 position;        //本体のいる位置
 
+	public int length = 0;
 	Sprite[] tentacleSpr = new Sprite[2];
 
-	List<SpriteRenderer> tentacleBody;
+	List<SpriteRenderer> tentacleBody = new List<SpriteRenderer>();
 
-	// Use this for initialization
-	void Start () {
-		tentacleBody = new List<SpriteRenderer>();
-		initialPosition = transform.position;
-
+	void Awake () {
 		Sprite[] bff = ResourceLoader.GetChips(MapChipType.Sub1_Tentacle);
 		tentacleSpr[0] = bff[CHIPOFFSET];
 		tentacleSpr[1] = bff[CHIPOFFSET + 1];
-		SetLength(5);
 	}
 
+	/// <summary>
+	/// 触手を生成する
+	/// </summary>
+	/// <param name="position">場所</param>
+	/// <returns>生成した触手</returns>
 	public static Tentacle CreateTentacle(Vector2 position) {
 		Tentacle t = new GameObject("[Tentacle]").AddComponent<Tentacle>();
+		t.position = position;
+		t.transform.position = position;
 		return t;
 	}
 
@@ -38,17 +40,137 @@ public class Tentacle : MonoBehaviour {
 		
 	}
 
-	void Move() {
+	public void Move(Vector2 newPosition) {
 
+		bool isHorizonCancel = false;			//横移動キャンセル用
+		bool isVerticCancel = false;           //縦移動キャンセル用
+		Vector2 OVec = newPosition - position;	//ベースからのベクトル
+		Vector2 v;								//垂直なベクトル
+		float r = Vector3.Angle(angle, OVec);   //角度(deg)
+
+		Vector2 cPos;
+		Piece p;
+
+		//外積で左右判定
+		float side = angle.x * OVec.y - angle.y * OVec.x;
+		if(side < 0) {
+			v = (Quaternion.Euler(0, 0, -90) * angle).normalized;
+		}
+		else {
+			v = (Quaternion.Euler(0, 0, 90) * angle).normalized;
+		}
+
+
+		//向きの方向の長さ
+		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
+		//向きに垂直な長さ
+		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
+
+		//デバッグ表示
+		Debug.DrawLine(position, newPosition, Color.red);
+		Debug.DrawLine(position, position + angleVec, Color.blue);
+		Debug.DrawLine(position, position + vVec, Color.blue);
+
+		#region 横方向の制限
+
+		//i=0のとき、横に触手ブロックがなければ移動不可
+		//i!=0のとき、横にブロックがあれば移動不可
+		for(int i = 0;i <= length;i++) {
+			cPos = position + v + (angle * i);
+			p = StageGenerator.GetPiece(cPos);
+			if((i == 0 && (!p || p.id != 1)) || (i != 0 && p)) {
+				isHorizonCancel = true;
+				break;
+			}
+		}
+
+		//横移動がキャンセルされた場合
+		if(isHorizonCancel) {
+			//Debug.Log("c");
+			//newPosition = position + angleVec;
+			vVec = Vector2.zero;
+		}
+
+		#endregion
+
+
+		//デバッグ表示
+		Debug.DrawLine(position, newPosition, Color.yellow);
+
+
+		#region 縦方向の制限
+
+		//自分の生成している向きより下か？
+		if(r > 90) {
+
+			//newPosition = position + vVec;
+			angleVec = Vector2.zero;
+
+			//角度等更新
+			OVec = newPosition - position;
+			r = Vector3.Angle(angle, OVec);
+		}
+
+		//デバッグ表示
+		Debug.DrawLine(position, newPosition, Color.green);
+
+		//ブロックに埋まっているか
+		for(int i=1;i < length + 1;i++) {
+			cPos = position + (angle * i);
+			p = StageGenerator.GetPiece(cPos);
+
+			//埋まっているか
+			if(p) {
+				Debug.Log("ume");
+				Vector2 cPosV = cPos - position;
+
+				float a = OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
+				float d = (int)(cPosV.magnitude * Mathf.Sin(Vector2.Angle(cPosV, v) * Mathf.Deg2Rad)) - 1;
+
+				//newPosition = position + a * v + d * angle;
+				angleVec = angle * d;
+				break;
+			}
+		}
+
+		#endregion
+
+
+		#region 移動
+
+		//デバッグ表示
+		Debug.DrawLine(position, position + vVec + angleVec);
+		transform.position = position + vVec + angleVec;
+
+		#endregion
+
+		#region ベース座標移動
+
+		//ベースの座標を移動するか
+		Vector2 vPosInt = new Vector2((int)(position.x + vVec.x + 0.5), (int)(position.y + vVec.y + 0.5));
+		if(!isHorizonCancel && vPosInt != position) {
+			p = StageGenerator.GetPiece(vPosInt);
+			position = p && p.id == 1 ? vPosInt : position;
+		}
+
+		#endregion
+	}
+
+	public Vector2 GetTargetPosition() {
+		return position + angle * length;
 	}
 
 	/// <summary>
 	/// 触手の長さを変更する
 	/// </summary>
-	/// <param name="count"></param>
-	void SetLength(int count) {
+	/// <param name="count">長さ</param>
+	public void SetLength(int count) {
 
 		if(length == count) return;
+
+		foreach(var g in tentacleBody) {
+			Destroy(g.gameObject);
+		}
 
 		tentacleBody = new List<SpriteRenderer>();
 		for(int i = 0;i < count;i++) {
@@ -59,12 +181,24 @@ public class Tentacle : MonoBehaviour {
 			spr.transform.SetParent(transform);
 			spr.sprite = tentacleSpr[c];
 			spr.sortingOrder = 2;
-			transform.position = angle * -1 * (i + 1);
+			spr.transform.localPosition = angle * i * -1;
+
+			//回転
+			float rot = 0;
+			if(angle.y != 0)					rot -= 90;
+			if(angle.x == 1 || angle.y == -1)	rot += 180;
+			spr.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
 
 			tentacleBody.Add(spr);
-			
 		}
 
 		length = count;
+	}
+
+	/// <summary>
+	/// 触手が死ぬ時
+	/// </summary>
+	public void Death() {
+		Destroy(gameObject);
 	}
 }
