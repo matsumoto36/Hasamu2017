@@ -4,4 +4,19 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Murata/Scenes/Clear.unity
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Murata/Scenes/Game.unity
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Murata/Scenes/Menu.unity
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Murata/Scenes/Over.unity
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Murata/Scenes/Title.unity
+    guid: 00000000000000000000000000000000
