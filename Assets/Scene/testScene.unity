@@ -301,6 +301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 925682071}
   - component: {fileID: 925682070}
+  - component: {fileID: 925682072}
   m_Layer: 0
   m_Name: '[StageGenerator]'
   m_TagString: Untagged
@@ -332,6 +333,17 @@ Transform:
   m_Father: {fileID: 929007286}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &925682072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 925682069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9add8ffb7ac6d0646a34da948c7b6e39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &929007285
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,7 +648,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb74a17b4e37254e84d7fb0ed622f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAction: 0
 --- !u!4 &1538091981
 Transform:
   m_ObjectHideFlags: 0
