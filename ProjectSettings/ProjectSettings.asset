@@ -137,7 +137,7 @@ PlayerSettings:
   protectGraphicsMemory: 0
   useHDRDisplay: 0
   applicationIdentifier:
-    Android: com.Company.ProductName
+    Android: com.Company.Tentacle
     Standalone: unity.DefaultCompany.Hasamu2017
     Tizen: com.Company.ProductName
     iOS: com.Company.ProductName
