@@ -117,7 +117,7 @@ public class Tentacle : MonoBehaviour {
 		//i!=0のとき、横にブロックがあれば移動不可
 		checkCount = (int)(angleVec.magnitude + 0.9f);
 		checkCount = checkCount == 0 ? 1 : checkCount;
-		Debug.Log("cnt:" + checkCount);
+		//Debug.Log("cnt:" + checkCount);
 		for(int i = 0;i <= checkCount;i++) {
 			cPos = position + v + (angle * i);
 			p = StageGenerator.GetPiece(cPos);
@@ -210,5 +210,9 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	public void Death() {
 		Destroy(gameObject);
+	}
+
+	void OnDrawGizmos() {
+		Gizmos.DrawWireCube(GetTargetPosition(), Vector3.one);
 	}
 }

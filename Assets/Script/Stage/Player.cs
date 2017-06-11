@@ -12,7 +12,7 @@ public class Player : MonoBehaviour {
 
 	Tentacle[] currenTentacle = new Tentacle[2];
 
-	Piece currentPiece;
+	PieceContainer currentPieceContainer;
 	Rigidbody2D cpRig;
 
 	// Update is called once per frame
@@ -78,20 +78,13 @@ public class Player : MonoBehaviour {
 
 			#region はさむアクション
 
-			//同じポジションを差しているか判定
-			if(currenTentacle[0].GetTargetPosition() == currenTentacle[1].GetTargetPosition()) {
+			//触手の間のピースを取得
+			Piece[] btwp = GetPiecesBetweenTentacle();
+			if(btwp != null && !currentPieceContainer) {
+				Debug.Log("はさめたよ");
 
-				Piece p = StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition());
-				if(p && p.id != 1 && !currentPiece) {
-					//はさむ
-					SetCurrentPiece(p);
-				}
-
-				//Debug.Log("hasami");
-
-			}
-			else {
-				//RemoveCurrentPiece();
+				//はさむ
+				currentPieceContainer = PieceContainer.CreateContainer(btwp);
 			}
 
 			#endregion
@@ -101,7 +94,9 @@ public class Player : MonoBehaviour {
 			currenTentacle[1].Move(pos[1]);
 
 			//はさんでいるものがあれば移動
-			MoveCurrentPiece();
+			//MoveCurrentPiece();
+			if(currentPieceContainer)
+				currentPieceContainer.Move((currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f);
 
 		}
 		else if(InputManager.GetInput(out pos[0])) {
@@ -115,54 +110,72 @@ public class Player : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// ピースをはさむ
+	/// 触手の間にあるピースを取得(完全)
 	/// </summary>
-	/// <param name="piece"></param>
-	void SetCurrentPiece(Piece piece) {
+	/// <returns>すべて取得できれば、できたピースの配列</returns>
+	Piece[] GetPiecesBetweenTentacle() {
 
-		if(currentPiece) RemoveCurrentPiece();
+		Vector2[] targetPositions = new Vector2[2];
+		targetPositions[0] = currenTentacle[0].GetTargetPosition();
+		targetPositions[1] = currenTentacle[1].GetTargetPosition();
 
-		piece.isMoved = true;
-		currentPiece = piece;
+		//位置が縦、横のどちらかが同じでなければキャンセル
+		//if(targetPositions[0].x == targetPositions[1].x && targetPositions[0].y == targetPositions[1].y) return null;
+		if(targetPositions[0].x != targetPositions[1].x && targetPositions[0].y != targetPositions[1].y) return null;
 
+		//大きさを求める
+		int count = (int)(targetPositions[0] - targetPositions[1]).magnitude + 1;
+		Debug.Log("hasamiC:" + count);
+
+		//取得してみる
+		List<Piece> pieces = new List<Piece>();
+		for(int i = 0;i < count;i++) {
+			Piece p = StageGenerator.GetPiece(targetPositions[0] + currenTentacle[0].angle * i);
+			//一つでも取得できなければキャンセル
+			if(!p || !(p is IExecutable)) return null;
+
+			pieces.Add(p);
+		}
+
+		return pieces.ToArray();
 	}
 
 	/// <summary>
 	/// はさんでいるピースを動かす
 	/// </summary>
-	void MoveCurrentPiece() {
+	//void MoveCurrentPiece() {
 
-		if(!currentPiece) return;
+	//	if(!currentPiece) return;
 
-		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
-		Vector2 moveVec = movePos - currentPiece.position;
-		//x方向のチェック
-		if(moveVec.x != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(moveVec.x / Mathf.Abs(moveVec.x), 0))) {
-			movePos.x = currentPiece.position.x;
-		}
-		//y方向のチェック
-		else if(moveVec.y != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(0, moveVec.y / Mathf.Abs(moveVec.y)))) {
-			movePos.y = currentPiece.position.y;
-		}
+	//	Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
+	//	Vector2 moveVec = movePos - currentPiece.position;
+	//	//x方向のチェック
+	//	if(moveVec.x != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(moveVec.x / Mathf.Abs(moveVec.x), 0))) {
+	//		movePos.x = currentPiece.position.x;
+	//	}
+	//	//y方向のチェック
+	//	else if(moveVec.y != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(0, moveVec.y / Mathf.Abs(moveVec.y)))) {
+	//		movePos.y = currentPiece.position.y;
+	//	}
 
-		//移動
-		currentPiece.transform.position = movePos;
+	//	//移動
+	//	currentPiece.transform.position = movePos;
 
-		//ステージ座標を移動させる
-		StageGenerator.SetPiecePosition(currentPiece, movePos);
-	}
+	//	//ステージ座標を移動させる
+	//	StageGenerator.SetPiecePosition(currentPiece, movePos);
+	//}
 
 	/// <summary>
 	/// はさんでいるヒースを離す
 	/// </summary>
-	void RemoveCurrentPiece() {
+	//void RemoveCurrentPiece() {
 
-		if(!currentPiece) return;
+	//	if(!currentPiece) return;
 
-		Destroy(cpRig);
-		currentPiece.transform.position = currentPiece.position;
-		currentPiece = null;
-	}
+	//	Destroy(cpRig);
+	//	currentPiece.transform.position = currentPiece.position;
+	//	currentPiece = null;
+	//}
 
 
 }
