@@ -75,7 +75,9 @@ public class StageGenerator : MonoBehaviour {
 		//場所を保存
 		Vector2 position = piece.position;
 
+		RemovePiece(piece);
 		Destroy(piece.gameObject);
+
 		//作成して返却
 		return CreatePiece(position, newID);
 	}

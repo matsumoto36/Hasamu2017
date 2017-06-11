@@ -8,28 +8,42 @@ using UnityEngine;
 public class PieceBomb : Piece, IExecutable
 {
 
-    public float coldtime = 0;
-    float decpersec;
-
     Piece[] p = new Piece[4];
 
     public void Update()
     {
-        for (int i = 0; i < checkPos.Length; i++) 
+		//取得用位置を格納
+		Vector2[] checkPos = new Vector2[] {
+			new Vector2(position.x, position.y + 1),
+			new Vector2(position.x - 1, position.y),
+			new Vector2(position.x, position.y - 1),
+			new Vector2(position.x + 1, position.y),
+		};
+
+		//温度を計測
+		int checkThrmo = 0;
+		for(int i = 0; i < checkPos.Length; i++) 
         {
             p[i] = StageGenerator.GetPiece(checkPos[i]);
 			if(!p[i]) continue;
             switch(p[i].id)
             {
                 case 5:
-                    hot();
-                    break;
+					//熱くなる
+					checkThrmo++;
+					break;
                 case 6:
-                    cold();
+					//冷たくなる
+					checkThrmo--;
                     break;
             }
         }
-    }
+
+		//結果で判断
+		if(checkThrmo < 0) cold();
+		else if(checkThrmo > 0) hot();
+		else Normal();
+	}
 
     /// <summary>
 	/// 触手に掴まれているときに毎フレーム実行される
@@ -44,25 +58,18 @@ public class PieceBomb : Piece, IExecutable
     ///</summary>
     public void hot()
     {
-
-        decpersec = Timebar.Decpersec;
-        coldtime += Time.deltaTime;
-        if (coldtime <= 3.0f)
-            Timebar.Decpersec = 2;
-        else
-            Timebar.Decpersec = decpersec;
-    }
+		Timebar.Decpersec = 2;
+	}
 
     /// <summary>
     /// さむいブロックに隣接すると呼び出される
     /// </summary>
     public void cold()
     {
-		decpersec = Timebar.Decpersec;
-        coldtime += Time.deltaTime;
-        if (coldtime <= 3.0f)
-            Timebar.Decpersec = 0.5f;
-        else
-            Timebar.Decpersec = decpersec;
-    }
+		Timebar.Decpersec = 0.5f;
+	}
+
+	public void Normal() {
+		Timebar.Decpersec = 1;
+	}
 }

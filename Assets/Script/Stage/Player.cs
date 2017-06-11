@@ -14,7 +14,7 @@ public class Player : MonoBehaviour {
 
 	Tentacle[] currenTentacle = new Tentacle[2];	//操作している触手	
 
-	PieceContainer currentPieceContainer;			//はさんでいるオブジェクト
+	static PieceContainer currentPieceContainer;	//はさんでいるオブジェクト
 
 	// Update is called once per frame
 	void Update () {
@@ -153,5 +153,15 @@ public class Player : MonoBehaviour {
 		}
 
 		return pieces.ToArray();
+	}
+
+	/// <summary>
+	/// コンテナを削除
+	/// </summary>
+	public static void DestroyCurrentContainer() {
+		if(!currentPieceContainer) return;
+
+			currentPieceContainer.DestroyContainer();
+			currentPieceContainer = null;
 	}
 }

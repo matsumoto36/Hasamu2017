@@ -9,7 +9,7 @@ public class Timebar : MonoBehaviour
     static bool isStarted = false;
 
     public static float time = 10;//初期値を60
-    public static float Decpersec = 2;
+    public static float Decpersec = 1;
 
     void Start()
     {

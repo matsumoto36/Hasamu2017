@@ -14,8 +14,6 @@ public class Piece : MonoBehaviour {
 
     public SpriteRenderer _renderer;	//自分の画像
 
-    public Vector2[] checkPos = new Vector2[4];
-
 	/// <summary>
 	/// 画像を持ってくる
 	/// </summary>
@@ -61,7 +59,7 @@ public class Piece : MonoBehaviour {
 
 
 		//取得用位置を格納
-		checkPos = new Vector2[] {
+		Vector2[] checkPos = new Vector2[] {
 			new Vector2(position.x, position.y + 1),
 			new Vector2(position.x - 1, position.y),
 			new Vector2(position.x, position.y - 1),
