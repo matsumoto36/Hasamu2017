@@ -7,9 +7,8 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour {
 
-	static int stageLevel, stageNum;
-
-	public Vector2 clearPosition = new Vector2(3, 4);
+	int stageLevel, stageNum;	//生成するステージ
+	float limitTime;			//制限時間
 
 	void Awake() {
 		GameInitiarize();
@@ -30,7 +29,7 @@ public class GameManager : MonoBehaviour {
 		int[,] map = new int[,] {
 			{1, 1, 1, 1, 1, 1, 2, 2, 2},
 			{1, 0, 0, 0, 2, 0, 0, 0, 1},
-			{1, 0, 0, 0, 4, 5, 0, 0, 1},
+			{1, 0, 0, -1, 4, 5, 0, 0, 1},
 			{1, 0, 0, 0, 3, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -39,8 +38,8 @@ public class GameManager : MonoBehaviour {
 		//ステージの生成
 		StageGenerator.GenerateMap(map);
 
-		//クリア場所の作成
-		Hole.CreateHole(clearPosition);
+		//制限時間の設定
+		Timebar.time = limitTime;
 	}
 
 	/// <summary>

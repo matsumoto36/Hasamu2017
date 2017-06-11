@@ -147,8 +147,14 @@ public class StageGenerator : MonoBehaviour {
 
 				int id = map[height - (i + 1), j];
 				Vector2 position = new Vector2(j, i);
-				//ピースを作成
-				CreatePiece(position, id);
+				//idが0以上のときはピースを作成
+				if(id <= 0) {
+					CreatePiece(position, id);
+				}
+				else {
+					//それ以外はクリア場所を作成
+					Hole.CreateHole(position);
+				}
 			}
 		}
 
