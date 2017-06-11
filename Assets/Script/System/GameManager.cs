@@ -65,4 +65,8 @@ public class GameManager : MonoBehaviour {
 		Debug.Log("GameClear");
 
 	}
+
+	public void ShowMenu() {
+		
+	}
 }

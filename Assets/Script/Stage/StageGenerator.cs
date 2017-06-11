@@ -148,7 +148,7 @@ public class StageGenerator : MonoBehaviour {
 				int id = map[height - (i + 1), j];
 				Vector2 position = new Vector2(j, i);
 				//idが0以上のときはピースを作成
-				if(id <= 0) {
+				if(id >= 0) {
 					CreatePiece(position, id);
 				}
 				else {
