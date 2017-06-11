@@ -13,6 +13,7 @@ public class Player : MonoBehaviour {
 	Tentacle[] currenTentacle = new Tentacle[2];
 
 	Piece currentPiece;
+	Rigidbody2D cpRig;
 
 	// Update is called once per frame
 	void Update () {
@@ -75,38 +76,22 @@ public class Player : MonoBehaviour {
 				isAction = true;
 			}
 
-			//長さを決める
-			for(int i = 0;i < 2;i++) {
-				int l = 0;
-
-				Vector2 v = pos[i] - currenTentacle[i].position;
-				float rad = Vector2.Angle(currenTentacle[i].angle, v) * Mathf.Deg2Rad;
-
-				l = (int)(v.magnitude * Mathf.Cos(rad)) + 1;
-
-				currenTentacle[i].SetLength(l < 0 ? 0 : l);
-				
-			}
-
 			#region はさむアクション
-
-			//Debug.Log("0pos " + (currenTentacle[0].position + (currenTentacle[0].angle * currenTentacle[0].length)));
-			//Debug.Log("1pos " + (currenTentacle[1].position + (currenTentacle[1].angle * currenTentacle[1].length)));
 
 			//同じポジションを差しているか判定
 			if(currenTentacle[0].GetTargetPosition() == currenTentacle[1].GetTargetPosition()) {
 
 				Piece p = StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition());
 				if(p && p.id != 1 && !currentPiece) {
-					currentPiece = p;
-					StageGenerator.RemovePiece(p);
+					//はさむ
+					SetCurrentPiece(p);
 				}
 
 				//Debug.Log("hasami");
 
 			}
 			else {
-				//currentPiece = null;
+				//RemoveCurrentPiece();
 			}
 
 			#endregion
@@ -116,11 +101,7 @@ public class Player : MonoBehaviour {
 			currenTentacle[1].Move(pos[1]);
 
 			//はさんでいるものがあれば移動
-			if(currentPiece) {
-
-				currentPiece.transform.position = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
-
-			}
+			MoveCurrentPiece();
 
 		}
 		else if(InputManager.GetInput(out pos[0])) {
@@ -131,6 +112,56 @@ public class Player : MonoBehaviour {
 			isAction = false;
 		}
 
+	}
+
+	/// <summary>
+	/// ピースをはさむ
+	/// </summary>
+	/// <param name="piece"></param>
+	void SetCurrentPiece(Piece piece) {
+
+		if(currentPiece) RemoveCurrentPiece();
+
+		piece.isMoved = true;
+		currentPiece = piece;
+
+	}
+
+	/// <summary>
+	/// はさんでいるピースを動かす
+	/// </summary>
+	void MoveCurrentPiece() {
+
+		if(!currentPiece) return;
+
+		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
+		Vector2 moveVec = movePos - currentPiece.position;
+		//x方向のチェック
+		if(moveVec.x != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(moveVec.x / Mathf.Abs(moveVec.x), 0))) {
+			movePos.x = currentPiece.position.x;
+		}
+		//y方向のチェック
+		else if(moveVec.y != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(0, moveVec.y / Mathf.Abs(moveVec.y)))) {
+			movePos.y = currentPiece.position.y;
+		}
+
+		//移動
+		currentPiece.transform.position = movePos;
+
+		//ステージ座標を移動させる
+		StageGenerator.SetPiecePosition(currentPiece, movePos);
+	}
+
+	/// <summary>
+	/// はさんでいるヒースを離す
+	/// </summary>
+	void RemoveCurrentPiece() {
+
+		if(!currentPiece) return;
+
+		Destroy(cpRig);
+		currentPiece.transform.position = currentPiece.position;
+		currentPiece = null;
 	}
 
 

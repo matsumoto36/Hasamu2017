@@ -17,7 +17,7 @@ public class StageGenerator : MonoBehaviour {
 		int[,] map = new int[,] {
 			{1, 1, 1, 0, 0, 0, 2, 2, 2},
 			{1, 0, 1, 1, 1, 1, 1, 1, 0},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 3, 4, 5, 6, 0},
 			{0, 1, 0, 0, 0, 0, 0, 1, 0},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -146,7 +146,6 @@ public class StageGenerator : MonoBehaviour {
 		generatedStage[arrY, arrX] = piece;
 		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
 
-		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
 		piece.position = new Vector2(arrX, arrY);
 
 		//Debug.Log("Moved" + newPos);
