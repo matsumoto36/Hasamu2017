@@ -91,11 +91,10 @@ public class PieceContainer : MonoBehaviour {
 		//設定した変更を元に戻す
 		foreach(Piece p in pieceArray) {
 			p.isMoved = false;
-			p.transform.SetParent(StageGenerator.myTrans);
+			p.transform.SetParent(null);
 			p.GetComponent<Collider2D>().enabled = true;
 			p.transform.position = p.position;
 		}
-
 
 		Debug.Log("DestroyContainer");
 		Destroy(gameObject);

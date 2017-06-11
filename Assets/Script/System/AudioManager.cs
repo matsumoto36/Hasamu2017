@@ -39,16 +39,11 @@ public class AudioManager : MonoBehaviour {
 	public AudioClip[] _SEclips;		//SE設定用リスト
 	public AudioClip[] _BGMclips;		//BGM設定用リスト
 
-	void Awake() {
+	public void Initiarize() {
 		myManager = this;
 		mixer = _mixer;
 		SEclips = _SEclips;
 		BGMclips = _BGMclips;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
 	/// <summary>

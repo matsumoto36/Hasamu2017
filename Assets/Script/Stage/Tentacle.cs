@@ -43,7 +43,6 @@ public class Tentacle : MonoBehaviour {
 	public void Move(Vector2 newPosition) {
 
 		bool isHorizonCancel = false;			//横移動キャンセル用
-		bool isVerticCancel = false;           //縦移動キャンセル用
 		Vector2 OVec = newPosition - position;	//ベースからのベクトル
 		Vector2 v;								//垂直なベクトル
 		float r = Vector3.Angle(angle, OVec);   //角度(deg)
@@ -97,8 +96,6 @@ public class Tentacle : MonoBehaviour {
 			if(p && !p.isMoved) {
 				//Debug.Log("ume");
 				Vector2 cPosV = cPos - position;
-
-				float a = OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
 				float d = (int)(cPosV.magnitude * Mathf.Sin(Vector2.Angle(cPosV, v) * Mathf.Deg2Rad)) - 1;
 
 				angleVec = angle * d;

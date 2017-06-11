@@ -15,14 +15,10 @@ public class ResourceLoader : MonoBehaviour {
 
 	public Sprite[] mapChipSrc;
 
-	void Awake() {
-		LoadChip();
-	}
-
 	/// <summary>
 	/// マップチップをロードする
 	/// </summary>
-	void LoadChip() {
+	public void LoadChip() {
 
 		mapChipList = new List<Sprite[]>();
 		for(int i = 0;i < mapChipSrc.Length;i++) {

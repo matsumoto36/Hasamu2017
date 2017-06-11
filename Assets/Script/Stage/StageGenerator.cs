@@ -5,31 +5,9 @@ using UnityEngine;
 public class StageGenerator : MonoBehaviour {
 
 	public static Vector2 stageSize;
-	public static Transform myTrans;
 
 	static Piece[,] generatedStage;
 	static bool isGanerate;
-
-	// Use this for initialization
-	void Start () {
-
-		//後にCSVから読み込む
-		int[,] map = new int[,] {
-			{1, 1, 1, 0, 0, 0, 2, 2, 2},
-			{1, 0, 0, 0, 3, 0, 0, 0, 1},
-			{1, 0, 0, 0, 4, 5, 0, 0, 1},
-			{1, 0, 0, 0, 3, 4, 5, 0, 1},
-			{1, 1, 0, 0, 0, 0, 0, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		};
-
-		myTrans = gameObject.transform;
-
-		//マップを生成
-		GenerateMap(map);
-
-
-	}
 
 	/// <summary>
 	/// ある地点のピースを取得する
@@ -67,8 +45,6 @@ public class StageGenerator : MonoBehaviour {
 		BoxCollider2D col = g.AddComponent<BoxCollider2D>();
 
 		p.tag = "Piece";
-
-		p.transform.SetParent(myTrans);
 
 		Vector3 stagePosition = position;
 		p.transform.position = stagePosition;

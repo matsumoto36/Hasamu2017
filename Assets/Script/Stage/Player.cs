@@ -125,12 +125,10 @@ public class Player : MonoBehaviour {
 		targetPositions[1] = currenTentacle[1].GetTargetPosition();
 
 		//位置が縦、横のどちらかが同じでなければキャンセル
-		//if(targetPositions[0].x == targetPositions[1].x && targetPositions[0].y == targetPositions[1].y) return null;
 		if(targetPositions[0].x != targetPositions[1].x && targetPositions[0].y != targetPositions[1].y) return null;
 
 		//大きさを求める
 		int count = (int)(targetPositions[0] - targetPositions[1]).magnitude + 1;
-		Debug.Log("hasamiC:" + count);
 
 		//取得してみる
 		List<Piece> pieces = new List<Piece>();
