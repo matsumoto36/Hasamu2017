@@ -13,10 +13,6 @@ public class PieceContainer : MonoBehaviour {
 	Rigidbody2D rig;				//移動阻止用
 	public Vector2 containerSize;	//当たり判定用
 
-	void Update() {
-		
-	}
-
 	/// <summary>
 	/// 新しくコンテナーを作成
 	/// </summary>
@@ -52,7 +48,7 @@ public class PieceContainer : MonoBehaviour {
 
 		//ピースの情報を変更
 		foreach(Piece p in pieces) {
-			p.isMoved = true;
+			p.noCollision = true;
 			p.transform.SetParent(transform);
 			p.GetComponent<BoxCollider2D>().enabled = false;
 		}
@@ -90,7 +86,7 @@ public class PieceContainer : MonoBehaviour {
 
 		//設定した変更を元に戻す
 		foreach(Piece p in pieceArray) {
-			p.isMoved = false;
+			p.noCollision = false;
 			p.transform.SetParent(null);
 			p.GetComponent<Collider2D>().enabled = true;
 			p.transform.position = p.position;

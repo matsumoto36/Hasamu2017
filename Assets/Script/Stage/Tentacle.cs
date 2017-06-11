@@ -18,6 +18,7 @@ public class Tentacle : MonoBehaviour {
 	List<SpriteRenderer> tentacleBody = new List<SpriteRenderer>();
 
 	void Awake () {
+		//画像を取得
 		Sprite[] bff = ResourceLoader.GetChips(MapChipType.Sub1_Tentacle);
 		tentacleSpr[0] = bff[CHIPOFFSET];
 		tentacleSpr[1] = bff[CHIPOFFSET + 1];
@@ -33,11 +34,6 @@ public class Tentacle : MonoBehaviour {
 		t.position = position;
 		t.transform.position = position;
 		return t;
-	}
-
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
 	public void Move(Vector2 newPosition) {
@@ -93,7 +89,7 @@ public class Tentacle : MonoBehaviour {
 			p = StageGenerator.GetPiece(cPos);
 
 			//埋まっているか
-			if(p && !p.isMoved) {
+			if(p && !p.noCollision) {
 				//Debug.Log("ume");
 				Vector2 cPosV = cPos - position;
 				float d = (int)(cPosV.magnitude * Mathf.Sin(Vector2.Angle(cPosV, v) * Mathf.Deg2Rad)) - 1;
@@ -118,7 +114,7 @@ public class Tentacle : MonoBehaviour {
 		for(int i = 0;i <= checkCount;i++) {
 			cPos = position + v + (angle * i);
 			p = StageGenerator.GetPiece(cPos);
-			if((i == 0 && (!p || p.id != 1)) || (i != 0 && p && !p.isMoved)) {
+			if((i == 0 && (!p || p.id != 1)) || (i != 0 && p && !p.noCollision)) {
 				isHorizonCancel = true;
 				break;
 			}
@@ -157,6 +153,10 @@ public class Tentacle : MonoBehaviour {
 		SetLength();
 	}
 
+	/// <summary>
+	/// 触手が差し示している場所を取得する
+	/// </summary>
+	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
 		return position + angle * length;
 	}
@@ -203,7 +203,7 @@ public class Tentacle : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 触手が死ぬ時
+	/// 触手が死ぬ時に実行する
 	/// </summary>
 	public void Death() {
 		Destroy(gameObject);

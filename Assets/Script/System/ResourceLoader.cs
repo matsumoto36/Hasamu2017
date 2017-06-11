@@ -5,6 +5,7 @@ using UnityEngine;
 public enum MapChipType {
 	MainChip,
 	Sub1_Tentacle,
+	Hole,
 }
 
 public class ResourceLoader : MonoBehaviour {

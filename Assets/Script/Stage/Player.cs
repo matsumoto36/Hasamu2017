@@ -7,13 +7,14 @@ using UnityEngine;
 /// </summary>
 public class Player : MonoBehaviour {
 
-	public static bool isAction = false;
-	public static Vector2[] pos = new Vector2[2];
+	public static bool isAction = false;			//触手を操作しているか
+	public static Vector2[] pos = new Vector2[2];   //タッチした座標
 
-	Tentacle[] currenTentacle = new Tentacle[2];
+	bool firstTouch = false;
 
-	PieceContainer currentPieceContainer;
-	Rigidbody2D cpRig;
+	Tentacle[] currenTentacle = new Tentacle[2];	//操作している触手	
+
+	PieceContainer currentPieceContainer;			//はさんでいるオブジェクト
 
 	// Update is called once per frame
 	void Update () {
@@ -74,6 +75,12 @@ public class Player : MonoBehaviour {
 				#endregion
 
 				isAction = true;
+	
+				//初めて生成した場合、ゲーム開始
+				if(!firstTouch) {
+					firstTouch = true;
+					GameManager.GameStart();
+				}
 			}
 
 			#region はさむアクション

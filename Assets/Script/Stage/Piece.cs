@@ -9,7 +9,7 @@ public class Piece : MonoBehaviour {
 
     public int id;                      //自分のID
     public int subId;                   //アニメーション用のサブID
-	public bool isMoved = false;		//動かしているか
+	public bool noCollision = false;	//壁の判定が無いか
     public Vector2 position;            //ステージ上の位置
 
     public SpriteRenderer _renderer;	//自分の画像

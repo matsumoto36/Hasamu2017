@@ -45,7 +45,10 @@ public class Timebar : MonoBehaviour
     void TimeUp()
     {
         Debug.Log("Timeup!!");
-    }
+
+		//ゲームオーバーを呼ぶ
+		GameManager.GameOver();
+	}
     //}
     //public void DelayMethod()//フレームカウント
     //{
