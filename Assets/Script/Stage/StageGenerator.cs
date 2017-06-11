@@ -5,8 +5,8 @@ using UnityEngine;
 public class StageGenerator : MonoBehaviour {
 
 	public static Vector2 stageSize;
+	public static Transform myTrans;
 
-	static Transform myTrans;
 	static Piece[,] generatedStage;
 	static bool isGanerate;
 

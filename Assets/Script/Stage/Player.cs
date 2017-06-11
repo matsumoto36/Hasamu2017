@@ -94,7 +94,6 @@ public class Player : MonoBehaviour {
 			currenTentacle[1].Move(pos[1]);
 
 			//はさんでいるものがあれば移動
-			//MoveCurrentPiece();
 			if(currentPieceContainer)
 				currentPieceContainer.Move((currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f);
 
@@ -105,6 +104,12 @@ public class Player : MonoBehaviour {
 
 		if(InputManager.GetInputUpDouble()) {
 			isAction = false;
+
+			//はさんでいるものがあれば解除
+			if(currentPieceContainer) {
+				currentPieceContainer.DestroyContainer();
+				currentPieceContainer = null;
+			}
 		}
 
 	}
@@ -139,43 +144,4 @@ public class Player : MonoBehaviour {
 
 		return pieces.ToArray();
 	}
-
-	/// <summary>
-	/// はさんでいるピースを動かす
-	/// </summary>
-	//void MoveCurrentPiece() {
-
-	//	if(!currentPiece) return;
-
-	//	Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
-	//	Vector2 moveVec = movePos - currentPiece.position;
-	//	//x方向のチェック
-	//	if(moveVec.x != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(moveVec.x / Mathf.Abs(moveVec.x), 0))) {
-	//		movePos.x = currentPiece.position.x;
-	//	}
-	//	//y方向のチェック
-	//	else if(moveVec.y != 0 && StageGenerator.GetPiece(currentPiece.position + new Vector2(0, moveVec.y / Mathf.Abs(moveVec.y)))) {
-	//		movePos.y = currentPiece.position.y;
-	//	}
-
-	//	//移動
-	//	currentPiece.transform.position = movePos;
-
-	//	//ステージ座標を移動させる
-	//	StageGenerator.SetPiecePosition(currentPiece, movePos);
-	//}
-
-	/// <summary>
-	/// はさんでいるヒースを離す
-	/// </summary>
-	//void RemoveCurrentPiece() {
-
-	//	if(!currentPiece) return;
-
-	//	Destroy(cpRig);
-	//	currentPiece.transform.position = currentPiece.position;
-	//	currentPiece = null;
-	//}
-
-
 }

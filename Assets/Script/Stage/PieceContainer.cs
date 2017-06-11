@@ -82,4 +82,22 @@ public class PieceContainer : MonoBehaviour {
 			StageGenerator.SetPiecePosition(p, p.transform.position);
 		}
 	}
+
+	/// <summary>
+	/// コンテナを破壊してピースを開放する
+	/// </summary>
+	public void DestroyContainer() {
+
+		//設定した変更を元に戻す
+		foreach(Piece p in pieceArray) {
+			p.isMoved = false;
+			p.transform.SetParent(StageGenerator.myTrans);
+			p.GetComponent<Collider2D>().enabled = true;
+			p.transform.position = p.position;
+		}
+
+
+		Debug.Log("DestroyContainer");
+		Destroy(gameObject);
+	}
 }
