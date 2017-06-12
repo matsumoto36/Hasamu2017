@@ -18,6 +18,7 @@ public class Tentacle : MonoBehaviour {
 	List<SpriteRenderer> tentacleBody = new List<SpriteRenderer>();
 
 	void Awake () {
+		//画像を取得
 		Sprite[] bff = ResourceLoader.GetChips(MapChipType.Sub1_Tentacle);
 		tentacleSpr[0] = bff[CHIPOFFSET];
 		tentacleSpr[1] = bff[CHIPOFFSET + 1];
@@ -35,15 +36,9 @@ public class Tentacle : MonoBehaviour {
 		return t;
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	public void Move(Vector2 newPosition) {
 
 		bool isHorizonCancel = false;			//横移動キャンセル用
-		bool isVerticCancel = false;           //縦移動キャンセル用
 		Vector2 OVec = newPosition - position;	//ベースからのベクトル
 		Vector2 v;								//垂直なベクトル
 		float r = Vector3.Angle(angle, OVec);   //角度(deg)
@@ -71,14 +66,55 @@ public class Tentacle : MonoBehaviour {
 		Debug.DrawLine(position, position + angleVec, Color.blue);
 		Debug.DrawLine(position, position + vVec, Color.blue);
 
+
+		#region 縦方向の制限
+
+		//自分の生成している向きより下か？
+		if(r > 90) {
+
+			angleVec = Vector2.zero;
+
+			//角度等更新
+			OVec = newPosition - position;
+			r = Vector3.Angle(angle, OVec);
+		}
+
+		//デバッグ表示
+		Debug.DrawLine(position, newPosition, Color.green);
+
+		//ブロックに埋まっているか
+		int checkCount = (int)angleVec.magnitude + 1;
+		for(int i = 1;i <= checkCount;i++) {
+			cPos = position + (angle * i);
+			p = StageGenerator.GetPiece(cPos);
+
+			//埋まっているか
+			if(p && !p.noCollision) {
+				//Debug.Log("ume");
+				Vector2 cPosV = cPos - position;
+				float d = (int)(cPosV.magnitude * Mathf.Sin(Vector2.Angle(cPosV, v) * Mathf.Deg2Rad)) - 1;
+
+				angleVec = angle * d;
+				break;
+			}
+		}
+
+		#endregion
+
+		//デバッグ表示
+		Debug.DrawLine(position, newPosition, Color.yellow);
+
 		#region 横方向の制限
 
 		//i=0のとき、横に触手ブロックがなければ移動不可
 		//i!=0のとき、横にブロックがあれば移動不可
-		for(int i = 0;i <= length;i++) {
+		checkCount = (int)(angleVec.magnitude + 0.9f);
+		checkCount = checkCount == 0 ? 1 : checkCount;
+		//Debug.Log("cnt:" + checkCount);
+		for(int i = 0;i <= checkCount;i++) {
 			cPos = position + v + (angle * i);
 			p = StageGenerator.GetPiece(cPos);
-			if((i == 0 && (!p || p.id != 1)) || (i != 0 && p)) {
+			if((i == 0 && (!p || p.id != 1)) || (i != 0 && p && !p.noCollision)) {
 				isHorizonCancel = true;
 				break;
 			}
@@ -93,53 +129,11 @@ public class Tentacle : MonoBehaviour {
 
 		#endregion
 
-
 		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.yellow);
-
-
-		#region 縦方向の制限
-
-		//自分の生成している向きより下か？
-		if(r > 90) {
-
-			//newPosition = position + vVec;
-			angleVec = Vector2.zero;
-
-			//角度等更新
-			OVec = newPosition - position;
-			r = Vector3.Angle(angle, OVec);
-		}
-
-		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.green);
-
-		//ブロックに埋まっているか
-		for(int i=1;i < length + 1;i++) {
-			cPos = position + (angle * i);
-			p = StageGenerator.GetPiece(cPos);
-
-			//埋まっているか
-			if(p) {
-				Debug.Log("ume");
-				Vector2 cPosV = cPos - position;
-
-				float a = OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
-				float d = (int)(cPosV.magnitude * Mathf.Sin(Vector2.Angle(cPosV, v) * Mathf.Deg2Rad)) - 1;
-
-				//newPosition = position + a * v + d * angle;
-				angleVec = angle * d;
-				break;
-			}
-		}
-
-		#endregion
-
+		Debug.DrawLine(position, position + vVec + angleVec);
 
 		#region 移動
 
-		//デバッグ表示
-		Debug.DrawLine(position, position + vVec + angleVec);
 		transform.position = position + vVec + angleVec;
 
 		#endregion
@@ -154,8 +148,15 @@ public class Tentacle : MonoBehaviour {
 		}
 
 		#endregion
+
+		//長さを決める
+		SetLength();
 	}
 
+	/// <summary>
+	/// 触手が差し示している場所を取得する
+	/// </summary>
+	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
 		return position + angle * length;
 	}
@@ -163,17 +164,25 @@ public class Tentacle : MonoBehaviour {
 	/// <summary>
 	/// 触手の長さを変更する
 	/// </summary>
-	/// <param name="count">長さ</param>
-	public void SetLength(int count) {
+	void SetLength() {
 
-		if(length == count) return;
+		int l = 0;
+
+		Vector2 v = (Vector2)transform.position - position;
+		float rad = Vector2.Angle(angle, v) * Mathf.Deg2Rad;
+
+		l = (int)(v.magnitude * Mathf.Cos(rad)) + 1;
+
+		if(l < 0 || l == length) return;
+
+		length = l;
 
 		foreach(var g in tentacleBody) {
 			Destroy(g.gameObject);
 		}
 
 		tentacleBody = new List<SpriteRenderer>();
-		for(int i = 0;i < count;i++) {
+		for(int i = 0;i < length;i++) {
 			int c = 0;
 			if(i != 0) c++;
 
@@ -191,14 +200,16 @@ public class Tentacle : MonoBehaviour {
 
 			tentacleBody.Add(spr);
 		}
-
-		length = count;
 	}
 
 	/// <summary>
-	/// 触手が死ぬ時
+	/// 触手が死ぬ時に実行する
 	/// </summary>
 	public void Death() {
 		Destroy(gameObject);
+	}
+
+	void OnDrawGizmos() {
+		Gizmos.DrawWireCube(GetTargetPosition(), Vector3.one);
 	}
 }

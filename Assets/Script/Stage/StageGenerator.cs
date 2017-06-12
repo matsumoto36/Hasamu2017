@@ -6,30 +6,8 @@ public class StageGenerator : MonoBehaviour {
 
 	public static Vector2 stageSize;
 
-	static Transform myTrans;
 	static Piece[,] generatedStage;
 	static bool isGanerate;
-
-	// Use this for initialization
-	void Start () {
-
-		//後にCSVから読み込む
-		int[,] map = new int[,] {
-			{1, 1, 1, 0, 0, 0, 2, 2, 2},
-			{1, 0, 1, 1, 1, 1, 1, 1, 0},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 3, 4, 5, 6, 0},
-			{0, 1, 0, 0, 0, 0, 0, 1, 0},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		};
-
-		myTrans = gameObject.transform;
-
-		//マップを生成
-		GenerateMap(map);
-
-
-	}
 
 	/// <summary>
 	/// ある地点のピースを取得する
@@ -68,8 +46,6 @@ public class StageGenerator : MonoBehaviour {
 
 		p.tag = "Piece";
 
-		p.transform.SetParent(myTrans);
-
 		Vector3 stagePosition = position;
 		p.transform.position = stagePosition;
 
@@ -99,7 +75,9 @@ public class StageGenerator : MonoBehaviour {
 		//場所を保存
 		Vector2 position = piece.position;
 
+		RemovePiece(piece);
 		Destroy(piece.gameObject);
+
 		//作成して返却
 		return CreatePiece(position, newID);
 	}
@@ -146,7 +124,6 @@ public class StageGenerator : MonoBehaviour {
 		generatedStage[arrY, arrX] = piece;
 		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
 
-		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
 		piece.position = new Vector2(arrX, arrY);
 
 		//Debug.Log("Moved" + newPos);
@@ -172,8 +149,14 @@ public class StageGenerator : MonoBehaviour {
 
 				int id = map[height - (i + 1), j];
 				Vector2 position = new Vector2(j, i);
-				//ピースを作成
-				CreatePiece(position, id);
+				//idが0以上のときはピースを作成
+				if(id >= 0) {
+					CreatePiece(position, id);
+				}
+				else {
+					//それ以外はクリア場所を作成
+					Hole.CreateHole(position);
+				}
 			}
 		}
 
