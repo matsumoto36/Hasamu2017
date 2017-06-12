@@ -20,29 +20,28 @@ public class PieceBomb : Piece, IExecutable
 			new Vector2(position.x + 1, position.y),
 		};
 
-		//温度を計測
-		int checkThrmo = 0;
-		for(int i = 0; i < checkPos.Length; i++) 
+		//挟まれ検知
+        for (int i = 0; i < checkPos.Length; i++)
         {
             p[i] = StageGenerator.GetPiece(checkPos[i]);
-			if(!p[i]) continue;
-            switch(p[i].id)
+
+            //p[i]がnullであれば判定しない
+            if (!(p[0] == null || p[2] == null))
             {
-                case 5:
-					//熱くなる
-					checkThrmo++;
-					break;
-                case 6:
-					//冷たくなる
-					checkThrmo--;
-                    break;
+                if (p[0].id == p[2].id)
+                {
+                    Sandwiched(p[0].id);
+                }
+            }
+
+            if (!(p[1] == null || p[3] == null))
+            {
+                if (p[1].id == p[3].id)
+                {
+                    Sandwiched(p[1].id);
+                }
             }
         }
-
-		//結果で判断
-		if(checkThrmo < 0) cold();
-		else if(checkThrmo > 0) hot();
-		else Normal();
 	}
 
     /// <summary>
@@ -52,24 +51,23 @@ public class PieceBomb : Piece, IExecutable
     {
 
 	}
-    
+
     ///<summary>
-    ///あついブロックに隣接すると呼び出される
+    ///挟まれると呼び出される
     ///</summary>
-    public void hot()
+    public void Sandwiched(int id)
     {
-		Timebar.Decpersec = 2;
-	}
-
-    /// <summary>
-    /// さむいブロックに隣接すると呼び出される
-    /// </summary>
-    public void cold()
-    {
-		Timebar.Decpersec = 0.5f;
-	}
-
-	public void Normal() {
-		Timebar.Decpersec = 1;
-	}
+        switch (id)
+        {
+            case 4:
+                Timebar.Decpersec = 1;
+                break;
+            case 5:
+                Timebar.Decpersec = 2;
+                break;
+            case 6:
+                Timebar.Decpersec = 0.5f;
+                break;
+        }
+    }
 }
