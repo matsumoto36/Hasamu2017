@@ -8,7 +8,7 @@ public class CsvLoader : MonoBehaviour
     /// <summary>
     /// ステージの番号を受け取って該当するcsvを読み込む
     /// </summary>
-    public static int[,] StageLoad(int stageLevel, int stageNumber)
+    public static StageData StageLoad(int stageLevel, int stageNumber)
     {
         TextAsset csv;
         List<string[]> csvDataS = new List<string[]>(); // CSVの中身を入れるリスト
@@ -26,7 +26,8 @@ public class CsvLoader : MonoBehaviour
             csvDataS.Add(line.Split(',')); // リストに入れる
             height++; // 行数加算
         }
- 
+
+        int time=0; 
         int[,] csvData = new int[csvDataS.Count, csvDataS[0].Length];
 
         //List<string>をint二次元配列に変換
@@ -34,9 +35,16 @@ public class CsvLoader : MonoBehaviour
         {
             for (int j = 0; j < csvData.GetLength(1); j++)
             {
-                csvData[i, j] = int.Parse(csvDataS[i][j]);
+                if (i == 0 && j == 0)
+                {
+                    time = int.Parse(csvDataS[i][i]);
+                }
+                else
+                {
+                    csvData[i, j] = int.Parse(csvDataS[i][j]);
+                }
             }
         }
-        return csvData;
+        return new StageData(time, csvData);
     }
 }
