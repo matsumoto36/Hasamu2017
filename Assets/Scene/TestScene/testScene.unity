@@ -1600,6 +1600,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3a517485be744c1468ca637c290d1fe5, type: 3}
   - {fileID: 21300000, guid: 59441745b956d934396d188a659e136c, type: 3}
   - {fileID: 21300000, guid: 767ab69bced121e4289fe4308623273f, type: 3}
+  otherSpriteSrc:
+  - {fileID: 21300000, guid: 7a306e3e8ee7e2b4f8b88e865b5ef657, type: 3}
+  - {fileID: 21300000, guid: 38e3a5f16acf07b47b687bdc733999de, type: 3}
+  materialSrc:
+  - {fileID: 2100000, guid: 628c65e1eaeee1b468c4db95b15acb90, type: 2}
+  - {fileID: 2100000, guid: 187d4ef49b9c8664180c3fc0c4bab1e3, type: 2}
 --- !u!4 &1355441017
 Transform:
   m_ObjectHideFlags: 0
