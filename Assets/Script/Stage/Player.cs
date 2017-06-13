@@ -89,7 +89,7 @@ public class Player : MonoBehaviour {
 
 			//触手があれば削除
 			for(int i = 0;i < 2;i++) {
-				//if(currenTentacle[i]) currenTentacle[i].Death();
+				if(currenTentacle[i]) currenTentacle[i].Death();
 			}
 
 			//はさんでいるものがあれば解除

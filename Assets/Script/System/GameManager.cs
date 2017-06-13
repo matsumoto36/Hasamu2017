@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 /// <summary>
@@ -7,10 +8,16 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour {
 
-	int stageLevel, stageNum;	//生成するステージ
-	float limitTime = 100;			//制限時間
+	static int stageLevel, stageNum;	//生成するステージ
+	static float limitTime = 100;           //制限時間
+
+	public Text stageText;
 
 	void Awake() {
+
+		//後にほかのところから割り当てられる
+		stageLevel = stageNum = 1;
+
 		GameInitiarize();
 	}
 
@@ -63,10 +70,25 @@ public class GameManager : MonoBehaviour {
 		};
 
 		//ステージの生成
+		//StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+		//StageGenerator.GenerateMap(stageData.mapData);
 		StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
+		//Timebar.time = stageData.time;
 		Timebar.time = limitTime;
+
+		//テキストの設定
+		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
+	}
+
+	/// <summary>
+	/// 生成するステージの情報をセットする
+	/// </summary>
+	/// <param name="data">ステージのデータ</param>
+	public static void SetStageData(int stageLevel, int stageNum) {
+		GameManager.stageLevel = stageLevel;
+		GameManager.stageNum = stageNum;
 	}
 
 	/// <summary>
@@ -94,9 +116,5 @@ public class GameManager : MonoBehaviour {
 		//カウントダウンストップ
 
 
-	}
-
-	public void ShowMenu() {
-		
 	}
 }
