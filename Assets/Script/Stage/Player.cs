@@ -14,7 +14,13 @@ public class Player : MonoBehaviour {
 
 	Tentacle[] currenTentacle = new Tentacle[2];	//操作している触手	
 
-	static PieceContainer currentPieceContainer;	//はさんでいるオブジェクト
+	static PieceContainer currentPieceContainer;    //はさんでいるオブジェクト
+
+	public float[] containerDistance = new float[2];
+
+
+	public bool isSafe;
+	public Vector2[] v;
 
 	// Update is called once per frame
 	void Update () {
@@ -43,24 +49,27 @@ public class Player : MonoBehaviour {
 			//はさむアクション
 			TentacleAction();
 
+			//はさみ続けられるかチェック
+			CheckRetentionContainer();
+
 			//移動
 			currenTentacle[0].Move(pos[0]);
 			currenTentacle[1].Move(pos[1]);
 
 			//はさんでいるものがあれば移動
-			if(currentPieceContainer)
-				currentPieceContainer.Move((currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f);
-
+			MoveContainer();
 		}
 
 		if(InputManager.GetInputUpDouble()) {
 			isAction = false;
 
-			//はさんでいるものがあれば解除
-			if(currentPieceContainer) {
-				currentPieceContainer.DestroyContainer();
-				currentPieceContainer = null;
+			//触手があれば削除
+			for(int i = 0;i < 2;i++) {
+				if(currenTentacle[i]) currenTentacle[i].Death();
 			}
+
+			//はさんでいるものがあれば解除
+			DestroyCurrentContainer();
 		}
 
 	}
@@ -104,7 +113,6 @@ public class Player : MonoBehaviour {
 
 		//触手の生成開始
 		for(int i = 0;i < 2;i++) {
-			if(currenTentacle[i]) currenTentacle[i].Death();
 
 			//触手を生成
 			currenTentacle[i] = Tentacle.CreateTentacle(p[i].position);
@@ -115,6 +123,9 @@ public class Player : MonoBehaviour {
 		return true;
 	}
 
+	/// <summary>
+	/// 触手のはさむアクション
+	/// </summary>
 	void TentacleAction() {
 		//触手の間のピースを取得
 		Piece[] btwp = GetPiecesBetweenTentacle();
@@ -156,12 +167,80 @@ public class Player : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// はさみ続けられるかチェック
+	/// </summary>
+	/// <returns>はさめる = true</returns>
+	bool CheckRetentionContainer() {
+
+		if(!currentPieceContainer) return false;
+
+		bool ans = true;
+
+		for(int i = 0;i < 2;i++) {
+
+			Vector2 bound = new Vector2(currenTentacle[i].angle.x * currentPieceContainer.containerSize.x,
+										currenTentacle[i].angle.y * currentPieceContainer.containerSize.y) * 0.5f;
+
+			Vector2 checkVec = (Vector2)currentPieceContainer.transform.position - (Vector2)currenTentacle[i].transform.position;
+
+			//Debug.DrawLine((Vector2)currentPieceContainer.transform.position, (Vector2)currenTentacle[i].transform.position, Color.black);
+
+
+			containerDistance[i] = checkVec.magnitude - bound.magnitude - 0.5f;
+
+			//一定距離あれば解除
+			if(checkVec.magnitude > 0.3f) ans = false;
+		}
+
+		return ans;
+	}
+
+	/// <summary>
+	/// はさんでいるピースの移動
+	/// </summary>
+	void MoveContainer() {
+		if(!currentPieceContainer) return;
+
+		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
+
+		v = new Vector2[2];
+		v[0] = new Vector2(currenTentacle[0].angle.x * currentPieceContainer.containerSize.x,
+									 currenTentacle[0].angle.y * currentPieceContainer.containerSize.y);
+
+		v[1] = new Vector2(currenTentacle[1].angle.x * currentPieceContainer.containerSize.x,
+									 currenTentacle[1].angle.y * currentPieceContainer.containerSize.y);
+
+		v[0].x += v[0].x != 0 ? 0.5f : 0;
+		v[0].y += v[0].y != 0 ? 0.5f : 0;
+		v[0] += movePos;
+
+		v[1].x += v[1].x != 0 ? 0.5f : 0;
+		v[1].y += v[1].y != 0 ? 0.5f : 0;
+		v[1] += movePos;
+
+		Debug.DrawLine(movePos, v[0], Color.black);
+		Debug.DrawLine(movePos, v[1], Color.black);
+
+		Piece[] p = new Piece[2];
+		p[0] = StageGenerator.GetPiece(v[0]);
+		p[1] = StageGenerator.GetPiece(v[1]);
+
+		if(p[0] && p[0].noCollision) p[0] = null;
+		if(p[1] && p[1].noCollision) p[1] = null;
+
+		isSafe = !(p[0] || p[1]);
+
+		currentPieceContainer.Move(movePos, isSafe);
+
+	}
+
+	/// <summary>
 	/// コンテナを削除
 	/// </summary>
 	public static void DestroyCurrentContainer() {
 		if(!currentPieceContainer) return;
 
-			currentPieceContainer.DestroyContainer();
-			currentPieceContainer = null;
+		currentPieceContainer.DestroyContainer();
+		currentPieceContainer = null;
 	}
 }

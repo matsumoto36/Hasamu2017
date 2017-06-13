@@ -7,12 +7,15 @@ using UnityEngine;
 /// </summary>
 public class Tentacle : MonoBehaviour {
 
-	const int CHIPOFFSET = 5;		//使う画像のオフセット
+	const int CHIPOFFSET = 5;       //使う画像のオフセット
+
+	public Player player;			//プレイヤーのレファレンス
 
 	public Vector2 angle;			//生える向き
 	public Vector2 position;        //本体のいる位置
 
 	public int length = 0;
+
 	Sprite[] tentacleSpr = new Sprite[2];
 
 	List<SpriteRenderer> tentacleBody = new List<SpriteRenderer>();
@@ -36,10 +39,10 @@ public class Tentacle : MonoBehaviour {
 		return t;
 	}
 
-	public void Move(Vector2 newPosition) {
+	public void Move(Vector2 touchPosition) {
 
 		bool isHorizonCancel = false;			//横移動キャンセル用
-		Vector2 OVec = newPosition - position;	//ベースからのベクトル
+		Vector2 OVec = touchPosition - position;	//ベースからのベクトル
 		Vector2 v;								//垂直なベクトル
 		float r = Vector3.Angle(angle, OVec);   //角度(deg)
 
@@ -57,12 +60,12 @@ public class Tentacle : MonoBehaviour {
 
 
 		//向きの方向の長さ
-		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
+		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad) + angle;
 		//向きに垂直な長さ
 		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
 
 		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.red);
+		Debug.DrawLine(position, touchPosition, Color.red);
 		Debug.DrawLine(position, position + angleVec, Color.blue);
 		Debug.DrawLine(position, position + vVec, Color.blue);
 
@@ -72,15 +75,12 @@ public class Tentacle : MonoBehaviour {
 		//自分の生成している向きより下か？
 		if(r > 90) {
 
-			angleVec = Vector2.zero;
+			angleVec = angle;
 
 			//角度等更新
-			OVec = newPosition - position;
+			OVec = touchPosition - position;
 			r = Vector3.Angle(angle, OVec);
 		}
-
-		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.green);
 
 		//ブロックに埋まっているか
 		int checkCount = (int)angleVec.magnitude + 1;
@@ -100,9 +100,6 @@ public class Tentacle : MonoBehaviour {
 		}
 
 		#endregion
-
-		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.yellow);
 
 		#region 横方向の制限
 
