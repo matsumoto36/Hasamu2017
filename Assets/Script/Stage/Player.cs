@@ -49,12 +49,12 @@ public class Player : MonoBehaviour {
 			//はさむアクション
 			TentacleAction();
 
-			//はさみ続けられるかチェック
-			CheckRetentionContainer();
-
 			//移動
 			currenTentacle[0].Move(pos[0]);
 			currenTentacle[1].Move(pos[1]);
+
+			//はさみ続けられるかチェック
+			if(!CheckRetentionContainer()) DestroyCurrentContainer();
 
 			//はさんでいるものがあれば移動
 			MoveContainer();
@@ -189,7 +189,7 @@ public class Player : MonoBehaviour {
 			containerDistance[i] = checkVec.magnitude - bound.magnitude - 0.5f;
 
 			//一定距離あれば解除
-			if(checkVec.magnitude > 0.3f) ans = false;
+			if(containerDistance[i] > 0.3f) ans = false;
 		}
 
 		return ans;
