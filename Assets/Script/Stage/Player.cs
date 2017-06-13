@@ -16,11 +16,10 @@ public class Player : MonoBehaviour {
 
 	static PieceContainer currentPieceContainer;    //はさんでいるオブジェクト
 
-	public float[] containerDistance = new float[2];
+	//public float[] containerDistance = new float[2];
 
 
 	public bool isSafe;
-	public Vector2[] v;
 
 	// Update is called once per frame
 	void Update () {
@@ -49,15 +48,40 @@ public class Player : MonoBehaviour {
 			//はさむアクション
 			TentacleAction();
 
+			//はさみ続けられるかチェック
+			if(!CheckRetentionContainer()) DestroyCurrentContainer();
+
+			//触手が何か挟んでいる場合は、横移動を平均値に
+			if(currentPieceContainer) {
+
+				//0番の位置を基点とする
+				Vector2 tVec = pos[1] - pos[0];
+				Vector2 v;
+
+				//外積で左右判定
+				float side = currenTentacle[0].angle.x * tVec.y - currenTentacle[0].angle.y * tVec.x;
+				if(side < 0) {
+					v = (Quaternion.Euler(0, 0, -90) * currenTentacle[0].angle).normalized;
+				}
+				else {
+					v = (Quaternion.Euler(0, 0, 90) * currenTentacle[0].angle).normalized;
+				}
+
+				float r = Vector2.Angle(v, tVec) * Mathf.Deg2Rad;
+
+				//合わせる座標
+				pos[0] += v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
+				pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
+
+			}
+
 			//移動
 			currenTentacle[0].Move(pos[0]);
 			currenTentacle[1].Move(pos[1]);
 
-			//はさみ続けられるかチェック
-			if(!CheckRetentionContainer()) DestroyCurrentContainer();
-
 			//はさんでいるものがあれば移動
 			MoveContainer();
+
 		}
 
 		if(InputManager.GetInputUpDouble()) {
@@ -174,6 +198,7 @@ public class Player : MonoBehaviour {
 
 		if(!currentPieceContainer) return false;
 
+		Vector2 maxLength = new Vector2(0.2f, 0.2f);
 		bool ans = true;
 
 		for(int i = 0;i < 2;i++) {
@@ -181,15 +206,26 @@ public class Player : MonoBehaviour {
 			Vector2 bound = new Vector2(currenTentacle[i].angle.x * currentPieceContainer.containerSize.x,
 										currenTentacle[i].angle.y * currentPieceContainer.containerSize.y) * 0.5f;
 
-			Vector2 checkVec = (Vector2)currentPieceContainer.transform.position - (Vector2)currenTentacle[i].transform.position;
+			Vector2 checkVec = ((Vector2)currenTentacle[i].transform.position + (currenTentacle[i].angle * 0.5f))
+							 - ((Vector2)currentPieceContainer.transform.position - bound);
 
 			//Debug.DrawLine((Vector2)currentPieceContainer.transform.position, (Vector2)currenTentacle[i].transform.position, Color.black);
 
+			//Debug.DrawLine(((Vector2)currenTentacle[i].transform.position + (currenTentacle[i].angle * 0.5f)),
+			//	 ((Vector2)currentPieceContainer.transform.position - bound));
 
-			containerDistance[i] = checkVec.magnitude - bound.magnitude - 0.5f;
+			float r = Vector2.Angle(checkVec, currenTentacle[i].angle);
+			//if(r < 60) continue;
+
+			r *= Mathf.Deg2Rad;
+
+			Vector2 v = new Vector2(Mathf.Abs(Mathf.Sin(r)), Mathf.Cos(r) * -1) * checkVec.magnitude;
+			//Debug.Log("v:" + v);
+
 
 			//一定距離あれば解除
-			if(containerDistance[i] > 0.3f) ans = false;
+			if(v.x > maxLength.x || v.y > maxLength.y) ans = false;
+			//if(containerDistance[i] > 0.1f) ans = false;
 		}
 
 		return ans;
@@ -203,7 +239,7 @@ public class Player : MonoBehaviour {
 
 		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
 
-		v = new Vector2[2];
+		Vector2[] v = new Vector2[2];
 		v[0] = new Vector2(currenTentacle[0].angle.x * currentPieceContainer.containerSize.x,
 									 currenTentacle[0].angle.y * currentPieceContainer.containerSize.y);
 
@@ -218,8 +254,8 @@ public class Player : MonoBehaviour {
 		v[1].y += v[1].y != 0 ? 0.5f : 0;
 		v[1] += movePos;
 
-		Debug.DrawLine(movePos, v[0], Color.black);
-		Debug.DrawLine(movePos, v[1], Color.black);
+		//Debug.DrawLine(movePos, v[0], Color.black);
+		//Debug.DrawLine(movePos, v[1], Color.black);
 
 		Piece[] p = new Piece[2];
 		p[0] = StageGenerator.GetPiece(v[0]);

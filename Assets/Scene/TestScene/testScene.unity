@@ -1819,11 +1819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb74a17b4e37254e84d7fb0ed622f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containerDistance:
-  - 0
-  - 0
   isSafe: 0
-  v: []
 --- !u!4 &1538091981
 Transform:
   m_ObjectHideFlags: 0

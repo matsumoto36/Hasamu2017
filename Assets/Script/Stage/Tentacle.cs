@@ -120,7 +120,6 @@ public class Tentacle : MonoBehaviour {
 		//横移動がキャンセルされた場合
 		if(isHorizonCancel) {
 			//Debug.Log("c");
-			//newPosition = position + angleVec;
 			vVec = Vector2.zero;
 		}
 
