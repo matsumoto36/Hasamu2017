@@ -16,13 +16,6 @@ public class InputManager : MonoBehaviour {
 
 	static bool isTouch, isTouchDouble;
 
-	/// <summary>
-	/// デバッグ中につき削除
-	/// </summary>
-	//static InputManager() {
-	//	InputManager m = new GameObject("[InputManager]").AddComponent<InputManager>();
-	//}
-
 	// Use this for initialization
 	void Start () {
 
@@ -55,7 +48,7 @@ public class InputManager : MonoBehaviour {
 			pos = Input.touches[0].position;
 		}
 
-		Debug.Log("Touch " + pos);
+		//Debug.Log("Touch " + pos);
 
 		return isTouch = true;
 	}
@@ -123,6 +116,8 @@ public class InputManager : MonoBehaviour {
 	/// デバッグ用に、すべてのタッチ情報を出力する
 	/// </summary>
 	public void DebugGetInput() {
+
+		if(!debug_text) return;
 
 		string result = "";
 		result += string.Format("touchCount : {0}\r\n", Input.touchCount);

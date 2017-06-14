@@ -68,10 +68,13 @@ public class PieceContainer : MonoBehaviour {
 	/// 指定された座標へ動かす
 	/// </summary>
 	/// <param name="newPosition">移動する場所</param>
-	public void Move(Vector2 newPosition) {
+	/// <param name="isSafe">安全な移動か</param>
+	public void Move(Vector2 newPosition, bool isSafe) {
 
 		//移動
 		rig.MovePosition(newPosition);
+
+		if(!isSafe) return;
 
 		//座標を反映
 		foreach(Piece p in pieceArray) {

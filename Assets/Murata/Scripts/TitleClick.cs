@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class TitleClick : MonoBehaviour
 {
-    public string nextSceneName;//シーン名
-   
-	void Update ()
-    {//ボタンクリックされたらDoorManagerからCreateDoorOpenを持ってきて指定したシーンに行きます
-        if (Input.GetMouseButtonDown(0))
+    void Start()
+    {
+        StartCoroutine(MoveScene());
+    }
 
-            DoorManager.CreateDoorOpen(nextSceneName);
+    IEnumerator MoveScene()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        SumCanvasAnimation.MoveScene("Menu");
     }
 }
