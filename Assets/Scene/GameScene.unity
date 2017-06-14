@@ -946,6 +946,7 @@ MonoBehaviour:
   materialSrc:
   - {fileID: 2100000, guid: 628c65e1eaeee1b468c4db95b15acb90, type: 2}
   - {fileID: 2100000, guid: 187d4ef49b9c8664180c3fc0c4bab1e3, type: 2}
+  - {fileID: 2100000, guid: 45353333d83ea1d409261e130294ec59, type: 2}
 --- !u!1 &755209991
 GameObject:
   m_ObjectHideFlags: 0
@@ -1066,7 +1067,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb74a17b4e37254e84d7fb0ed622f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isSafe: 0
 --- !u!1 &895637940
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,7 +1686,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_SizeDelta: {x: 65.3, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1433698114
 MonoBehaviour:
@@ -2116,7 +2116,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 39, y: 50}
-  m_SizeDelta: {x: 330, y: 33}
+  m_SizeDelta: {x: 306.4, y: 64.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1864999057
 MonoBehaviour:

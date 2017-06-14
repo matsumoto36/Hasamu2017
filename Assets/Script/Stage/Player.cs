@@ -18,8 +18,14 @@ public class Player : MonoBehaviour {
 
 	//public float[] containerDistance = new float[2];
 
+	Sprite failCreateSprite;
 
-	public bool isSafe;
+	bool[] isFailAnimPlay = new bool[2];
+
+	void Start() {
+		//生成失敗時の画像読み込み
+		failCreateSprite = ResourceLoader.GetChips(MapChipType.MainChip)[15];
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -129,9 +135,16 @@ public class Player : MonoBehaviour {
 		angles[1] = (p[0].position - p[1].position).normalized;
 
 		//邪魔していたらキャンセル
-		if(StageGenerator.GetPiece(angles[0] + p[0].position)) return false;
-		if(StageGenerator.GetPiece(angles[1] + p[1].position)) return false;
+		Piece[] anglePiece = new Piece[2];
+		anglePiece[0] = StageGenerator.GetPiece(angles[0] + p[0].position);
+		anglePiece[1] = StageGenerator.GetPiece(angles[1] + p[1].position);
+		if(anglePiece[0] || anglePiece[1]) {
+			//キャンセルアニメーションを再生
+			if(anglePiece[0] && !isFailAnimPlay[0]) StartCoroutine(FailCreateAnimation(0, anglePiece[0].position));
+			if(anglePiece[1] && !isFailAnimPlay[1]) StartCoroutine(FailCreateAnimation(1, anglePiece[0].position));
 
+			return false;
+		}
 		//デバッグ用でSEを鳴らす
 		AudioManager.Play(SEType.Tap, 1);
 
@@ -198,7 +211,7 @@ public class Player : MonoBehaviour {
 
 		if(!currentPieceContainer) return false;
 
-		Vector2 maxLength = new Vector2(0.2f, 0.2f);
+		Vector2 maxLength = new Vector2(0.2f, 0.5f);
 		bool ans = true;
 
 		for(int i = 0;i < 2;i++) {
@@ -264,7 +277,7 @@ public class Player : MonoBehaviour {
 		if(p[0] && p[0].noCollision) p[0] = null;
 		if(p[1] && p[1].noCollision) p[1] = null;
 
-		isSafe = !(p[0] || p[1]);
+		bool isSafe = !(p[0] || p[1]);
 
 		currentPieceContainer.Move(movePos, isSafe);
 
@@ -278,5 +291,46 @@ public class Player : MonoBehaviour {
 
 		currentPieceContainer.DestroyContainer();
 		currentPieceContainer = null;
+	}
+
+	/// <summary>
+	/// 生成が失敗したときに再生されるアニメーション
+	/// </summary>
+	/// <param name="animNum">占有する番号</param>
+	/// <param name="position">再生する場所</param>
+	/// <returns></returns>
+	IEnumerator FailCreateAnimation(int animNum, Vector2 position) {
+
+		float playTime = 1.0f;  //再生し続ける時間
+		float freq = 4;         //秒間に何回点滅するか
+		float maxAlpha = 0.5f;	//アルファの最大値
+
+		//再生中
+		isFailAnimPlay[animNum] = true;
+
+		SpriteRenderer spr = new GameObject("[FailObject]").AddComponent<SpriteRenderer>();
+		spr.material = ResourceLoader.GetMaterial(MaterialType.AdditiveSprite);
+		spr.sprite = failCreateSprite;
+		spr.sortingOrder = 10;
+		spr.transform.position = position;
+		Color c = spr.color;
+
+		float t = 0;
+		while(t < playTime) {
+			t += Time.deltaTime;
+
+			//色を計算
+			c.a = 0.5f * maxAlpha + Mathf.Sin(t * 2 * Mathf.PI * freq) * 0.5f * maxAlpha;
+			//反映
+			spr.color = c;
+
+			yield return null;
+		}
+
+		//再生が終わったら削除
+		Destroy(spr.gameObject);
+
+		//再生終了
+		isFailAnimPlay[animNum] = false;
 	}
 }

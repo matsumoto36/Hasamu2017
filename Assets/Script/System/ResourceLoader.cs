@@ -16,6 +16,7 @@ public enum OtherSpriteType {
 public enum MaterialType {
 	MaskingSprite,
 	MaskableSprite,
+	AdditiveSprite,
 }
 
 public class ResourceLoader : MonoBehaviour {

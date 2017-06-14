@@ -16,12 +16,7 @@ public class Tentacle : MonoBehaviour {
 
 	SpriteRenderer body;
 	SpriteRenderer maskRenderer;
-
-	void Awake() {
-
-
-	}
-
+	
 	void Start () {
 
 		//ボディ部分を作成
