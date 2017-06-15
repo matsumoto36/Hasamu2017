@@ -18,10 +18,13 @@ public class text : MonoBehaviour {
 
     public void TestStartTimer()
     {
-        Timebar.StartTimer();
+        Timebar.StartTimer();//タイム起動
     }
-
-    void TestGameOver()
+    public void TestStopTimer()
+    {
+        Timebar.StopTimer();//タイムストップ
+    }
+        void TestGameOver()
     {
         //gameOverText.gameObject.SetActive(true);
     }
