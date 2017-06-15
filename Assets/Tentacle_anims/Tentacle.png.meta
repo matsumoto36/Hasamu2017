@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 811600e99de07f14c8aae1fb5a138ddf
-timeCreated: 1497422973
+timeCreated: 1497436657
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -102,55 +102,16 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 10.97694
-        width: 262.2409
-        height: 108
-      alignment: 9
-      pivot: {x: 0.48810083, y: 0.49095425}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Tentacle_1
-      rect:
-        serializedVersion: 2
-        x: 246
-        y: 10
-        width: 276
-        height: 108
+        y: 12
+        width: 1024
+        height: 104
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Tentacle_2
-      rect:
-        serializedVersion: 2
-        x: 502
-        y: 10
-        width: 276
-        height: 108
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Tentacle_3
-      rect:
-        serializedVersion: 2
-        x: 758
-        y: 10
-        width: 266
-        height: 108
-      alignment: 9
-      pivot: {x: 0.518797, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     outline: []
   spritePackingTag: 
-  userData: 98135110073164
+  userData: 98135997266965
   assetBundleName: 
   assetBundleVariant: 
