@@ -174,7 +174,21 @@ public class StageGenerator : MonoBehaviour {
 		isGanerate = true;
 
 
-		Camera.main.transform.position = new Vector3((width - 1f) / 2, (height - 1f) / 2, -1);
+		Vector2 center = new Vector2((width - 1f) * 0.5f, (height - 1f) * 0.5f);
+
+		//背景画像を設置
+		SpriteRenderer backGround = new GameObject("[BackGround]").AddComponent<SpriteRenderer>();
+		backGround.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		backGround.color = new Color32(101, 173, 174, 255);
+		backGround.sortingOrder = 0;
+		backGround.transform.position = center;
+		backGround.transform.localScale = center * 3f;
+
+		Vector3 cameraPos = center;
+		cameraPos.x += 0.6f;
+		cameraPos.z = -1;
+
+		Camera.main.transform.position = cameraPos;
 	}
 
 	/// <summary>

@@ -7,21 +7,41 @@ using UnityEngine;
 /// </summary>
 public class Tentacle : MonoBehaviour {
 
-	const int CHIPOFFSET = 5;		//使う画像のオフセット
-
 	public Vector2 angle;			//生える向き
 	public Vector2 position;        //本体のいる位置
 
 	public int length = 0;
+
 	Sprite[] tentacleSpr = new Sprite[2];
 
-	List<SpriteRenderer> tentacleBody = new List<SpriteRenderer>();
+	SpriteRenderer body;
+	SpriteRenderer maskRenderer;
+	
+	void Start () {
 
-	void Awake () {
-		//画像を取得
-		Sprite[] bff = ResourceLoader.GetChips(MapChipType.Sub1_Tentacle);
-		tentacleSpr[0] = bff[CHIPOFFSET];
-		tentacleSpr[1] = bff[CHIPOFFSET + 1];
+		//ボディ部分を作成
+		body = new GameObject("[Body]").AddComponent<SpriteRenderer>();
+		body.material = ResourceLoader.GetMaterial(MaterialType.MaskableSprite);
+		body.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Tentacle);
+		body.transform.SetParent(transform);
+		body.transform.localPosition = angle * 0.5f;
+		body.sortingOrder = 2;
+
+
+		//マスク用レンダラーの作成
+		maskRenderer = new GameObject("[Mask]").AddComponent<SpriteRenderer>();
+		maskRenderer.material = ResourceLoader.GetMaterial(MaterialType.MaskingSprite);
+		maskRenderer.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		maskRenderer.transform.SetParent(transform);
+		maskRenderer.transform.localPosition = angle * 0.5f;
+		maskRenderer.sortingOrder = 2;
+
+		//画像の回転
+		float rot = 0;
+		if(angle.y != 0) rot -= 90;
+		if(angle.x == 1 || angle.y == -1) rot += 180;
+		body.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+
 	}
 
 	/// <summary>
@@ -36,10 +56,10 @@ public class Tentacle : MonoBehaviour {
 		return t;
 	}
 
-	public void Move(Vector2 newPosition) {
+	public void Move(Vector2 touchPosition) {
 
 		bool isHorizonCancel = false;			//横移動キャンセル用
-		Vector2 OVec = newPosition - position;	//ベースからのベクトル
+		Vector2 OVec = touchPosition - position;	//ベースからのベクトル
 		Vector2 v;								//垂直なベクトル
 		float r = Vector3.Angle(angle, OVec);   //角度(deg)
 
@@ -57,14 +77,14 @@ public class Tentacle : MonoBehaviour {
 
 
 		//向きの方向の長さ
-		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
+		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad) + angle;
 		//向きに垂直な長さ
 		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
 
 		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.red);
-		Debug.DrawLine(position, position + angleVec, Color.blue);
-		Debug.DrawLine(position, position + vVec, Color.blue);
+		//Debug.DrawLine(position, touchPosition, Color.red);
+		//Debug.DrawLine(position, position + angleVec, Color.blue);
+		//Debug.DrawLine(position, position + vVec, Color.blue);
 
 
 		#region 縦方向の制限
@@ -72,15 +92,12 @@ public class Tentacle : MonoBehaviour {
 		//自分の生成している向きより下か？
 		if(r > 90) {
 
-			angleVec = Vector2.zero;
+			angleVec = angle;
 
 			//角度等更新
-			OVec = newPosition - position;
+			OVec = touchPosition - position;
 			r = Vector3.Angle(angle, OVec);
 		}
-
-		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.green);
 
 		//ブロックに埋まっているか
 		int checkCount = (int)angleVec.magnitude + 1;
@@ -101,9 +118,6 @@ public class Tentacle : MonoBehaviour {
 
 		#endregion
 
-		//デバッグ表示
-		Debug.DrawLine(position, newPosition, Color.yellow);
-
 		#region 横方向の制限
 
 		//i=0のとき、横に触手ブロックがなければ移動不可
@@ -123,14 +137,13 @@ public class Tentacle : MonoBehaviour {
 		//横移動がキャンセルされた場合
 		if(isHorizonCancel) {
 			//Debug.Log("c");
-			//newPosition = position + angleVec;
 			vVec = Vector2.zero;
 		}
 
 		#endregion
 
 		//デバッグ表示
-		Debug.DrawLine(position, position + vVec + angleVec);
+		//Debug.DrawLine(position, position + vVec + angleVec);
 
 		#region 移動
 
@@ -151,6 +164,9 @@ public class Tentacle : MonoBehaviour {
 
 		//長さを決める
 		SetLength();
+
+		//表示範囲を決める
+		SetVisibleArea();
 	}
 
 	/// <summary>
@@ -173,33 +189,30 @@ public class Tentacle : MonoBehaviour {
 
 		l = (int)(v.magnitude * Mathf.Cos(rad)) + 1;
 
-		if(l < 0 || l == length) return;
+		if(l < 0) return;
 
 		length = l;
+	}
 
-		foreach(var g in tentacleBody) {
-			Destroy(g.gameObject);
-		}
+	/// <summary>
+	/// 触手の見える範囲を決める
+	/// </summary>
+	void SetVisibleArea() {
+		if(!maskRenderer) return;
 
-		tentacleBody = new List<SpriteRenderer>();
-		for(int i = 0;i < length;i++) {
-			int c = 0;
-			if(i != 0) c++;
+		Vector3 vec = (Vector2)transform.position - position;
 
-			SpriteRenderer spr = new GameObject("[Child " + i + "]").AddComponent<SpriteRenderer>();
-			spr.transform.SetParent(transform);
-			spr.sprite = tentacleSpr[c];
-			spr.sortingOrder = 2;
-			spr.transform.localPosition = angle * i * -1;
+		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, position + angle * 0.5f, Color.black);
 
-			//回転
-			float rot = 0;
-			if(angle.y != 0)					rot -= 90;
-			if(angle.x == 1 || angle.y == -1)	rot += 180;
-			spr.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+		float r = Vector2.Angle(vec, angle) * Mathf.Deg2Rad;
+		float vSize = Mathf.Cos(r) * vec.magnitude;
 
-			tentacleBody.Add(spr);
-		}
+		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, (Vector2)transform.position + angle * 0.5f - angle * vSize, Color.black);
+
+		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 1) + new Vector2(1, 1);
+
+		maskRenderer.transform.localScale = size;
+		maskRenderer.transform.localPosition = -(angle * 0.5f * (vSize - 1));
 	}
 
 	/// <summary>

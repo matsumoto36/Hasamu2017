@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +10,14 @@ public class PieceBomb : Piece, IExecutable
 {
 
     Piece[] p = new Piece[4];
+
+	Text timeViewer;
+
+	void Start() {
+		timeViewer = new GameObject("[Time]").AddComponent<Text>();
+		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
+		timeViewer.rectTransform.sizeDelta = new Vector2(1, 1);
+	}
 
     public void Update()
     {
@@ -42,6 +51,13 @@ public class PieceBomb : Piece, IExecutable
                 }
             }
         }
+
+		//表示時間の移動
+		Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
+		timeViewer.rectTransform.anchoredPosition = pos;
+
+		//時間の表示
+		timeViewer.text = string.Format("{0:000.0}", Timebar.time);
 	}
 
     /// <summary>

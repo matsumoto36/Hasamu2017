@@ -14,7 +14,18 @@ public class Player : MonoBehaviour {
 
 	Tentacle[] currenTentacle = new Tentacle[2];	//操作している触手	
 
-	static PieceContainer currentPieceContainer;	//はさんでいるオブジェクト
+	static PieceContainer currentPieceContainer;    //はさんでいるオブジェクト
+
+	//public float[] containerDistance = new float[2];
+
+	Sprite failCreateSprite;
+
+	bool[] isFailAnimPlay = new bool[2];
+
+	void Start() {
+		//生成失敗時の画像読み込み
+		failCreateSprite = ResourceLoader.GetChips(MapChipType.MainChip)[15];
+	}
 
 	// Update is called once per frame
 	void Update () {
@@ -43,24 +54,52 @@ public class Player : MonoBehaviour {
 			//はさむアクション
 			TentacleAction();
 
+			//はさみ続けられるかチェック
+			if(!CheckRetentionContainer()) DestroyCurrentContainer();
+
+			//触手が何か挟んでいる場合は、横移動を平均値に
+			if(currentPieceContainer) {
+
+				//0番の位置を基点とする
+				Vector2 tVec = pos[1] - pos[0];
+				Vector2 v;
+
+				//外積で左右判定
+				float side = currenTentacle[0].angle.x * tVec.y - currenTentacle[0].angle.y * tVec.x;
+				if(side < 0) {
+					v = (Quaternion.Euler(0, 0, -90) * currenTentacle[0].angle).normalized;
+				}
+				else {
+					v = (Quaternion.Euler(0, 0, 90) * currenTentacle[0].angle).normalized;
+				}
+
+				float r = Vector2.Angle(v, tVec) * Mathf.Deg2Rad;
+
+				//合わせる座標
+				pos[0] += v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
+				pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
+
+			}
+
 			//移動
 			currenTentacle[0].Move(pos[0]);
 			currenTentacle[1].Move(pos[1]);
 
 			//はさんでいるものがあれば移動
-			if(currentPieceContainer)
-				currentPieceContainer.Move((currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f);
+			MoveContainer();
 
 		}
 
 		if(InputManager.GetInputUpDouble()) {
 			isAction = false;
 
-			//はさんでいるものがあれば解除
-			if(currentPieceContainer) {
-				currentPieceContainer.DestroyContainer();
-				currentPieceContainer = null;
+			//触手があれば削除
+			for(int i = 0;i < 2;i++) {
+				if(currenTentacle[i]) currenTentacle[i].Death();
 			}
+
+			//はさんでいるものがあれば解除
+			DestroyCurrentContainer();
 		}
 
 	}
@@ -96,15 +135,21 @@ public class Player : MonoBehaviour {
 		angles[1] = (p[0].position - p[1].position).normalized;
 
 		//邪魔していたらキャンセル
-		if(StageGenerator.GetPiece(angles[0] + p[0].position)) return false;
-		if(StageGenerator.GetPiece(angles[1] + p[1].position)) return false;
+		Piece[] anglePiece = new Piece[2];
+		anglePiece[0] = StageGenerator.GetPiece(angles[0] + p[0].position);
+		anglePiece[1] = StageGenerator.GetPiece(angles[1] + p[1].position);
+		if(anglePiece[0] || anglePiece[1]) {
+			//キャンセルアニメーションを再生
+			if(anglePiece[0] && !isFailAnimPlay[0]) StartCoroutine(FailCreateAnimation(0, anglePiece[0].position));
+			if(anglePiece[1] && !isFailAnimPlay[1]) StartCoroutine(FailCreateAnimation(1, anglePiece[0].position));
 
+			return false;
+		}
 		//デバッグ用でSEを鳴らす
 		AudioManager.Play(SEType.Tap, 1);
 
 		//触手の生成開始
 		for(int i = 0;i < 2;i++) {
-			if(currenTentacle[i]) currenTentacle[i].Death();
 
 			//触手を生成
 			currenTentacle[i] = Tentacle.CreateTentacle(p[i].position);
@@ -115,6 +160,9 @@ public class Player : MonoBehaviour {
 		return true;
 	}
 
+	/// <summary>
+	/// 触手のはさむアクション
+	/// </summary>
 	void TentacleAction() {
 		//触手の間のピースを取得
 		Piece[] btwp = GetPiecesBetweenTentacle();
@@ -156,12 +204,133 @@ public class Player : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// はさみ続けられるかチェック
+	/// </summary>
+	/// <returns>はさめる = true</returns>
+	bool CheckRetentionContainer() {
+
+		if(!currentPieceContainer) return false;
+
+		Vector2 maxLength = new Vector2(0.2f, 0.5f);
+		bool ans = true;
+
+		for(int i = 0;i < 2;i++) {
+
+			Vector2 bound = new Vector2(currenTentacle[i].angle.x * currentPieceContainer.containerSize.x,
+										currenTentacle[i].angle.y * currentPieceContainer.containerSize.y) * 0.5f;
+
+			Vector2 checkVec = ((Vector2)currenTentacle[i].transform.position + (currenTentacle[i].angle * 0.5f))
+							 - ((Vector2)currentPieceContainer.transform.position - bound);
+
+			//Debug.DrawLine((Vector2)currentPieceContainer.transform.position, (Vector2)currenTentacle[i].transform.position, Color.black);
+
+			//Debug.DrawLine(((Vector2)currenTentacle[i].transform.position + (currenTentacle[i].angle * 0.5f)),
+			//	 ((Vector2)currentPieceContainer.transform.position - bound));
+
+			float r = Vector2.Angle(checkVec, currenTentacle[i].angle);
+			//if(r < 60) continue;
+
+			r *= Mathf.Deg2Rad;
+
+			Vector2 v = new Vector2(Mathf.Abs(Mathf.Sin(r)), Mathf.Cos(r) * -1) * checkVec.magnitude;
+			//Debug.Log("v:" + v);
+
+
+			//一定距離あれば解除
+			if(v.x > maxLength.x || v.y > maxLength.y) ans = false;
+			//if(containerDistance[i] > 0.1f) ans = false;
+		}
+
+		return ans;
+	}
+
+	/// <summary>
+	/// はさんでいるピースの移動
+	/// </summary>
+	void MoveContainer() {
+		if(!currentPieceContainer) return;
+
+		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
+
+		Vector2[] v = new Vector2[2];
+		v[0] = new Vector2(currenTentacle[0].angle.x * currentPieceContainer.containerSize.x,
+									 currenTentacle[0].angle.y * currentPieceContainer.containerSize.y);
+
+		v[1] = new Vector2(currenTentacle[1].angle.x * currentPieceContainer.containerSize.x,
+									 currenTentacle[1].angle.y * currentPieceContainer.containerSize.y);
+
+		v[0].x += v[0].x != 0 ? 0.5f : 0;
+		v[0].y += v[0].y != 0 ? 0.5f : 0;
+		v[0] += movePos;
+
+		v[1].x += v[1].x != 0 ? 0.5f : 0;
+		v[1].y += v[1].y != 0 ? 0.5f : 0;
+		v[1] += movePos;
+
+		//Debug.DrawLine(movePos, v[0], Color.black);
+		//Debug.DrawLine(movePos, v[1], Color.black);
+
+		Piece[] p = new Piece[2];
+		p[0] = StageGenerator.GetPiece(v[0]);
+		p[1] = StageGenerator.GetPiece(v[1]);
+
+		if(p[0] && p[0].noCollision) p[0] = null;
+		if(p[1] && p[1].noCollision) p[1] = null;
+
+		bool isSafe = !(p[0] || p[1]);
+
+		currentPieceContainer.Move(movePos, isSafe);
+
+	}
+
+	/// <summary>
 	/// コンテナを削除
 	/// </summary>
 	public static void DestroyCurrentContainer() {
 		if(!currentPieceContainer) return;
 
-			currentPieceContainer.DestroyContainer();
-			currentPieceContainer = null;
+		currentPieceContainer.DestroyContainer();
+		currentPieceContainer = null;
+	}
+
+	/// <summary>
+	/// 生成が失敗したときに再生されるアニメーション
+	/// </summary>
+	/// <param name="animNum">占有する番号</param>
+	/// <param name="position">再生する場所</param>
+	/// <returns></returns>
+	IEnumerator FailCreateAnimation(int animNum, Vector2 position) {
+
+		float playTime = 1.0f;  //再生し続ける時間
+		float freq = 4;         //秒間に何回点滅するか
+		float maxAlpha = 0.5f;	//アルファの最大値
+
+		//再生中
+		isFailAnimPlay[animNum] = true;
+
+		SpriteRenderer spr = new GameObject("[FailObject]").AddComponent<SpriteRenderer>();
+		spr.material = ResourceLoader.GetMaterial(MaterialType.AdditiveSprite);
+		spr.sprite = failCreateSprite;
+		spr.sortingOrder = 10;
+		spr.transform.position = position;
+		Color c = spr.color;
+
+		float t = 0;
+		while(t < playTime) {
+			t += Time.deltaTime;
+
+			//色を計算
+			c.a = 0.5f * maxAlpha + Mathf.Sin(t * 2 * Mathf.PI * freq) * 0.5f * maxAlpha;
+			//反映
+			spr.color = c;
+
+			yield return null;
+		}
+
+		//再生が終わったら削除
+		Destroy(spr.gameObject);
+
+		//再生終了
+		isFailAnimPlay[animNum] = false;
 	}
 }
