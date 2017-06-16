@@ -20,14 +20,25 @@ public class CsvLoader : MonoBehaviour
         Debug.Log(stageLevel + "-" + stageNumber);
         StringReader reader = new StringReader(csv.text);
 
+        int counter = 0;
+        int time = 0;
+
         while (reader.Peek() > -1)
         {
             string line = reader.ReadLine();
-            csvDataS.Add(line.Split(',')); // リストに入れる
-            height++; // 行数加算
+            //A1セルとそれ以外を仕分け
+            if (counter == 0)
+            {
+                time = int.Parse(line);
+                counter++;
+            }
+            else
+            {
+                csvDataS.Add(line.Split(',')); // リストに入れる
+                height++; // 行数加算
+            }
         }
-
-        int time=0; 
+ 
         int[,] csvData = new int[csvDataS.Count, csvDataS[0].Length];
 
         //List<string>をint二次元配列に変換
@@ -35,14 +46,8 @@ public class CsvLoader : MonoBehaviour
         {
             for (int j = 0; j < csvData.GetLength(1); j++)
             {
-                if (i == 0 && j == 0)
-                {
-                    time = int.Parse(csvDataS[i][i]);
-                }
-                else
-                {
+
                     csvData[i, j] = int.Parse(csvDataS[i][j]);
-                }
             }
         }
         return new StageData(time, csvData);

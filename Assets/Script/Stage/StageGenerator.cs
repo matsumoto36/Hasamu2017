@@ -148,6 +148,7 @@ public class StageGenerator : MonoBehaviour {
 			for(int j = 0;j < width;j++) {
 
 				int id = map[height - (i + 1), j];
+                Debug.Log(id);
 				Vector2 position = new Vector2(j, i);
 				//idが0以上のときはピースを作成
 				if(id >= 0) {
