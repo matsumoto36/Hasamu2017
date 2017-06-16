@@ -23,17 +23,22 @@ public class UImanager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown("4"))
-		{
-			Debug.Log("(/・ω・)/");
-			animator.SetBool("Open", !animator.GetBool("Open"));
-		}
 
 		if(isPause != _isPause)
 		{
 			_isPause = isPause;
 			SetPause(_isPause);
 		}
+	}
+
+	/// <summary>
+	/// メニューの表示・非表示を切り替える
+	/// </summary>
+	public void ToggleMenu() {
+		//if(Input.GetKeyDown("4")) {
+			Debug.Log("(/・ω・)/");
+			animator.SetBool("Open", !animator.GetBool("Open"));
+		//}
 	}
 
 	void SetPause(bool enable)

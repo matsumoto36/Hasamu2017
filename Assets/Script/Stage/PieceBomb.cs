@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 /// <summary>
@@ -8,34 +9,56 @@ using UnityEngine;
 public class PieceBomb : Piece, IExecutable
 {
 
-    public float coldtime = 0;
-    float decpersec;
-
-	Timebar tmber;
-
     Piece[] p = new Piece[4];
 
+	Text timeViewer;
+
 	void Start() {
-		tmber = FindObjectOfType<Timebar>();
+		timeViewer = new GameObject("[Time]").AddComponent<Text>();
+		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
+		timeViewer.rectTransform.sizeDelta = new Vector2(1, 1);
 	}
 
     public void Update()
     {
-        for (int i = 0; i < checkPos.Length; i++) 
+		//取得用位置を格納
+		Vector2[] checkPos = new Vector2[] {
+			new Vector2(position.x, position.y + 1),
+			new Vector2(position.x - 1, position.y),
+			new Vector2(position.x, position.y - 1),
+			new Vector2(position.x + 1, position.y),
+		};
+
+		//挟まれ検知
+        for (int i = 0; i < checkPos.Length; i++)
         {
             p[i] = StageGenerator.GetPiece(checkPos[i]);
-			if(!p[i]) continue;
-            switch(p[i].id)
+
+            //p[i]がnullであれば判定しない
+            if (!(p[0] == null || p[2] == null))
             {
-                case 5:
-                    hot();
-                    break;
-                case 6:
-                    cold();
-                    break;
+                if (p[0].id == p[2].id)
+                {
+                    Sandwiched(p[0].id);
+                }
+            }
+
+            if (!(p[1] == null || p[3] == null))
+            {
+                if (p[1].id == p[3].id)
+                {
+                    Sandwiched(p[1].id);
+                }
             }
         }
-    }
+
+		//表示時間の移動
+		Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
+		timeViewer.rectTransform.anchoredPosition = pos;
+
+		//時間の表示
+		timeViewer.text = string.Format("{0:000.0}", Timebar.time);
+	}
 
     /// <summary>
 	/// 触手に掴まれているときに毎フレーム実行される
@@ -44,34 +67,23 @@ public class PieceBomb : Piece, IExecutable
     {
 
 	}
-    
+
     ///<summary>
-    ///あついブロックに隣接すると呼び出される
+    ///挟まれると呼び出される
     ///</summary>
-    public void hot()
+    public void Sandwiched(int id)
     {
-		if(!tmber) return;
-
-        decpersec = tmber.Decpersec;
-        coldtime += Time.deltaTime;
-        if (coldtime <= 3.0f)
-            tmber.Decpersec = 2;
-        else
-            tmber.Decpersec = decpersec;
-    }
-
-    /// <summary>
-    /// さむいブロックに隣接すると呼び出される
-    /// </summary>
-    public void cold()
-    {
-		if(!tmber) return;
-
-		decpersec = tmber.Decpersec;
-        coldtime += Time.deltaTime;
-        if (coldtime <= 3.0f)
-            tmber.Decpersec = 0.5f;
-        else
-            tmber.Decpersec = decpersec;
+        switch (id)
+        {
+            case 4:
+                Timebar.Decpersec = 1;
+                break;
+            case 5:
+                Timebar.Decpersec = 2;
+                break;
+            case 6:
+                Timebar.Decpersec = 0.5f;
+                break;
+        }
     }
 }

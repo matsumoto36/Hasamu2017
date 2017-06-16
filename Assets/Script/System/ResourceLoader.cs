@@ -5,6 +5,18 @@ using UnityEngine;
 public enum MapChipType {
 	MainChip,
 	Sub1_Tentacle,
+	Hole,
+}
+
+public enum OtherSpriteType {
+	Tentacle,
+	Mask,
+}
+
+public enum MaterialType {
+	MaskingSprite,
+	MaskableSprite,
+	AdditiveSprite,
 }
 
 public class ResourceLoader : MonoBehaviour {
@@ -12,24 +24,32 @@ public class ResourceLoader : MonoBehaviour {
 	const int MAPCHIPWIDTH = 4;
 
 	static List<Sprite[]> mapChipList;
+	static Sprite[] otherSpriteArray;
+	static Material[] materialArray;
 
 	public Sprite[] mapChipSrc;
+	public Sprite[] otherSpriteSrc;
 
-	void Awake() {
-		LoadChip();
-	}
+	public Material[] materialSrc;
 
 	/// <summary>
 	/// マップチップをロードする
 	/// </summary>
-	void LoadChip() {
+	public void LoadChip() {
 
+		//マップチップ読み込み
 		mapChipList = new List<Sprite[]>();
 		for(int i = 0;i < mapChipSrc.Length;i++) {
 			mapChipList.Add(Split(mapChipSrc[i], MAPCHIPWIDTH, System.Enum.GetName(typeof(MapChipType), i)));
 		}
 
 		Debug.Log("All MapChip Loaded.");
+
+		//そのほかの画像読み込み
+		otherSpriteArray = otherSpriteSrc;
+
+		//マテリアル読み込み
+		materialArray = materialSrc;
 	}
 
 	/// <summary>
@@ -39,6 +59,24 @@ public class ResourceLoader : MonoBehaviour {
 	/// <returns>マップチップ</returns>
 	public static Sprite[] GetChips(MapChipType type) {
 		return mapChipList[(int)type];
+	}
+
+	/// <summary>
+	/// マップチップ以外のスプライトを取得する
+	/// </summary>
+	/// <param name="type">スプライトのタイプ</param>
+	/// <returns>スプライト</returns>
+	public static Sprite GetOtherSprite(OtherSpriteType type) {
+		return otherSpriteArray[(int)type];
+	}
+
+	/// <summary>
+	/// マテリアルを取得する
+	/// </summary>
+	/// <param name="type">マテリアルのタイプ</param>
+	/// <returns>マテリアル</returns>
+	public static Material GetMaterial(MaterialType type) {
+		return materialArray[(int)type];
 	}
 
 	/// <summary>

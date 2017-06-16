@@ -4,30 +4,10 @@ using UnityEngine;
 
 public class StageGenerator : MonoBehaviour {
 
-	static Transform myTrans;
+	public static Vector2 stageSize;
+
 	static Piece[,] generatedStage;
 	static bool isGanerate;
-
-	// Use this for initialization
-	void Start () {
-
-		//後にCSVから読み込む
-		int[,] map = new int[,] {
-			{0, 0, 0, 0, 0, 0, 2, 2, 2},
-			{0, 0, 1, 1, 1, 1, 1, 1, 0},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0},
-			{1, 0, 0, 0, 3, 4, 5, 6, 0},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		};
-
-		myTrans = gameObject.transform;
-
-		//マップを生成
-		GenerateMap(map);
-
-
-	}
 
 	/// <summary>
 	/// ある地点のピースを取得する
@@ -66,9 +46,7 @@ public class StageGenerator : MonoBehaviour {
 
 		p.tag = "Piece";
 
-		p.transform.SetParent(myTrans);
-
-		Vector3 stagePosition = new Vector3(position.x, generatedStage.GetLength(0) - position.y - 1, 0.0f);
+		Vector3 stagePosition = position;
 		p.transform.position = stagePosition;
 
 		p.id = id;
@@ -97,9 +75,19 @@ public class StageGenerator : MonoBehaviour {
 		//場所を保存
 		Vector2 position = piece.position;
 
+		RemovePiece(piece);
 		Destroy(piece.gameObject);
+
 		//作成して返却
 		return CreatePiece(position, newID);
+	}
+
+	/// <summary>
+	/// ステージから削除(オブジェクトは削除されない)
+	/// </summary>
+	/// <param name="piece">ピース</param>
+	public static void RemovePiece(Piece piece) {
+		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
 	}
 
 	/// <summary>
@@ -128,7 +116,7 @@ public class StageGenerator : MonoBehaviour {
 		if(CheckStageBound(newPos)) return false;
 
 		int arrX = (int)newPos.x;
-		int arrY = generatedStage.GetLength(0) - (int)newPos.y - 1;
+		int arrY = (int)newPos.y;
 
 		//存在してたらキャンセル
 		if(generatedStage[arrY, arrX]) return false;
@@ -136,7 +124,6 @@ public class StageGenerator : MonoBehaviour {
 		generatedStage[arrY, arrX] = piece;
 		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
 
-		piece.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
 		piece.position = new Vector2(arrX, arrY);
 
 		//Debug.Log("Moved" + newPos);
@@ -154,15 +141,22 @@ public class StageGenerator : MonoBehaviour {
 
 		int width = map.GetLength(1);
 		int height = map.GetLength(0);
+		stageSize = new Vector2(width, height);
 
 		generatedStage = new Piece[height, width];
 		for(int i = 0;i < height;i++) {
 			for(int j = 0;j < width;j++) {
 
 				int id = map[height - (i + 1), j];
-				Vector2 position = new Vector2(j, (height - (i + 1)));
-				//ピースを作成
-				CreatePiece(position, id);
+				Vector2 position = new Vector2(j, i);
+				//idが0以上のときはピースを作成
+				if(id >= 0) {
+					CreatePiece(position, id);
+				}
+				else {
+					//それ以外はクリア場所を作成
+					Hole.CreateHole(position);
+				}
 			}
 		}
 
@@ -180,7 +174,21 @@ public class StageGenerator : MonoBehaviour {
 		isGanerate = true;
 
 
-		Camera.main.transform.position = new Vector3((width - 1f) / 2, (height - 1f) / 2, -1);
+		Vector2 center = new Vector2((width - 1f) * 0.5f, (height - 1f) * 0.5f);
+
+		//背景画像を設置
+		SpriteRenderer backGround = new GameObject("[BackGround]").AddComponent<SpriteRenderer>();
+		backGround.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		backGround.color = new Color32(101, 173, 174, 255);
+		backGround.sortingOrder = 0;
+		backGround.transform.position = center;
+		backGround.transform.localScale = center * 3f;
+
+		Vector3 cameraPos = center;
+		cameraPos.x += 0.6f;
+		cameraPos.z = -1;
+
+		Camera.main.transform.position = cameraPos;
 	}
 
 	/// <summary>

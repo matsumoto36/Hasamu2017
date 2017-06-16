@@ -10,12 +10,15 @@ public class PieceBlockFire : Piece, IExecutable
     // Update is called once per frame
     void Update ()
     {
-        /*Vector2 [] checkPositioin=new Vector2[]
-            { new Vector2(position.x + 1, position.y),
-            new Vector2(position.x-1,position.y),
-            new Vector2(position.x,position.y+1),
-            new Vector2(position.x,position.y-1)};*/
-        for (int i = 0; i > checkPos.Length; i++) 
+		//取得用位置を格納
+		Vector2[] checkPos = new Vector2[] {
+			new Vector2(position.x, position.y + 1),
+			new Vector2(position.x - 1, position.y),
+			new Vector2(position.x, position.y - 1),
+			new Vector2(position.x + 1, position.y),
+		};
+
+		for(int i = 0; i < checkPos.Length; i++) 
         {
             p[i] = StageGenerator.GetPiece(checkPos[i]);
         }
@@ -44,14 +47,15 @@ public class PieceBlockFire : Piece, IExecutable
 	}
 
     /// <summary>
-    /// 挟まれなう
+    /// 挟まれた場合にidを通常ブロックと同じ4にする
     /// </summary>
     void Sandwiched(int id)
     {
         switch (id)
         {
             case 6:
-                id = 4;
+				//id = 4;
+				StageGenerator.EditPieceID(this, 4);
                 break;
             default:
                 break;

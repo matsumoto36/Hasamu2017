@@ -9,17 +9,10 @@ public class Piece : MonoBehaviour {
 
     public int id;                      //自分のID
     public int subId;                   //アニメーション用のサブID
-
+	public bool noCollision = false;	//壁の判定が無いか
     public Vector2 position;            //ステージ上の位置
 
     public SpriteRenderer _renderer;	//自分の画像
-
-    public Vector2[] checkPos = new Vector2[4];
-
-    // Update is called once per frame
-    void Update () {           
-
-	}
 
 	/// <summary>
 	/// 画像を持ってくる
@@ -64,15 +57,16 @@ public class Piece : MonoBehaviour {
 		//座標を表示
 		//Debug.Log(position);
 
+
 		//取得用位置を格納
-		checkPos = new Vector2[] {
-			new Vector2(position.x, position.y - 1),
-			new Vector2(position.x - 1, position.y),
+		Vector2[] checkPos = new Vector2[] {
 			new Vector2(position.x, position.y + 1),
+			new Vector2(position.x - 1, position.y),
+			new Vector2(position.x, position.y - 1),
 			new Vector2(position.x + 1, position.y),
 		};
 
-		//接続数c, 重み合計値sumを得る
+		//接続数connectCount, 重み合計値weightSumを得る
 		int connectCount = 0; int weightSum = 0;
 		for(int i = 0;i < 4;i++) {
 			Piece p = StageGenerator.GetPiece(checkPos[i]);
@@ -83,7 +77,7 @@ public class Piece : MonoBehaviour {
 		}
 
 		//接続数と合計値表示
-		//Debug.Log("c:" + c + " sum:" + sum);
+		//Debug.Log("c:" + connectCount + " sum:" + weightSum);
 
 		//0ならsubID = 0, 4なら5が確定する(回転もなし)
 		if(connectCount == 0) { subId = 0; return; }
