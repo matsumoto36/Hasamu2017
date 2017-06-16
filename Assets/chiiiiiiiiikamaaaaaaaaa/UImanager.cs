@@ -8,6 +8,13 @@ public class UImanager : MonoBehaviour {
 	bool _isPause;
 
 	Animator animator;
+
+	public void RetryButton()
+	{
+
+	}
+
+
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
