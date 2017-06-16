@@ -27,7 +27,6 @@ public class Tentacle : MonoBehaviour {
 		body.transform.localPosition = angle * 0.5f;
 		body.sortingOrder = 2;
 
-
 		//マスク用レンダラーの作成
 		maskRenderer = new GameObject("[Mask]").AddComponent<SpriteRenderer>();
 		maskRenderer.material = ResourceLoader.GetMaterial(MaterialType.MaskingSprite);
@@ -75,8 +74,7 @@ public class Tentacle : MonoBehaviour {
 			v = (Quaternion.Euler(0, 0, 90) * angle).normalized;
 		}
 
-
-		//向きの方向の長さ
+		//向きの方向の長さ(angle分盛る)
 		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad) + angle;
 		//向きに垂直な長さ
 		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
@@ -85,7 +83,6 @@ public class Tentacle : MonoBehaviour {
 		//Debug.DrawLine(position, touchPosition, Color.red);
 		//Debug.DrawLine(position, position + angleVec, Color.blue);
 		//Debug.DrawLine(position, position + vVec, Color.blue);
-
 
 		#region 縦方向の制限
 
@@ -174,7 +171,11 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
-		return position + angle * length;
+		Vector2 ans = position + angle * length;
+		ans.x = (int)ans.x;
+		ans.y = (int)ans.y;
+
+		return ans;
 	}
 
 	/// <summary>

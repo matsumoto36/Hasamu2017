@@ -11,7 +11,7 @@ public class PieceContainer : MonoBehaviour {
 	Piece[] pieceArray;				//まとめられているピースの配列
 
 	Rigidbody2D rig;				//移動阻止用
-	public Vector2 containerSize;	//当たり判定用
+	public Vector2 containerSize;   //当たり判定用
 
 	/// <summary>
 	/// 新しくコンテナーを作成
@@ -54,7 +54,7 @@ public class PieceContainer : MonoBehaviour {
 		}
 
 		//各種判定を取り付ける
-		gameObject.AddComponent<BoxCollider2D>().size = containerSize - new Vector2(0.1f, 0.1f);
+		gameObject.AddComponent<BoxCollider2D>().size = containerSize - new Vector2(0.2f, 0.2f);
 		rig = gameObject.AddComponent<Rigidbody2D>();
 		rig.gravityScale = 0;
 		rig.freezeRotation = true;
@@ -72,7 +72,10 @@ public class PieceContainer : MonoBehaviour {
 	public void Move(Vector2 newPosition, bool isSafe) {
 
 		//移動
-		rig.MovePosition(newPosition);
+		//rig.MovePosition(newPosition);
+		//transform.position = newPosition;
+
+		rig.position = newPosition;
 
 		if(!isSafe) return;
 
