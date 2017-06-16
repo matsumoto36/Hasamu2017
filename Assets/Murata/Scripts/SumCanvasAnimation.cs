@@ -58,7 +58,7 @@ public class SumCanvasAnimation : MonoBehaviour
         //自分を生成してアニメーションする
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Door_b");
         SumCanvasAnimation anim = Instantiate(prefab).GetComponent<SumCanvasAnimation>();
-        CanvasDoor door = anim.transform.GetChild(0).GetComponent<CanvasDoor>();
+        //CanvasDoor door = anim.transform.GetChild(0).GetComponent<CanvasDoor>();
     }
 
     // ドア開く
