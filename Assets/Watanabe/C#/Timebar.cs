@@ -20,7 +20,7 @@ public class Timebar : MonoBehaviour
     }
     void Update()
     {
-
+        //isStartedがfalseならタイムを減らさない
         if (isStarted == false) return;
     //if (m_isVisibleTimer)//フレームカウント後
     //{
@@ -40,8 +40,14 @@ public class Timebar : MonoBehaviour
     public static void StartTimer()
     {
         isStarted = true;
+
     }
 
+    public static void StopTimer()
+    {
+        isStarted = false;
+
+    }
     void TimeUp()
     {
         Debug.Log("Timeup!!");
