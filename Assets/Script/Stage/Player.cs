@@ -479,38 +479,9 @@ public class Player : MonoBehaviour {
 	void MoveContainer() {
 		if(!currentPieceContainer) return;
 
+		//中点に移動
 		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
-
-		Vector2[] v = new Vector2[2];
-		v[0] = new Vector2(currenTentacle[0].angle.x * currentPieceContainer.containerSize.x,
-									 currenTentacle[0].angle.y * currentPieceContainer.containerSize.y);
-
-		v[1] = new Vector2(currenTentacle[1].angle.x * currentPieceContainer.containerSize.x,
-									 currenTentacle[1].angle.y * currentPieceContainer.containerSize.y);
-
-		v[0].x += v[0].x != 0 ? 0.5f : 0;
-		v[0].y += v[0].y != 0 ? 0.5f : 0;
-		v[0] += movePos;
-
-		v[1].x += v[1].x != 0 ? 0.5f : 0;
-		v[1].y += v[1].y != 0 ? 0.5f : 0;
-		v[1] += movePos;
-
-		//Debug.DrawLine(movePos, v[0], Color.black);
-		//Debug.DrawLine(movePos, v[1], Color.black);
-
-		Piece[] p = new Piece[2];
-		p[0] = StageGenerator.GetPiece(v[0]);
-		p[1] = StageGenerator.GetPiece(v[1]);
-
-		if(p[0] && p[0].noCollision) p[0] = null;
-		if(p[1] && p[1].noCollision) p[1] = null;
-
-		//詰みチェックしない
-		bool isSafe = true;
-		//bool isSafe = !(p[0] || p[1]);
-
-		currentPieceContainer.Move(movePos, isSafe);
+		currentPieceContainer.Move(movePos);
 
 	}
 
