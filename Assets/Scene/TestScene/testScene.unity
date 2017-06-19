@@ -1682,6 +1682,8 @@ MonoBehaviour:
   materialSrc:
   - {fileID: 2100000, guid: 628c65e1eaeee1b468c4db95b15acb90, type: 2}
   - {fileID: 2100000, guid: 187d4ef49b9c8664180c3fc0c4bab1e3, type: 2}
+  prefabSrc:
+  - {fileID: 1601928441505028, guid: ad0b472dbe5e2684bac33278628e81b0, type: 2}
 --- !u!4 &1355441017
 Transform:
   m_ObjectHideFlags: 0

@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
 		FindObjectOfType<AudioManager>().Initiarize();
 
 		//マップチップのロード
-		FindObjectOfType<ResourceLoader>().LoadChip();
+		FindObjectOfType<ResourceLoader>().LoadAll();
 
 		//後にCSVから読み込む
 		//int[,] map = new int[,] {
@@ -128,5 +128,16 @@ public class GameManager : MonoBehaviour {
 		//カウントダウンストップ
 
 
+	}
+
+
+	public static void DebugPause() {
+		Debug.Break();
+	}
+
+	void Update() {
+		if(Input.GetKeyDown(KeyCode.B)) {
+			DebugPause();
+		}
 	}
 }

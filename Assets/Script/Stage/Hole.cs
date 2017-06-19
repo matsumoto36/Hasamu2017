@@ -25,7 +25,7 @@ public class Hole : MonoBehaviour {
 
 		SpriteRenderer r = hole.gameObject.AddComponent<SpriteRenderer>();
 		r.sortingOrder = 1;
-		r.sprite = ResourceLoader.GetChips(MapChipType.Hole)[0];
+		r.sprite = ResourceLoader.GetChips(R_MapChipType.Hole)[0];
 
 		return hole;
 	}

@@ -10,7 +10,6 @@ public class PieceContainer : MonoBehaviour {
 
 	Piece[] pieceArray;				//まとめられているピースの配列
 
-	Rigidbody2D rig;				//移動阻止用
 	public Vector2 containerSize;   //当たり判定用
 
 	/// <summary>

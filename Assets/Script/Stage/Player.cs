@@ -7,19 +7,15 @@ using UnityEngine;
 /// </summary>
 public class Player : MonoBehaviour {
 
-	public static bool[] isAction = new bool[2];	//触手を操作しているか
-	public static Vector2?[] pos;					//タッチした座標
+	public static bool[] isAction = new bool[2];			//触手を操作しているか
+	public static Vector2?[] pos;							//タッチした座標
 
-	bool firstTouch = false;						//ゲームで初めて触手をはやしたとき
+	public static PieceContainer currentPieceContainer;		//はさんでいるオブジェクト
 
-	Tentacle[] currenTentacle = new Tentacle[2];	//操作している触手	
+	bool firstTouch = false;								//ゲームで初めて触手をはやしたとき
 
-	public static PieceContainer currentPieceContainer;    //はさんでいるオブジェクト
+	Tentacle[] currenTentacle = new Tentacle[2];			//操作している触手	
 
-
-	public Vector2[] vs = new Vector2[2];
-
-	//public float[] containerDistance = new float[2];
 
 	Sprite failCreateSprite;
 
@@ -27,7 +23,7 @@ public class Player : MonoBehaviour {
 
 	void Start() {
 		//生成失敗時の画像読み込み
-		failCreateSprite = ResourceLoader.GetChips(MapChipType.MainChip)[15];
+		failCreateSprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[15];
 	}
 
 	// Update is called once per frame
@@ -60,7 +56,15 @@ public class Player : MonoBehaviour {
 				TentacleAction();
 
 				//はさみ続けられるかチェック
-				if(!CheckRetentionContainer()) DestroyCurrentContainer();
+				if(!CheckRetentionContainer()) {
+
+					//アニメーション変更
+					currenTentacle[0].SetAnimatonState(TentacleAnimState.Move);
+					currenTentacle[1].SetAnimatonState(TentacleAnimState.Move);
+
+					//コンテナを破壊
+					DestroyCurrentContainer();
+				}
 
 				//触手が何か挟んでいる場合は、横移動を平均値に
 				if(currentPieceContainer) {
@@ -83,10 +87,6 @@ public class Player : MonoBehaviour {
 					//合わせる座標
 					pos[0] += v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
 					pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
-
-
-					vs[0] = (Vector2)pos[0];
-					vs[1] = (Vector2)pos[1];
 				}
 
 				//移動
@@ -110,7 +110,7 @@ public class Player : MonoBehaviour {
 			if(touchUp[i] && currenTentacle[i]) {
 				Debug.Log("TouchUp + " + i);
 
-				currenTentacle[i].Death();
+				currenTentacle[i].Return();
 				isAction[i] = false;
 				if(currentPieceContainer) DestroyCurrentContainer();
 			}
@@ -375,7 +375,7 @@ public class Player : MonoBehaviour {
 		}
 
 		//触手の生成開始
-		if(currenTentacle[id]) currenTentacle[id].Death();
+		if(currenTentacle[id]) currenTentacle[id].Return();
 		currenTentacle[id] = Tentacle.CreateTentacle(spawnPos);
 		currenTentacle[id].angle = angle;
 		currenTentacle[id].transform.position = spawnPos;
@@ -400,6 +400,10 @@ public class Player : MonoBehaviour {
 
 			//はさむ
 			currentPieceContainer = PieceContainer.CreateContainer(btwp);
+
+			//アニメーション変更
+			currenTentacle[0].SetAnimatonState(TentacleAnimState.Hold_Normal);
+			currenTentacle[1].SetAnimatonState(TentacleAnimState.Hold_Normal);
 		}
 	}
 
@@ -511,7 +515,7 @@ public class Player : MonoBehaviour {
 		isFailAnimPlay[animNum] = true;
 
 		SpriteRenderer spr = new GameObject("[FailObject]").AddComponent<SpriteRenderer>();
-		spr.material = ResourceLoader.GetMaterial(MaterialType.AdditiveSprite);
+		spr.material = ResourceLoader.GetMaterial(R_MaterialType.AdditiveSprite);
 		spr.sprite = failCreateSprite;
 		spr.sortingOrder = 10;
 		spr.transform.position = position;

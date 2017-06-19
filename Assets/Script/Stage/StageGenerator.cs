@@ -179,7 +179,7 @@ public class StageGenerator : MonoBehaviour {
 
 		//背景画像を設置
 		SpriteRenderer backGround = new GameObject("[BackGround]").AddComponent<SpriteRenderer>();
-		backGround.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		backGround.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
 		backGround.color = new Color32(101, 173, 174, 255);
 		backGround.sortingOrder = 0;
 		backGround.transform.position = center;

@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum TentacleAnimState {
+	Move,
+	Hold_Normal,
+	Return = 5,
+}
+
 /// <summary>
 /// 触手本体
 /// </summary>
 public class Tentacle : MonoBehaviour {
+
+	const float BODY_OFFSET = 3.25f;
 
 	public Vector2 angle;			//生える向き
 	public Vector2 position;        //本体のいる位置
@@ -14,23 +23,31 @@ public class Tentacle : MonoBehaviour {
 
 	Sprite[] tentacleSpr = new Sprite[2];
 
-	SpriteRenderer body;
+	Animator bodyAnimation;
+
+	Coroutine execCol;
+
 	SpriteRenderer maskRenderer;
 	
+	void Awake() {
+		bodyAnimation = Instantiate(ResourceLoader.GetPrefab(R_PrefabType.TentacleBody)).GetComponent<Animator>();
+	}
+
 	void Start () {
 
 		//ボディ部分を作成
-		body = new GameObject("[Body]").AddComponent<SpriteRenderer>();
-		body.material = ResourceLoader.GetMaterial(MaterialType.MaskableSprite);
-		body.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Tentacle);
-		body.transform.SetParent(transform);
-		body.transform.localPosition = angle * 0.5f;
-		body.sortingOrder = 2;
+		bodyAnimation.transform.SetParent(transform);
+		bodyAnimation.transform.localPosition = -angle * (BODY_OFFSET + 1);
+		bodyAnimation.transform.localScale *= 0.75f;
+
+		var meshInstance = bodyAnimation.GetComponent<Anima2D.SpriteMeshInstance>();
+		meshInstance.sortingOrder = 2;
+		meshInstance.sharedMaterial = ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite);
 
 		//マスク用レンダラーの作成
 		maskRenderer = new GameObject("[Mask]").AddComponent<SpriteRenderer>();
-		maskRenderer.material = ResourceLoader.GetMaterial(MaterialType.MaskingSprite);
-		maskRenderer.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		maskRenderer.material = ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite);
+		maskRenderer.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
 		maskRenderer.transform.SetParent(transform);
 		maskRenderer.transform.localPosition = angle * 0.5f;
 		maskRenderer.sortingOrder = 2;
@@ -39,7 +56,10 @@ public class Tentacle : MonoBehaviour {
 		float rot = 0;
 		if(angle.y != 0) rot -= 90;
 		if(angle.x == 1 || angle.y == -1) rot += 180;
-		body.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+		bodyAnimation.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+
+		//生えるアニメーション
+		execCol = StartCoroutine(CreateAnim());
 
 	}
 
@@ -210,17 +230,76 @@ public class Tentacle : MonoBehaviour {
 
 		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, (Vector2)transform.position + angle * 0.5f - angle * vSize, Color.black);
 
-		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 1) + new Vector2(1, 1);
+		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 1) + new Vector2(3, 1);
 
 		maskRenderer.transform.localScale = size;
 		maskRenderer.transform.localPosition = -(angle * 0.5f * (vSize - 1));
 	}
 
 	/// <summary>
-	/// 触手が死ぬ時に実行する
+	/// アニメーションを変更する
 	/// </summary>
-	public void Death() {
+	/// <param name="state"></param>
+	public void SetAnimatonState(TentacleAnimState state) {
+		bodyAnimation.SetInteger("anim_int", (int)state);
+	}
+
+	/// <summary>
+	/// 触手が戻る時に実行する
+	/// </summary>
+	public void Return() {
+		//Destroy(gameObject);
+		//実行中なら止める
+
+		SetAnimatonState(TentacleAnimState.Return);
+
+		if(execCol != null) StopCoroutine(execCol);
+		StartCoroutine(ReturnAnim());
+	}
+
+	/// <summary>
+	/// 作られるときのアニメーション
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator CreateAnim() {
+		//自分の位置からオフセットまで移動
+		float time = 0.5f;
+		float t = 0;
+		Vector2 startPosition = bodyAnimation.transform.localPosition;
+		Vector2 endPosition = -angle * BODY_OFFSET;
+		while(t < 1.0f) {
+			t += Time.deltaTime / time;
+
+			bodyAnimation.transform.localPosition = 
+				Vector2.Lerp(startPosition, endPosition, t);
+
+			yield return null;
+		}
+		bodyAnimation.transform.localPosition = endPosition;
+		execCol = null;
+	}
+
+	/// <summary>
+	/// 戻るときのアニメーション
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator ReturnAnim() {
+
+		float time = 1f;
+		float t = 0;
+		Vector2 startPosition = bodyAnimation.transform.localPosition;
+		Vector2 endPosition = -angle * (BODY_OFFSET + ((Vector2)transform.position - position).magnitude);
+		while(t < 1.0f) {
+			t += Time.deltaTime / time;
+
+			bodyAnimation.transform.localPosition =
+				Vector2.Lerp(startPosition, endPosition, t);
+
+			yield return null;
+		}
+
 		Destroy(gameObject);
+
 	}
 
 	void OnDrawGizmos() {
