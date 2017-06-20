@@ -90,16 +90,16 @@ public class Player : MonoBehaviour {
 				}
 
 				//移動
-				currenTentacle[0].Move((Vector2)pos[0]);
-				currenTentacle[1].Move((Vector2)pos[1]);
+				if(pos[0] != null) currenTentacle[0].Move((Vector2)pos[0]);
+				if(pos[1] != null) currenTentacle[1].Move((Vector2)pos[1]);
 
 				//はさんでいるものがあれば移動
 				MoveContainer();
 			}
 			else {
 				//移動
-				if(currenTentacle[0]) currenTentacle[0].Move((Vector2)pos[0]);
-				if(currenTentacle[1]) currenTentacle[1].Move((Vector2)pos[1]);
+				if(currenTentacle[0] && pos[0] != null) currenTentacle[0].Move((Vector2)pos[0]);
+				if(currenTentacle[1] && pos[1] != null) currenTentacle[1].Move((Vector2)pos[1]);
 			}
 
 
@@ -111,6 +111,7 @@ public class Player : MonoBehaviour {
 				Debug.Log("TouchUp + " + i);
 
 				currenTentacle[i].Return();
+				currenTentacle[i] = null;
 				isAction[i] = false;
 				if(currentPieceContainer) DestroyCurrentContainer();
 			}
@@ -264,16 +265,14 @@ public class Player : MonoBehaviour {
 				checkPiece[i] = StageGenerator.GetPiece(checkPos[i]);
 			}
 
-			//一回しか行わないfor(ブレイク用)
-			for(int i = 0;i < 1;i++) {
-				//1
-				for(int j = 0;j < 4;j++) {
-					if(!checkPiece[j] && !StageGenerator.CheckStageBound(checkPos[j])) {
-						checkResult = checkPos[j];
-						break;
-					}
+			//1
+			for(int j = 0;j < 4;j++) {
+				if(!checkPiece[j] && !StageGenerator.CheckStageBound(checkPos[j])) {
+					checkResult = checkPos[j];
+					break;
 				}
-				if(checkResult != null) break;
+			}
+			if(checkResult == null) {
 				//2
 				for(int j = 0;j < 4;j++) {
 					if(checkPiece[j].id != 1) {
@@ -282,7 +281,7 @@ public class Player : MonoBehaviour {
 					}
 				}
 
-				checkResult = checkPiece[0].position;
+				if(checkResult == null) checkResult = checkPiece[0].position;
 			}
 
 			angle = ((Vector2)checkResult - p.position).normalized;

@@ -4,21 +4,22 @@ Shader "Custom/SpineSpriteMask"{
 	Properties
 	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
+		_ID("MaskID", int) = 1
 	}
 
 		SubShader
-	{
-		Tags{ "Queue" = "Transparent+1" "IgnoreProjector" = "True" }
-		ZWrite Off
-		AlphaTest Greater 0.5
-		ColorMask 0
-		ZTest Always
-
+		{
+			Tags{ "Queue" = "Transparent+1" "IgnoreProjector" = "True" }
+			ZWrite Off
+			AlphaTest Greater 0.5
+			ColorMask 0
+			ZTest Always
 
 		Stencil{
-		Ref 1
-		Comp always
-		Pass replace
+		Ref [_ID]
+		Comp Always
+		WriteMask [_ID]
+		Pass Replace
 	}
 
 
