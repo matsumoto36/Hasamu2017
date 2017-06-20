@@ -14,11 +14,11 @@ public class PieceTentacle : Piece {
 		SetSubIDAndRotation();
 
 		if(subId == 0) {
-			_renderer.sprite = ResourceLoader.GetChips(MapChipType.MainChip)[id];
+			_renderer.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[id];
 		}
 		else {
 			
-			_renderer.sprite = ResourceLoader.GetChips(MapChipType.Sub1_Tentacle)[subId - 1];
+			_renderer.sprite = ResourceLoader.GetChips(R_MapChipType.Sub1_Tentacle)[subId - 1];
 		}
 		
 	}

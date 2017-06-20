@@ -18,7 +18,7 @@ public class Piece : MonoBehaviour {
 	/// 画像を持ってくる
 	/// </summary>
 	public virtual void SpriteLoad() {
-		_renderer.sprite = ResourceLoader.GetChips(MapChipType.MainChip)[id];
+		_renderer.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[id];
 	}
 
 	/// <summary>

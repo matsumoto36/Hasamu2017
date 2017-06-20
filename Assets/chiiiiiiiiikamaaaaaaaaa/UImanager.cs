@@ -20,7 +20,7 @@ public class UImanager : MonoBehaviour {
 			Pause.Pauser();
 		}
 		
-		SumCanvasAnimation.MoveScene("BGMSE");
+		SumCanvasAnimation.MoveScene("GameScene");
 	}
 
 

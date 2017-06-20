@@ -15,13 +15,11 @@ public class StageInformation : MonoBehaviour
     public void StageName(string SteageName)
     {
         
-        string[] SteageNumber = SteageName.Split();
-        string[] SteageLabel = SteageName.Split('-');
-        string[] SteageClass = SteageName.Split();
+        string[] SteageLabel = SteageName.Split('-');  
 
-        Debug.Log(string.Format(""));
-
-        // SceneManager.LoadScene(nextSceneName);
+        Debug.Log(string.Format("新たなるステージ、{0}",SteageName));
+        GameManager.SetStageData(int.Parse(SteageLabel[0]),int.Parse(SteageLabel[1]));
+        SceneManager.LoadScene(nextSceneName);
 
     }
     void Update()
