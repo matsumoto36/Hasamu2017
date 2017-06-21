@@ -29,6 +29,24 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		bool[] touchUp = InputManager.GetInputUpAll();
+		for(int i = 0;i < 2;i++) {
+			if(touchUp[i] && currenTentacle[i]) {
+				Debug.Log("TouchUp + " + i);
+
+				currenTentacle[i].Return();
+				currenTentacle[i] = null;
+				isAction[i] = false;
+				if(currentPieceContainer) {
+					//アニメーション変更
+					if(currenTentacle[0]) currenTentacle[0].SetAnimatonState(TentacleAnimState.Move);
+					if(currenTentacle[1]) currenTentacle[1].SetAnimatonState(TentacleAnimState.Move);
+
+					DestroyCurrentContainer();
+				}
+			}
+		}
+
 		//pos = new Vector2[2];
 
 		if(InputManager.GetInputAll(out pos)) {
@@ -90,103 +108,20 @@ public class Player : MonoBehaviour {
 				}
 
 				//移動
-				if(pos[0] != null) currenTentacle[0].Move((Vector2)pos[0]);
-				if(pos[1] != null) currenTentacle[1].Move((Vector2)pos[1]);
+				currenTentacle[0].Move((Vector2)pos[0]);
+				currenTentacle[1].Move((Vector2)pos[1]);
 
 				//はさんでいるものがあれば移動
 				MoveContainer();
 			}
 			else {
 				//移動
-				if(currenTentacle[0] && pos[0] != null) currenTentacle[0].Move((Vector2)pos[0]);
-				if(currenTentacle[1] && pos[1] != null) currenTentacle[1].Move((Vector2)pos[1]);
+				if(currenTentacle[0]) currenTentacle[0].Move((Vector2)pos[0]);
+				if(currenTentacle[1]) currenTentacle[1].Move((Vector2)pos[1]);
 			}
 
 
 		}
-
-		bool[] touchUp = InputManager.GetInputUpAll();
-		for(int i = 0;i < 2;i++) {
-			if(touchUp[i] && currenTentacle[i]) {
-				Debug.Log("TouchUp + " + i);
-
-				currenTentacle[i].Return();
-				currenTentacle[i] = null;
-				isAction[i] = false;
-				if(currentPieceContainer) DestroyCurrentContainer();
-			}
-		}
-
-		//if(InputManager.GetInputDouble(out pos)) {
-
-		//	pos[0] = Camera.main.ScreenToWorldPoint(pos[0]);
-		//	pos[1] = Camera.main.ScreenToWorldPoint(pos[1]);
-
-		//	//押された瞬間は取得も兼ねる
-		//	if(!isAction) {
-
-		//		//触手生成
-		//		if(!SpawnTentacle()) return;
-		//		isAction = true;
-	
-		//		//初めて生成した場合、ゲーム開始
-		//		if(!firstTouch) {
-		//			firstTouch = true;
-		//			GameManager.GameStart();
-		//		}
-		//	}
-
-		//	//はさむアクション
-		//	TentacleAction();
-
-		//	//はさみ続けられるかチェック
-		//	if(!CheckRetentionContainer()) DestroyCurrentContainer();
-
-		//	//触手が何か挟んでいる場合は、横移動を平均値に
-		//	if(currentPieceContainer) {
-
-		//		//0番の位置を基点とする
-		//		Vector2 tVec = pos[1] - pos[0];
-		//		Vector2 v;
-
-		//		//外積で左右判定
-		//		float side = currenTentacle[0].angle.x * tVec.y - currenTentacle[0].angle.y * tVec.x;
-		//		if(side < 0) {
-		//			v = (Quaternion.Euler(0, 0, -90) * currenTentacle[0].angle).normalized;
-		//		}
-		//		else {
-		//			v = (Quaternion.Euler(0, 0, 90) * currenTentacle[0].angle).normalized;
-		//		}
-
-		//		float r = Vector2.Angle(v, tVec) * Mathf.Deg2Rad;
-
-		//		//合わせる座標
-		//		pos[0] += v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
-		//		pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
-
-		//	}
-
-		//	//移動
-		//	currenTentacle[0].Move(pos[0]);
-		//	currenTentacle[1].Move(pos[1]);
-
-		//	//はさんでいるものがあれば移動
-		//	MoveContainer();
-
-		//}
-
-		//if(InputManager.GetInputUpDouble()) {
-		//	isAction = false;
-
-		//	//触手があれば削除
-		//	for(int i = 0;i < 2;i++) {
-		//		if(currenTentacle[i]) currenTentacle[i].Death();
-		//	}
-
-		//	//はさんでいるものがあれば解除
-		//	DestroyCurrentContainer();
-		//}
-
 	}
 
 	/// <summary>
@@ -275,7 +210,7 @@ public class Player : MonoBehaviour {
 			if(checkResult == null) {
 				//2
 				for(int j = 0;j < 4;j++) {
-					if(checkPiece[j].id != 1) {
+					if(checkPiece[j] && checkPiece[j].id != 1) {
 						checkResult = checkPiece[j].position;
 						break;
 					}
@@ -290,78 +225,6 @@ public class Player : MonoBehaviour {
 		//Debug.Log("SpawnTentacle Angle " + angle);
 
 		return SpawnTentacle(id, p.position, angle);
-
-		//RaycastHit2D[] hits = new RaycastHit2D[2];
-		//hits[0] = Physics2D.Raycast(pos[0], Vector2.zero);
-		//hits[1] = Physics2D.Raycast(pos[1], Vector2.zero);
-
-		////取得できなければキャンセル
-		//if(!hits[0] || !hits[1]) return false;
-
-		//Piece[] p = new Piece[2];
-		//p[0] = hits[0].collider.GetComponent<Piece>();
-		//p[1] = hits[1].collider.GetComponent<Piece>();
-
-		////位置が縦、横のどちらかが同じでなければキャンセル
-		//if(p[0].position.x == p[1].position.x && p[0].position.y == p[1].position.y) return false;
-		//if(p[0].position.x != p[1].position.x && p[0].position.y != p[1].position.y) return false;
-
-		////IDが同じでなければ、触手でなければキャンセル
-		//if(p[0].id != p[1].id || p[0].id != 1) return false;
-
-		////向き情報を格納
-		//Vector2[] angles = new Vector2[2];
-		//angles[0] = (p[1].position - p[0].position).normalized;
-		//angles[1] = (p[0].position - p[1].position).normalized;
-
-		////邪魔していたらキャンセル
-		//Piece[] anglePiece = new Piece[2];
-		//anglePiece[0] = StageGenerator.GetPiece(angles[0] + p[0].position);
-		//anglePiece[1] = StageGenerator.GetPiece(angles[1] + p[1].position);
-		//if(anglePiece[0] || anglePiece[1]) {
-		//	//キャンセルアニメーションを再生
-		//	if(anglePiece[0] && !isFailAnimPlay[0]) StartCoroutine(FailCreateAnimation(0, anglePiece[0].position));
-		//	if(anglePiece[1] && !isFailAnimPlay[1]) StartCoroutine(FailCreateAnimation(1, anglePiece[1].position));
-
-		//	return false;
-		//}
-
-		//Piece[] p = new Piece[2];
-		//Vector2[] angles = new Vector2[2];
-		//Piece[] anglePiece = new Piece[2];
-
-		////触手の生成開始
-		//for(int i = 0;i < 2;i++) {
-
-		//	hits[i] = Physics2D.Raycast(pos[i], Vector2.zero);
-		//	//取得できなければキャンセル
-		//	if(!hits[i]) continue;
-
-		//	p[i] = hits[i].collider.GetComponent<Piece>();
-
-		//	//IDが同じでなければ、触手でなければキャンセル
-		//	if(p[i].id != 1) continue;
-
-		//	//向き情報を格納
-		//	//angles[i] = (hits[i == 0 ? 1 : 0] - hits[i]).normalized;
-
-		//	anglePiece[i] = StageGenerator.GetPiece(angles[i] + p[i].position);
-		//	if(anglePiece[i]) {
-		//		//キャンセルアニメーションを再生
-		//		if(anglePiece[i] && !isFailAnimPlay[i]) StartCoroutine(FailCreateAnimation(i, anglePiece[i].position));
-		//		continue;
-		//	}
-
-		//	//触手を生成
-		//	currenTentacle[i] = Tentacle.CreateTentacle(p[i].position);
-		//	currenTentacle[i].angle = angles[i];
-		//	currenTentacle[i].transform.position = pos[i];
-		//}
-
-		////デバッグ用でSEを鳴らす
-		//AudioManager.Play(SEType.Tap, 1);
-
-		//return true;
 	}
 
 	bool SpawnTentacle(int id, Vector2 spawnPos, Vector2 angle) {
@@ -369,7 +232,7 @@ public class Player : MonoBehaviour {
 		//邪魔していたらキャンセルアニメーションを再生
 		Piece anglePiece = StageGenerator.GetPiece(angle + spawnPos);
 		if(anglePiece) {
-			if(isFailAnimPlay[id]) StartCoroutine(FailCreateAnimation(id, anglePiece.position));
+			if(!isFailAnimPlay[id]) StartCoroutine(FailCreateAnimation(id, anglePiece.position));
 			return false;
 		}
 
@@ -401,8 +264,11 @@ public class Player : MonoBehaviour {
 			currentPieceContainer = PieceContainer.CreateContainer(btwp);
 
 			//アニメーション変更
-			currenTentacle[0].SetAnimatonState(TentacleAnimState.Hold_Normal);
-			currenTentacle[1].SetAnimatonState(TentacleAnimState.Hold_Normal);
+			int id;
+			id = StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition()).id;
+			currenTentacle[0].SetAnimatonState(Tentacle.GetHoldState(id));
+			id = StageGenerator.GetPiece(currenTentacle[1].GetTargetPosition()).id;
+			currenTentacle[1].SetAnimatonState(Tentacle.GetHoldState(id));
 		}
 	}
 
@@ -484,7 +350,8 @@ public class Player : MonoBehaviour {
 
 		//中点に移動
 		Vector2 movePos = (currenTentacle[0].transform.position + currenTentacle[1].transform.position) * 0.5f;
-		currentPieceContainer.Move(movePos);
+		bool isXDir = currenTentacle[0].angle.x != 0;
+		currentPieceContainer.Move(movePos, isXDir);
 
 	}
 
@@ -505,6 +372,8 @@ public class Player : MonoBehaviour {
 	/// <param name="position">再生する場所</param>
 	/// <returns></returns>
 	IEnumerator FailCreateAnimation(int animNum, Vector2 position) {
+
+		Debug.Log("FailAnim");
 
 		float playTime = 1.0f;  //再生し続ける時間
 		float freq = 4;         //秒間に何回点滅するか

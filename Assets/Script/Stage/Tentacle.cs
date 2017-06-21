@@ -6,6 +6,8 @@ using UnityEngine;
 public enum TentacleAnimState {
 	Move,
 	Hold_Normal,
+	Hold_Hot,
+	Hold_Cold,
 	Return = 5,
 }
 
@@ -41,12 +43,12 @@ public class Tentacle : MonoBehaviour {
 
 		var meshInstance = bodyAnimation.GetComponent<Anima2D.SpriteMeshInstance>();
 		meshInstance.sortingOrder = 2;
-		meshInstance.sharedMaterial = Instantiate(ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite));
+		meshInstance.sharedMaterial = ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite);
 		meshInstance.sharedMaterial.SetInt("_ID", id);
 
 		//マスク用レンダラーの作成
 		maskRenderer = new GameObject("[Mask]").AddComponent<SpriteRenderer>();
-		maskRenderer.material = Instantiate(ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite));
+		maskRenderer.material = ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite);
 		maskRenderer.material.SetInt("_ID", id);
 		maskRenderer.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
 		maskRenderer.transform.SetParent(transform);
@@ -231,7 +233,7 @@ public class Tentacle : MonoBehaviour {
 
 		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, (Vector2)transform.position + angle * 0.5f - angle * vSize, Color.black);
 
-		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 2) + new Vector2(2, 2);
+		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 5) + new Vector2(5, 5);
 
 		maskRenderer.transform.localScale = size;
 		maskRenderer.transform.localPosition = -(angle * 0.5f * (vSize - 1));
@@ -244,6 +246,22 @@ public class Tentacle : MonoBehaviour {
 	public void SetAnimatonState(TentacleAnimState state) {
 		bodyAnimation.speed = 1;
 		bodyAnimation.SetInteger("anim_int", (int)state);
+	}
+
+	/// <summary>
+	/// はさんでいるときのブロックで変わる、アニメーションステートを取得する
+	/// </summary>
+	/// <param name="blockID">はさむブロック</param>
+	/// <returns></returns>
+	public static TentacleAnimState GetHoldState(int blockID) {
+		switch(blockID) {
+			case 5:
+				return TentacleAnimState.Hold_Hot;
+			case 6:
+				return TentacleAnimState.Hold_Cold;
+			default:
+				return TentacleAnimState.Hold_Normal;
+		}
 	}
 
 	/// <summary>
@@ -286,15 +304,15 @@ public class Tentacle : MonoBehaviour {
 	/// <returns></returns>
 	IEnumerator ReturnAnim() {
 
-		float time = 0.3f;
+		float time = 1f;
 		float t = 0;
 		Vector2 startPosition = bodyAnimation.transform.localPosition;
 		Vector2 endPosition = -angle * (BODY_OFFSET + ((Vector2)transform.position - position).magnitude);
 		while(t < 1.0f) {
 			t += Time.deltaTime / time;
 
-			bodyAnimation.transform.localPosition =
-				Vector2.Lerp(startPosition, endPosition, t);
+			//bodyAnimation.transform.localPosition =
+			//	Vector2.Lerp(startPosition, endPosition, t);
 
 			yield return null;
 		}

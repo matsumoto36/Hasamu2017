@@ -51,30 +51,20 @@ public class PieceContainer : MonoBehaviour {
 			p.transform.SetParent(transform);
 			p.GetComponent<BoxCollider2D>().enabled = false;
 		}
-
-		//各種判定を取り付ける
-		//gameObject.AddComponent<BoxCollider2D>().size = containerSize - new Vector2(0.2f, 0.2f);
-		//rig = gameObject.AddComponent<Rigidbody2D>();
-		//rig.gravityScale = 0;
-		//rig.freezeRotation = true;
-		//rig.isKinematic = true;
-		//rig.sharedMaterial = new PhysicsMaterial2D();
-		//rig.sharedMaterial.friction = 1;
-		//rig.sharedMaterial.bounciness = 0;
 	}
 
 	/// <summary>
 	/// 指定された座標へ動かす
 	/// </summary>
 	/// <param name="newPosition">移動する場所</param>
-	public void Move(Vector2 newPosition) {
+	/// <param name="isXDir">はさんでいる方向</param>
+	public void Move(Vector2 newPosition, bool isXDir) {
 
 		Vector2[] checkPosition = new Vector2[4];
 		checkPosition[0] = new Vector2(-containerSize.x, -containerSize.y);
-		checkPosition[1] = new Vector2(-containerSize.x, containerSize.y - 0.25f);
-		checkPosition[2] = new Vector2(containerSize.x - 0.25f, -containerSize.y);
-		checkPosition[3] = new Vector2(containerSize.x - 0.25f, containerSize.y - 0.25f);
-
+		checkPosition[1] = new Vector2(-containerSize.x, containerSize.y - 0.1f);
+		checkPosition[2] = new Vector2(containerSize.x - 0.1f, -containerSize.y);
+		checkPosition[3] = new Vector2(containerSize.x - 0.1f, containerSize.y - 0.1f);
 
 		for(int i = 0;i < 4;i++) {
 			checkPosition[i] *= 0.5f;
@@ -107,6 +97,15 @@ public class PieceContainer : MonoBehaviour {
 			if(isXCollision) break;
 		}
 
+		//方向がXの場合は+1まで検査
+		if(!isXDir) {
+			Vector2[] c = new Vector2[4];
+			c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0f);
+			c[1] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 1f);
+			c[2] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0f);
+			c[3] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 1f);
+		}
+
 		if(isXCollision) newPosition.y = (int)(transform.position.y + 0.5);
 
 		/* y方向の制限 */
@@ -133,12 +132,20 @@ public class PieceContainer : MonoBehaviour {
 			if(isYCollision) break;
 		}
 
+		//方向がXの場合は+1まで検査
+		if(!isXDir) {
+			Vector2[] c = new Vector2[4];
+			c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0f);
+			c[1] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 1f);
+			c[2] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0f);
+			c[3] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 1f);
+
+			
+		}
+
 		if(isYCollision) newPosition.x = (int)(transform.position.x + 0.5);
 
-
 		//移動
-		//rig.MovePosition(newPosition);
-		//rig.position = newPosition;
 		transform.position = newPosition;
 
 		//座標を反映
@@ -182,6 +189,18 @@ public class PieceContainer : MonoBehaviour {
 			checkPosition[i].y = (int)checkPosition[i].y;
 
 			Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
+		}
+
+		Vector2[] c = new Vector2[2];
+		c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0.5f);
+		c[1] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0.5f);
+		Gizmos.color = Color.yellow;
+		for(int i = 0;i < 2;i++) {
+
+			c[i].x = (int)c[i].x;
+			c[i].y = (int)c[i].y;
+
+			Gizmos.DrawWireCube(c[i], Vector3.one);
 		}
 
 	}

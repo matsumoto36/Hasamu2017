@@ -86,7 +86,7 @@ public class ResourceLoader : MonoBehaviour {
 	/// <param name="type">マテリアルのタイプ</param>
 	/// <returns>マテリアル</returns>
 	public static Material GetMaterial(R_MaterialType type) {
-		return materialArray[(int)type];
+		return Instantiate(materialArray[(int)type]);
 	}
 
 	/// <summary>
