@@ -681,8 +681,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug_text: {fileID: 0}
   FakeCount: 0
-  istouch: 
-  saveistouch: 
 --- !u!1 &495714737
 GameObject:
   m_ObjectHideFlags: 0

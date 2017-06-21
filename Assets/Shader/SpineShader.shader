@@ -4,16 +4,18 @@ Shader "Custom/SpineShader"{
 	Properties
 	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
+		_ID("MaskID", int) = 1
 	}
 
 		SubShader
 	{
-		Tags{ "Queue" = "Transparent+2" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+3" "IgnoreProjector" = "True" "RenderType" = "Opaque" }
 		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Stencil{
-		Ref 1
+		Ref [_ID]
+		ReadMask [_ID]
 		Comp Equal
 	}
 
