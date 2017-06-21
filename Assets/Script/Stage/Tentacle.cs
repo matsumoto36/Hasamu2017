@@ -311,8 +311,8 @@ public class Tentacle : MonoBehaviour {
 		while(t < 1.0f) {
 			t += Time.deltaTime / time;
 
-			//bodyAnimation.transform.localPosition =
-			//	Vector2.Lerp(startPosition, endPosition, t);
+			bodyAnimation.transform.localPosition =
+				Vector2.Lerp(startPosition, endPosition, t);
 
 			yield return null;
 		}

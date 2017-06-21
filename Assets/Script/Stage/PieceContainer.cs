@@ -100,10 +100,17 @@ public class PieceContainer : MonoBehaviour {
 		//方向がXの場合は+1まで検査
 		if(!isXDir) {
 			Vector2[] c = new Vector2[4];
-			c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0f);
-			c[1] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 1f);
-			c[2] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0f);
-			c[3] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 1f);
+			c[0] = newPosition + new Vector2(0.1f, -0.5f - containerSize.y * 0.5f);
+			c[1] = newPosition + new Vector2(0.9f, -0.5f - containerSize.y * 0.5f);
+			c[2] = newPosition + new Vector2(0.1f, 1.5f + containerSize.y * 0.5f);
+			c[3] = newPosition + new Vector2(0.9f, 1.5f + containerSize.y * 0.5f);
+
+			foreach(var cc in c) {
+				if(StageGenerator.GetPiece(cc)) {
+					isXCollision = true;
+					break;
+				}
+			}
 		}
 
 		if(isXCollision) newPosition.y = (int)(transform.position.y + 0.5);
@@ -133,14 +140,19 @@ public class PieceContainer : MonoBehaviour {
 		}
 
 		//方向がXの場合は+1まで検査
-		if(!isXDir) {
+		if(isXDir) {
 			Vector2[] c = new Vector2[4];
-			c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0f);
-			c[1] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 1f);
-			c[2] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0f);
-			c[3] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 1f);
+			c[0] = newPosition + new Vector2(-0.5f - containerSize.x * 0.5f, 0.1f);
+			c[1] = newPosition + new Vector2(-0.5f - containerSize.x * 0.5f, 0.9f);
+			c[2] = newPosition + new Vector2(1.5f + containerSize.x * 0.5f, 0.1f);
+			c[3] = newPosition + new Vector2(1.5f + containerSize.x * 0.5f, 0.9f);
 
-			
+			foreach(var cc in c) {
+				if(StageGenerator.GetPiece(cc)) {
+					isYCollision = true;
+					break;
+				}
+			}
 		}
 
 		if(isYCollision) newPosition.x = (int)(transform.position.x + 0.5);
@@ -190,18 +202,5 @@ public class PieceContainer : MonoBehaviour {
 
 			Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
 		}
-
-		Vector2[] c = new Vector2[2];
-		c[0] = (Vector2)transform.position + new Vector2(-0.5f - containerSize.x * 0.5f, 0.5f);
-		c[1] = (Vector2)transform.position + new Vector2(1.5f + containerSize.x * 0.5f, 0.5f);
-		Gizmos.color = Color.yellow;
-		for(int i = 0;i < 2;i++) {
-
-			c[i].x = (int)c[i].x;
-			c[i].y = (int)c[i].y;
-
-			Gizmos.DrawWireCube(c[i], Vector3.one);
-		}
-
 	}
 }
