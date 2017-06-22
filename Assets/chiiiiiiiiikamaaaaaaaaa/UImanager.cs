@@ -8,6 +8,22 @@ public class UImanager : MonoBehaviour {
 	bool _isPause;
 
 	Animator animator;
+	public void Awake()
+	{
+		Pause.ClearPauseList();
+	}
+
+	public void RetryButton()
+	{
+		if (_isPause == false)
+		{
+			Pause.Pauser();
+		}
+		
+		SumCanvasAnimation.MoveScene("GameScene");
+	}
+
+
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
@@ -16,6 +32,12 @@ public class UImanager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		//if (Input.GetMouseButtonDown(0))
+		//{
+		//	AudioManager.Play(SEType.Tap, 1);
+		//	Debug.Break();
+		//}
 
 		if(isPause != _isPause)
 		{

@@ -13,14 +13,15 @@ public class InputManager : MonoBehaviour {
 	public int FakeCount = 0;
 
 	static Transform debug_FalseTouch;
+	static InputManager thisManager;
 
 	static bool isTouch, isTouchDouble;
+	static bool[] isTouchArray = new bool[10];
 
 	// Use this for initialization
 	void Start () {
-
 		debug_FalseTouch = GameObject.Find("FalseTouch").transform;
-
+		thisManager = FindObjectOfType<InputManager>();
 	}
 	
 	// Update is called once per frame
@@ -81,6 +82,48 @@ public class InputManager : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// すべてのタッチ入力を取る
+	/// </summary>
+	/// <param name="pos">out 位置(null許容)</param>
+	/// <returns>一つでもあればtrue</returns>
+	public static bool GetInputAll(out Vector2?[] pos) {
+
+		pos = new Vector2?[10];
+
+		if(Application.isEditor) {
+			if(Input.GetMouseButton(0)) {
+				pos[0] = Input.mousePosition;
+				isTouchArray[0] = true;
+			}
+
+			if(Input.GetKey(KeyCode.F)) {
+				pos[1] = Camera.main.WorldToScreenPoint(debug_FalseTouch.position);
+				isTouchArray[1] = true;
+			}
+
+		}
+		else {
+			foreach(var t in Input.touches) {
+				pos[t.fingerId] = t.position;
+				isTouchArray[t.fingerId] = true;
+			}
+		}
+
+
+		bool ans = false;
+		foreach(var p in pos) {
+			if(p != null) {
+				ans = true;
+				break;
+			}
+
+		}
+
+		return ans;
+
+	}
+
+	/// <summary>
 	/// タッチが離されたかとる
 	/// </summary>
 	/// <returns>離されたかどうか</returns>
@@ -110,6 +153,31 @@ public class InputManager : MonoBehaviour {
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// すべての入力のうち、離されたものを取る
+	/// </summary>
+	/// <returns>離された番号のbool</returns>
+	public static bool[] GetInputUpAll() {
+
+		bool[] ans = new bool[10];
+		bool[] saveIsTouchArray = new bool[10];
+		isTouchArray.CopyTo(saveIsTouchArray, 0);
+
+
+		Vector2?[] pos = new Vector2?[10];
+		GetInputAll(out pos);
+
+		for(int i = 0;i < 10;i++) {
+
+			if(saveIsTouchArray[i] && pos[i] == null) {
+				Debug.Log("TouchUp " + i);
+				isTouchArray[i] = false;
+				ans[i] = true;
+			}
+		}
+		return ans;
 	}
 
 	/// <summary>

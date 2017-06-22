@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MapChipType {
+public enum R_MapChipType {
 	MainChip,
 	Sub1_Tentacle,
 	Hole,
 }
 
-public enum OtherSpriteType {
+public enum R_OtherSpriteType {
 	Tentacle,
 	Mask,
 }
 
-public enum MaterialType {
+public enum R_MaterialType {
 	MaskingSprite,
 	MaskableSprite,
 	AdditiveSprite,
+}
+
+public enum R_PrefabType {
+	TentacleBody,
 }
 
 public class ResourceLoader : MonoBehaviour {
@@ -26,21 +30,22 @@ public class ResourceLoader : MonoBehaviour {
 	static List<Sprite[]> mapChipList;
 	static Sprite[] otherSpriteArray;
 	static Material[] materialArray;
+	static GameObject[] prefabArray;
 
 	public Sprite[] mapChipSrc;
 	public Sprite[] otherSpriteSrc;
-
 	public Material[] materialSrc;
+	public GameObject[] prefabSrc;
 
 	/// <summary>
-	/// マップチップをロードする
+	/// 素材をロードする
 	/// </summary>
-	public void LoadChip() {
+	public void LoadAll() {
 
 		//マップチップ読み込み
 		mapChipList = new List<Sprite[]>();
 		for(int i = 0;i < mapChipSrc.Length;i++) {
-			mapChipList.Add(Split(mapChipSrc[i], MAPCHIPWIDTH, System.Enum.GetName(typeof(MapChipType), i)));
+			mapChipList.Add(Split(mapChipSrc[i], MAPCHIPWIDTH, System.Enum.GetName(typeof(R_MapChipType), i)));
 		}
 
 		Debug.Log("All MapChip Loaded.");
@@ -50,14 +55,19 @@ public class ResourceLoader : MonoBehaviour {
 
 		//マテリアル読み込み
 		materialArray = materialSrc;
+
+		//プレハブ読み込み
+		prefabArray = prefabSrc;
 	}
+
+	#region GetResource
 
 	/// <summary>
 	/// マップチップを取得する
 	/// </summary>
 	/// <param name="type">マップチップのタイプ</param>
 	/// <returns>マップチップ</returns>
-	public static Sprite[] GetChips(MapChipType type) {
+	public static Sprite[] GetChips(R_MapChipType type) {
 		return mapChipList[(int)type];
 	}
 
@@ -66,7 +76,7 @@ public class ResourceLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="type">スプライトのタイプ</param>
 	/// <returns>スプライト</returns>
-	public static Sprite GetOtherSprite(OtherSpriteType type) {
+	public static Sprite GetOtherSprite(R_OtherSpriteType type) {
 		return otherSpriteArray[(int)type];
 	}
 
@@ -75,9 +85,20 @@ public class ResourceLoader : MonoBehaviour {
 	/// </summary>
 	/// <param name="type">マテリアルのタイプ</param>
 	/// <returns>マテリアル</returns>
-	public static Material GetMaterial(MaterialType type) {
-		return materialArray[(int)type];
+	public static Material GetMaterial(R_MaterialType type) {
+		return Instantiate(materialArray[(int)type]);
 	}
+
+	/// <summary>
+	/// プレハブを取得する
+	/// </summary>
+	/// <param name="type">プレハブのタイプ</param>
+	/// <returns>マテリアル</returns>
+	public static GameObject GetPrefab(R_PrefabType type) {
+		return prefabArray[(int)type];
+	}
+
+	#endregion
 
 	/// <summary>
 	/// スプライトを分割する

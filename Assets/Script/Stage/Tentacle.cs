@@ -2,36 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum TentacleAnimState {
+	Move,
+	Hold_Normal,
+	Hold_Hot,
+	Hold_Cold,
+	Return = 5,
+}
+
 /// <summary>
 /// 触手本体
 /// </summary>
 public class Tentacle : MonoBehaviour {
 
+	const float BODY_OFFSET = 3.25f;//
+	static int idCounter = 1;		//idを割り当てる用
+
+
 	public Vector2 angle;			//生える向き
 	public Vector2 position;        //本体のいる位置
+	public int length = 0;          //本体の長さ
 
-	public int length = 0;
-
-	Sprite[] tentacleSpr = new Sprite[2];
-
-	SpriteRenderer body;
+	int id;							//触手のid
+	Animator bodyAnimation;
+	Coroutine execCol;
 	SpriteRenderer maskRenderer;
 	
+	void Awake() {
+		id = idCounter >= 128 ? idCounter = 1 : idCounter = idCounter * 2;
+		bodyAnimation = Instantiate(ResourceLoader.GetPrefab(R_PrefabType.TentacleBody)).GetComponent<Animator>();
+	}
+
 	void Start () {
 
 		//ボディ部分を作成
-		body = new GameObject("[Body]").AddComponent<SpriteRenderer>();
-		body.material = ResourceLoader.GetMaterial(MaterialType.MaskableSprite);
-		body.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Tentacle);
-		body.transform.SetParent(transform);
-		body.transform.localPosition = angle * 0.5f;
-		body.sortingOrder = 2;
+		bodyAnimation.transform.SetParent(transform);
+		bodyAnimation.transform.localPosition = -angle * (BODY_OFFSET + 1);
+		bodyAnimation.transform.localScale *= 0.75f;
 
+		var meshInstance = bodyAnimation.GetComponent<Anima2D.SpriteMeshInstance>();
+		meshInstance.sortingOrder = 2;
+		meshInstance.sharedMaterial = ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite);
+		meshInstance.sharedMaterial.SetInt("_ID", id);
 
 		//マスク用レンダラーの作成
 		maskRenderer = new GameObject("[Mask]").AddComponent<SpriteRenderer>();
-		maskRenderer.material = ResourceLoader.GetMaterial(MaterialType.MaskingSprite);
-		maskRenderer.sprite = ResourceLoader.GetOtherSprite(OtherSpriteType.Mask);
+		maskRenderer.material = ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite);
+		maskRenderer.material.SetInt("_ID", id);
+		maskRenderer.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
 		maskRenderer.transform.SetParent(transform);
 		maskRenderer.transform.localPosition = angle * 0.5f;
 		maskRenderer.sortingOrder = 2;
@@ -40,7 +59,10 @@ public class Tentacle : MonoBehaviour {
 		float rot = 0;
 		if(angle.y != 0) rot -= 90;
 		if(angle.x == 1 || angle.y == -1) rot += 180;
-		body.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+		bodyAnimation.transform.rotation = Quaternion.AngleAxis(rot, Vector3.forward);
+
+		//生えるアニメーション
+		execCol = StartCoroutine(CreateAnim());
 
 	}
 
@@ -75,8 +97,7 @@ public class Tentacle : MonoBehaviour {
 			v = (Quaternion.Euler(0, 0, 90) * angle).normalized;
 		}
 
-
-		//向きの方向の長さ
+		//向きの方向の長さ(angle分盛る)
 		Vector2 angleVec = angle * OVec.magnitude * Mathf.Sin(Vector2.Angle(OVec, v) * Mathf.Deg2Rad) + angle;
 		//向きに垂直な長さ
 		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
@@ -85,7 +106,6 @@ public class Tentacle : MonoBehaviour {
 		//Debug.DrawLine(position, touchPosition, Color.red);
 		//Debug.DrawLine(position, position + angleVec, Color.blue);
 		//Debug.DrawLine(position, position + vVec, Color.blue);
-
 
 		#region 縦方向の制限
 
@@ -174,7 +194,11 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
-		return position + angle * length;
+		Vector2 ans = position + angle * length;
+		ans.x = (int)ans.x;
+		ans.y = (int)ans.y;
+
+		return ans;
 	}
 
 	/// <summary>
@@ -209,17 +233,92 @@ public class Tentacle : MonoBehaviour {
 
 		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, (Vector2)transform.position + angle * 0.5f - angle * vSize, Color.black);
 
-		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 1) + new Vector2(1, 1);
+		Vector2 size = new Vector2(Mathf.Abs(angle.x), Mathf.Abs(angle.y)) * (vSize - 5) + new Vector2(5, 5);
 
 		maskRenderer.transform.localScale = size;
 		maskRenderer.transform.localPosition = -(angle * 0.5f * (vSize - 1));
 	}
 
 	/// <summary>
-	/// 触手が死ぬ時に実行する
+	/// アニメーションを変更する
 	/// </summary>
-	public void Death() {
+	/// <param name="state"></param>
+	public void SetAnimatonState(TentacleAnimState state) {
+		bodyAnimation.speed = 1;
+		bodyAnimation.SetInteger("anim_int", (int)state);
+	}
+
+	/// <summary>
+	/// はさんでいるときのブロックで変わる、アニメーションステートを取得する
+	/// </summary>
+	/// <param name="blockID">はさむブロック</param>
+	/// <returns></returns>
+	public static TentacleAnimState GetHoldState(int blockID) {
+		switch(blockID) {
+			case 5:
+				return TentacleAnimState.Hold_Hot;
+			case 6:
+				return TentacleAnimState.Hold_Cold;
+			default:
+				return TentacleAnimState.Hold_Normal;
+		}
+	}
+
+	/// <summary>
+	/// 触手が戻る時に実行する
+	/// </summary>
+	public void Return() {
+
+		SetAnimatonState(TentacleAnimState.Return);
+
+		//実行中なら止める
+		if(execCol != null) StopCoroutine(execCol);
+		StartCoroutine(ReturnAnim());
+	}
+
+	/// <summary>
+	/// 作られるときのアニメーション
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator CreateAnim() {
+		//自分の位置からオフセットまで移動
+		float time = 0.2f;
+		float t = 0;
+		Vector2 startPosition = bodyAnimation.transform.localPosition;
+		Vector2 endPosition = -angle * BODY_OFFSET;
+		while(t < 1.0f) {
+			t += Time.deltaTime / time;
+
+			bodyAnimation.transform.localPosition = 
+				Vector2.Lerp(startPosition, endPosition, t);
+
+			yield return null;
+		}
+		bodyAnimation.transform.localPosition = endPosition;
+		execCol = null;
+	}
+
+	/// <summary>
+	/// 戻るときのアニメーション
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator ReturnAnim() {
+
+		float time = 1f;
+		float t = 0;
+		Vector2 startPosition = bodyAnimation.transform.localPosition;
+		Vector2 endPosition = -angle * (BODY_OFFSET + ((Vector2)transform.position - position).magnitude);
+		while(t < 1.0f) {
+			t += Time.deltaTime / time;
+
+			bodyAnimation.transform.localPosition =
+				Vector2.Lerp(startPosition, endPosition, t);
+
+			yield return null;
+		}
+
 		Destroy(gameObject);
+
 	}
 
 	void OnDrawGizmos() {

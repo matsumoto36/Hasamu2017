@@ -5,10 +5,16 @@ using System;
 
 public class Pause : MonoBehaviour
 {
+
+	public static bool isPause;
 static List<Pause> targets = new List<Pause>();
 Behaviour[] pauseBehavs = null;
-// Use this for initialization
-void Start()
+	// Use this for initialization
+	public static void ClearPauseList()
+	{
+		targets.Clear();
+	}
+	void Start()
 {
 		Debug.Log("name:" + name); 
 	targets.Add(this);
@@ -45,6 +51,7 @@ void OnPause()
 //ポーズ
 public static void Pauser()
 {
+		isPause = true;
 	foreach (var obj in targets)
 	{
 		obj.OnPause();
@@ -53,6 +60,7 @@ public static void Pauser()
 	//ポーズ解除
 	public static void Resume()
 	{
+		isPause = false;
 		foreach (var obj in targets)
 		{
 			obj.OnResume();

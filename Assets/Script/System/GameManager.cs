@@ -26,11 +26,8 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	void GameInitiarize() {
 
-		//音設定読み込み
-		FindObjectOfType<AudioManager>().Initiarize();
-
 		//マップチップのロード
-		FindObjectOfType<ResourceLoader>().LoadChip();
+		FindObjectOfType<ResourceLoader>().LoadAll();
 
 		//後にCSVから読み込む
 		//int[,] map = new int[,] {
@@ -60,14 +57,26 @@ public class GameManager : MonoBehaviour {
 		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		//};
 
+		//int[,] map = new int[,] {
+		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
+		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
+		//	{1, 0, 0, -1, 0, 0, 0, 1, 1},
+		//	{1, 0, 4, 0, 0, 0, 0, 0, 1},
+		//	{1, 0, 0, 0, 0, 3, 0, 0, 1},
+		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
+		//};
+
 		int[,] map = new int[,] {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 0, 0, 3, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, -1, 0, 0, 0, 1, 1},
-			{1, 0, 4, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 3, 0, 0, 1},
+			{1, 0, 4, 5, 6, 0, -1, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
+
+		Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
+        //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
 
 		//ステージの生成
 		//StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
@@ -116,5 +125,16 @@ public class GameManager : MonoBehaviour {
 		//カウントダウンストップ
 
 
+	}
+
+
+	public static void DebugPause() {
+		Debug.Break();
+	}
+
+	void Update() {
+		if(Input.GetKeyDown(KeyCode.B)) {
+			DebugPause();
+		}
 	}
 }
