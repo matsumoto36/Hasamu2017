@@ -26,9 +26,6 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	void GameInitiarize() {
 
-		//音設定読み込み
-		FindObjectOfType<AudioManager>().Initiarize();
-
 		//マップチップのロード
 		FindObjectOfType<ResourceLoader>().LoadAll();
 

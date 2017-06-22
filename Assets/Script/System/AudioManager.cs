@@ -28,22 +28,45 @@ public enum SEType {
 /// </summary>
 public class AudioManager : MonoBehaviour {
 
+	static AudioManager myManager;      //自分のリファレンス
+
 	static AudioMixer mixer;			//ミキサー
 	static AudioClip[] SEclips;			//再生用リスト
 	static AudioClip[] BGMclips;		//再生用リスト
 	static AudioSource nowPlayingBGM;	//現在再生されているBGM
 
-	static AudioManager myManager;      //自分のリファレンス
+	void Awake() {
 
-	public AudioMixer _mixer;			//設定用のミキサー
-	public AudioClip[] _SEclips;		//SE設定用リスト
-	public AudioClip[] _BGMclips;		//BGM設定用リスト
+		//シングルトン
+		if(!myManager) {
+			myManager = this;
+			DontDestroyOnLoad(gameObject);
 
+			Initiarize();
+		}
+		else {
+			Destroy(gameObject);
+		}
+
+	}
+
+	/// <summary>
+	/// 初期設定
+	/// </summary>
 	public void Initiarize() {
-		myManager = this;
-		mixer = _mixer;
-		SEclips = _SEclips;
-		BGMclips = _BGMclips;
+
+		//LoadMixer
+		mixer = Resources.Load<AudioMixer>("Sounds/NewAudioMixer");
+
+		#region LoadBGM
+		BGMclips = new AudioClip[System.Enum.GetNames(typeof(BGMType)).Length];
+		BGMclips[0] = Resources.Load<AudioClip>("Sounds/BGM/retrogamecenter");
+		#endregion
+
+		#region LoadSE
+		SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
+		SEclips[0] = Resources.Load<AudioClip>("Sounds/SE/button35");
+		#endregion
 	}
 
 	/// <summary>
