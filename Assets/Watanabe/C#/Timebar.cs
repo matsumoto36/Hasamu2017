@@ -8,7 +8,7 @@ public class Timebar : MonoBehaviour
     //private bool m_isVisibleTimer = false;//フレームカウント
     static bool isStarted = false;
 
-    public static float time = 10;//初期値を60
+    public static float time = 60;//初期値を60
     public static float Decpersec = 1;
 
     void Start()
