@@ -12,11 +12,13 @@ public class PieceBomb : Piece, IExecutable
     Piece[] p = new Piece[4];
 
 	Text timeViewer;
+    Canvas canvas;
 
 	void Start() {
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
 		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
-		timeViewer.rectTransform.sizeDelta = new Vector2(1, 1);
+		timeViewer.rectTransform.localScale = new Vector2(1, 1);
+        canvas = FindObjectOfType<Canvas>();
 	}
 
     public void Update()
@@ -52,13 +54,22 @@ public class PieceBomb : Piece, IExecutable
             }
         }
 
-		//表示時間の移動
-		Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
-		timeViewer.rectTransform.anchoredPosition = pos;
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        Vector2 timePos;
+
+        //表示時間の移動
+        Vector2 pos = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, pos, Camera.main, out timePos);
+        timeViewer.rectTransform.anchoredPosition = timePos;
 
 		//時間の表示
 		timeViewer.text = string.Format("{0:000.0}", Timebar.time);
-	}
+        timeViewer.rectTransform.localScale = Vector3.one;
+        timeViewer.rectTransform.sizeDelta = new Vector2(200, 60);
+        timeViewer.font= Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+        timeViewer.fontSize = 50;
+        timeViewer.alignment = TextAnchor.MiddleCenter;
+    }
 
     /// <summary>
 	/// 触手に掴まれているときに毎フレーム実行される
