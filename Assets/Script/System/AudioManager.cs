@@ -41,6 +41,7 @@ public class AudioManager : MonoBehaviour {
 		//シングルトン
 		if(!myManager) {
 			myManager = this;
+			transform.SetParent(null);
 			DontDestroyOnLoad(gameObject);
 
 			Initiarize();
@@ -79,8 +80,10 @@ public class AudioManager : MonoBehaviour {
 
 		AudioSource src = new GameObject("[Audio SE - " + type.ToString() + "]" ).AddComponent<AudioSource>();
 		src.transform.SetParent(myManager.transform);
-		src.PlayOneShot(SEclips[(int)type], vol);
+		src.clip = SEclips[(int)type];
+		src.volume = vol;
 		src.outputAudioMixerGroup = mixer.FindMatchingGroups("SE")[0];
+		src.Play();
 
 		Destroy(src.gameObject, SEclips[(int)type].length + 0.1f);
 	}
@@ -179,6 +182,6 @@ public class AudioManager : MonoBehaviour {
 			yield return null;
 		}
 
-		yield return null;
+		Destroy(src.gameObject);
 	}
 }
