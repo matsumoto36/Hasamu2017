@@ -13,10 +13,12 @@ public class GameManager : MonoBehaviour {
 
 	public Text stageText;
 
-	void Awake() {
+	void Start() {
 
 		//後にほかのところから割り当てられる
 		stageLevel = stageNum = 1;
+
+		AudioManager.Play(BGMType.Title, 1, true);
 
 		GameInitiarize();
 	}
