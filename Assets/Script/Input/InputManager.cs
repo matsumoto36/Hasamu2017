@@ -8,25 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class InputManager : MonoBehaviour {
 
-	public Text debug_text;
-
-	public int FakeCount = 0;
-
-	static Transform debug_FalseTouch;
-	static InputManager thisManager;
-
-	static bool isTouch, isTouchDouble;
-	static bool[] isTouchArray = new bool[10];
+	static InputManager myManager;			//自分のリファレンス
+	static Transform debug_FalseTouch;			//エディタ用マルチタップ位置
+	static bool[] isTouchArray = new bool[10];  //タッチしているか保持
 
 	// Use this for initialization
 	void Start () {
 		debug_FalseTouch = GameObject.Find("FalseTouch").transform;
-		thisManager = FindObjectOfType<InputManager>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		DebugGetInput();
+		myManager = FindObjectOfType<InputManager>();
 	}
 
 	/// <summary>
@@ -51,7 +40,7 @@ public class InputManager : MonoBehaviour {
 
 		//Debug.Log("Touch " + pos);
 
-		return isTouch = true;
+		return isTouchArray[0] = true;
 	}
 
 	/// <summary>
@@ -78,7 +67,8 @@ public class InputManager : MonoBehaviour {
 
 		//Debug.Log("TouchD " + pos[0] + " " + pos[1]);
 
-		return isTouchDouble = true;
+		return isTouchArray[0] = isTouchArray[1] = true;
+
 	}
 
 	/// <summary>
@@ -133,8 +123,8 @@ public class InputManager : MonoBehaviour {
 
 		Vector2 pos = new Vector2();
 
-		if(isTouch && !GetInput(out pos)) {
-			isTouch = false;
+		if(isTouchArray[0] && !GetInput(out pos)) {
+			isTouchArray[0] = false;
 			return true;
 		}
 
@@ -149,8 +139,9 @@ public class InputManager : MonoBehaviour {
 
 		Vector2[] pos = new Vector2[2];
 
-		if(isTouchDouble && !GetInputDouble(out pos)) {
-			isTouchDouble = false;
+		if(isTouchArray[0] && isTouchArray[1] && !GetInputDouble(out pos)) {
+
+			isTouchArray[0] = isTouchArray[1] = false;
 			return true;
 		}
 
@@ -185,16 +176,16 @@ public class InputManager : MonoBehaviour {
 	/// <summary>
 	/// デバッグ用に、すべてのタッチ情報を出力する
 	/// </summary>
-	public void DebugGetInput() {
+	//public void DebugGetInput() {
 
-		if(!debug_text) return;
+	//	if(!debug_text) return;
 
-		string result = "";
-		result += string.Format("touchCount : {0}\r\n", Input.touchCount);
-		for(int i = 0;i < Input.touchCount;i++) {
-			result += string.Format("{0} touchPos : {1} , fingerId : {2} \r\n", i, Input.touches[i].position, Input.touches[i].fingerId);
-		}
-		debug_text.text = result;
+	//	string result = "";
+	//	result += string.Format("touchCount : {0}\r\n", Input.touchCount);
+	//	for(int i = 0;i < Input.touchCount;i++) {
+	//		result += string.Format("{0} touchPos : {1} , fingerId : {2} \r\n", i, Input.touches[i].position, Input.touches[i].fingerId);
+	//	}
+	//	debug_text.text = result;
 
-	}
+	//}
 }

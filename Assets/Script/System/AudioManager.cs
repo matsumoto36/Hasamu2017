@@ -46,12 +46,18 @@ public class AudioManager : MonoBehaviour {
 	static AudioSource nowPlayingBGM;								//現在再生されているBGM
 	static BGMType latestPlayBGMType;                               //再生されているBGMの種類
 
+	/// <summary>
+	/// 一回生成
+	/// </summary>
+	static AudioManager() {
+		new GameObject("[AudioManager]").AddComponent<AudioManager>();
+	}
+
 	void Awake() {
 
 		//シングルトン
 		if(!myManager) {
 			myManager = this;
-			transform.SetParent(null);
 			DontDestroyOnLoad(gameObject);
 
 			Initiarize();
