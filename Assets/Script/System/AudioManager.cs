@@ -9,6 +9,7 @@ using UnityEngine.Audio;
 /// </summary>
 public enum BGMType {
 	Title,
+    Select,
 	Game,
 	Game2,
 	Over,
@@ -26,8 +27,10 @@ public enum SEType {
 	BombTimer,
 	BombExplosion,
 	HasamuNormal,
-	HasamuHot,
-	HasamuCold,
+	Hot,
+	Cold,
+    Hole,
+    Button,
 }
 
 /// <summary>
@@ -94,7 +97,7 @@ public class AudioManager : MonoBehaviour {
 		src.volume = vol;
 		src.outputAudioMixerGroup = mixerGroups[0];
 		src.Play();
-
+        
 		Destroy(src.gameObject, SEclips[(int)type].length + 0.1f);
 	}
 
