@@ -73,15 +73,20 @@ public class AudioManager : MonoBehaviour {
 		mixerGroups[1] = mixer.FindMatchingGroups("BGM")[0];
 
 
-		#region LoadBGM
+        //BGM読み込み
 		BGMclips = new AudioClip[System.Enum.GetNames(typeof(BGMType)).Length];
-		BGMclips[0] = Resources.Load<AudioClip>("Sounds/BGM/retrogamecenter");
-		#endregion
+		for (int i = 0; i < BGMclips.Length; i++) {
+			//enumで定義された名前と同じものを読み込む
+			BGMclips[i] = Resources.Load<AudioClip>("Sounds/BGM/" + System.Enum.GetNames(typeof(BGMType))[i]);
+		}
 
-		#region LoadSE
-		SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
-		SEclips[0] = Resources.Load<AudioClip>("Sounds/SE/button35");
-		#endregion
+        //SE読み込み
+        SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
+		for (int i = 0; i < SEclips.Length; i++) {
+			//enumで定義された名前と同じものを読み込む
+			SEclips[i] = Resources.Load<AudioClip>("Sounds/SE/" + System.Enum.GetNames(typeof(SEType))[i]);
+		}
+
 	}
 
 	/// <summary>
