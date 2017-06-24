@@ -243,7 +243,7 @@ public class Player : MonoBehaviour {
 		currenTentacle[id].transform.position = spawnPos;
 
 		//デバッグ用でSEを鳴らす
-		AudioManager.Play(SEType.Tap, 1);
+		//AudioManager.Play(SEType.Tap, 1);
 
 		return true;
 

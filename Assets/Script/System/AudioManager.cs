@@ -9,8 +9,10 @@ using UnityEngine.Audio;
 /// </summary>
 public enum BGMType {
 	Title,
-	Main,
-	Clear
+	Game,
+	Game2,
+	Over,
+	Clear,
 }
 
 /// <summary>
@@ -18,9 +20,14 @@ public enum BGMType {
 /// 以下は例
 /// </summary>
 public enum SEType {
-	Tap,
-	Button,
-	Stat
+	TentacleSpawn,
+	TentacleMove,
+	TentacleReturn,
+	BombTimer,
+	BombExplosion,
+	HasamuNormal,
+	HasamuHot,
+	HasamuCold,
 }
 
 /// <summary>
@@ -28,13 +35,13 @@ public enum SEType {
 /// </summary>
 public class AudioManager : MonoBehaviour {
 
-	static AudioManager myManager;      //自分のリファレンス
+	static AudioManager myManager;									//自分のリファレンス
 
-	static AudioMixer mixer;			//ミキサー
-	static AudioClip[] SEclips;			//再生用リスト
-	static AudioClip[] BGMclips;		//再生用リスト
-	static AudioSource nowPlayingBGM;   //現在再生されているBGM
-	static BGMType latestPlayBGMType;	//再生されているBGMの種類
+	static AudioMixerGroup[] mixerGroups = new AudioMixerGroup[2];	//ミキサーのグループ [0]SE [1]BGM
+	static AudioClip[] SEclips;										//再生用リスト
+	static AudioClip[] BGMclips;									//再生用リスト
+	static AudioSource nowPlayingBGM;								//現在再生されているBGM
+	static BGMType latestPlayBGMType;                               //再生されているBGMの種類
 
 	void Awake() {
 
@@ -58,7 +65,10 @@ public class AudioManager : MonoBehaviour {
 	public void Initiarize() {
 
 		//LoadMixer
-		mixer = Resources.Load<AudioMixer>("Sounds/NewAudioMixer");
+		var mixer = Resources.Load<AudioMixer>("Sounds/NewAudioMixer");
+		mixerGroups[0] = mixer.FindMatchingGroups("SE")[0];
+		mixerGroups[1] = mixer.FindMatchingGroups("BGM")[0];
+
 
 		#region LoadBGM
 		BGMclips = new AudioClip[System.Enum.GetNames(typeof(BGMType)).Length];
@@ -82,10 +92,26 @@ public class AudioManager : MonoBehaviour {
 		src.transform.SetParent(myManager.transform);
 		src.clip = SEclips[(int)type];
 		src.volume = vol;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("SE")[0];
+		src.outputAudioMixerGroup = mixerGroups[0];
 		src.Play();
 
 		Destroy(src.gameObject, SEclips[(int)type].length + 0.1f);
+	}
+
+	/// <summary>
+	/// SEを再生するが、編集可能
+	/// </summary>
+	/// <param name="type">SEの内容</param>
+	/// <returns>再生されているSE</returns>
+	public static AudioSource Play(SEType type) {
+
+		AudioSource src = new GameObject("[Audio SE - " + type.ToString() + " - Editable]").AddComponent<AudioSource>();
+		src.transform.SetParent(myManager.transform);
+		src.clip = SEclips[(int)type];
+		src.outputAudioMixerGroup = mixerGroups[0];
+		src.Play();
+
+		return src;
 	}
 
 	/// <summary>
@@ -102,7 +128,7 @@ public class AudioManager : MonoBehaviour {
 		src.transform.SetParent(myManager.transform);
 		src.clip = BGMclips[(int)type];
 		src.volume = vol;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("BGM")[0];
+		src.outputAudioMixerGroup = mixerGroups[1];
 		src.Play();
 
 		if(isLoop) {
@@ -133,7 +159,7 @@ public class AudioManager : MonoBehaviour {
 		src.transform.SetParent(myManager.transform);
 		src.clip = BGMclips[(int)type];
 		src.volume = 0;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("BGM")[0];
+		src.outputAudioMixerGroup = mixerGroups[1];
 		src.Play();
 
 		//フェードイン

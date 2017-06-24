@@ -88,8 +88,10 @@ public class InputManager : MonoBehaviour {
 	/// <returns>一つでもあればtrue</returns>
 	public static bool GetInputAll(out Vector2?[] pos) {
 
+		//初期化
 		pos = new Vector2?[10];
 
+		//エディタ上かどうか判定
 		if(Application.isEditor) {
 			if(Input.GetMouseButton(0)) {
 				pos[0] = Input.mousePosition;
@@ -103,12 +105,12 @@ public class InputManager : MonoBehaviour {
 
 		}
 		else {
+			//入力されているTouchをすべて回す
 			foreach(var t in Input.touches) {
 				pos[t.fingerId] = t.position;
 				isTouchArray[t.fingerId] = true;
 			}
 		}
-
 
 		bool ans = false;
 		foreach(var p in pos) {
