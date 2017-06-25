@@ -8,12 +8,11 @@ public enum ParticleType {
 	TentacleStay,
 	HotBlock,
 	ColdBlock,
-	CreateContainer,
-	ContainerEdge,
-	StageEffect,
+	ContainerCreate,
+	ContainerMove,
+	AmbientEffect,
 	BombBlast,
 	BombDestrtoy,
-
 }
 
 /// <summary>
@@ -74,7 +73,7 @@ public class ParticleManager : MonoBehaviour {
 		ps.name = "[Particle - " + type.ToString() + " ]";
 		ps.transform.SetParent(myManager.transform);
 		ps.transform.position = position;
-		ps.transform.rotation = rotation;
+		ps.transform.rotation = particleArray[(int)type].transform.rotation * rotation;
 
 		ps.Play();
 
@@ -96,7 +95,7 @@ public class ParticleManager : MonoBehaviour {
 		ps.name = "[Particle - " + type.ToString() + " - Editable]";
 		ps.transform.SetParent(myManager.transform);
 		ps.transform.position = position;
-		ps.transform.rotation = rotation;
+		ps.transform.rotation = particleArray[(int)type].transform.rotation * rotation;
 
 		ps.Play();
 
