@@ -83,14 +83,14 @@ public class AudioManager : MonoBehaviour {
 		BGMclips = new AudioClip[System.Enum.GetNames(typeof(BGMType)).Length];
 		for (int i = 0; i < BGMclips.Length; i++) {
 			//enumで定義された名前と同じものを読み込む
-			BGMclips[i] = Resources.Load<AudioClip>("Sounds/BGM/" + System.Enum.GetNames(typeof(BGMType))[i]);
+			BGMclips[i] = Resources.Load<AudioClip>("Sounds/BGM/" + System.Enum.GetName(typeof(BGMType), i));
 		}
 
         //SE読み込み
         SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
 		for (int i = 0; i < SEclips.Length; i++) {
 			//enumで定義された名前と同じものを読み込む
-			SEclips[i] = Resources.Load<AudioClip>("Sounds/SE/" + System.Enum.GetNames(typeof(SEType))[i]);
+			SEclips[i] = Resources.Load<AudioClip>("Sounds/SE/" + System.Enum.GetName(typeof(SEType), i));
 		}
 
 	}
