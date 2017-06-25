@@ -8,7 +8,7 @@ public class SumCanvasAnimation : MonoBehaviour
     static RectTransform rectTransform;//トランスフォーム(CanvasDoor)
     static private string nextSceneName;    //移動したいシーンの名前
 
-    static bool created = false;
+    static bool isMovingScene = false;
 
 
     void Awake ()
@@ -42,8 +42,10 @@ public class SumCanvasAnimation : MonoBehaviour
         yield return new WaitForSeconds(2.2f);
         Debug.Log("OpenAnimComplete");
 
+		//移動許可
+		isMovingScene = false;
 
-        Destroy(gameObject);
+		Destroy(gameObject);
         Debug.Log("消えろ");
     }
 
@@ -54,7 +56,11 @@ public class SumCanvasAnimation : MonoBehaviour
     /// <param name="sceneName">移動したいシーンの名前</param>
     public static void MoveScene(string sceneName)
     {
-        nextSceneName = sceneName;
+		//シーン移動中は移動禁止
+		if (isMovingScene) return;
+		isMovingScene = true;
+
+		nextSceneName = sceneName;
         //自分を生成してアニメーションする
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Door_b");
         SumCanvasAnimation anim = Instantiate(prefab).GetComponent<SumCanvasAnimation>();
