@@ -87,6 +87,8 @@ public class GameManager : MonoBehaviour {
 		StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
+		Timebar.StopTimer();
+		Timebar.Decpersec = 1;
 		//Timebar.time = stageData.time;
 		Timebar.time = limitTime;
 

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class StageInformation : MonoBehaviour
 {
-    private static string nextSceneName;
+    //private static string nextSceneName;
 
     void Start()
     {
@@ -19,7 +19,7 @@ public class StageInformation : MonoBehaviour
 
         Debug.Log(string.Format("新たなるステージ、{0}",SteageName));
         GameManager.SetStageData(int.Parse(SteageLabel[0]),int.Parse(SteageLabel[1]));
-        SceneManager.LoadScene(nextSceneName);
+        SumCanvasAnimation.MoveScene("GameScene");
 
     }
     void Update()

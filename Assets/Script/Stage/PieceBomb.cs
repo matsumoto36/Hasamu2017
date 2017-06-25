@@ -12,14 +12,16 @@ public class PieceBomb : Piece, IExecutable
 	Piece[] p = new Piece[4];
 
 	Text timeViewer;
-    Canvas canvas;
+	RectTransform canvasRect;
 
 	void Start() {
 
+		canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
-		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
+		timeViewer.transform.SetParent(canvasRect.transform);
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
-        canvas = FindObjectOfType<Canvas>();
+        //canvas = FindObjectOfType<Canvas>();
 	}
 
     public void Update()
@@ -55,7 +57,6 @@ public class PieceBomb : Piece, IExecutable
             }
         }
 
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
         Vector2 timePos;
 
         //表示時間の移動
