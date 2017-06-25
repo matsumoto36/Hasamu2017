@@ -39,7 +39,14 @@ public class Gameview : MonoBehaviour {
 
         Text t = GameObject.Find("Remaining").GetComponent<Text>();
         t.text = Timebar.time.ToString();
-    }
+
+		//ステージセレクトボタンを押したとき
+		Button select = GameObject.Find("Stage select2").GetComponent<Button>();
+		select.onClick.AddListener(() => {
+			AudioManager.FadeOut(2);
+			SumCanvasAnimation.MoveScene("StageSelectScene");
+		});
+	}
 
     /// <summary>
     /// ゲームオーバーした時に実行される
@@ -53,12 +60,26 @@ public class Gameview : MonoBehaviour {
 
         GameObject viewObject = Instantiate(viewPrefab, target);
 
-        //gv_textの内容を変更（サンプル）
-        //Text t = GameObject.Find("gv_text").GetComponent<Text>();
-        //t.text = "aaaaa";
+		//リトライボタンを押したとき
+		Button retry = GameObject.Find("Retry").GetComponent<Button>();
+		retry.onClick.AddListener(() => {
+			AudioManager.FadeOut(2);
+			SumCanvasAnimation.MoveScene("GameScene");
+		});
 
-        //タイムをもってくる
-        //Timebar.time.ToString()
-    }
+		//ステージセレクトボタンを押したとき
+		Button select = GameObject.Find("Stage select1").GetComponent<Button>();
+		select.onClick.AddListener(() => {
+			AudioManager.FadeOut(2);
+			SumCanvasAnimation.MoveScene("StageSelectScene");
+		});
+
+		//gv_textの内容を変更（サンプル）
+		//Text t = GameObject.Find("gv_text").GetComponent<Text>();
+		//t.text = "aaaaa";
+
+		//タイムをもってくる
+		//Timebar.time.ToString()
+	}
 
 }

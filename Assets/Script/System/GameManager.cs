@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour {
 
 	public Text stageText;
 
+	bool isBGMSwitch = false;
+
 	void Start() {
 
 		//後にほかのところから割り当てられる
@@ -117,32 +119,82 @@ public class GameManager : MonoBehaviour {
 		Timebar.StartTimer();
 	}
 
+
+	void Update() {
+
+		if (Input.GetKeyDown(KeyCode.B)) {
+			DebugPause();
+		}
+
+		//のこり10秒以下になったらBGM変更
+		if (!isBGMSwitch && Timebar.time <= 10) {
+			isBGMSwitch = true;
+
+			AudioManager.FadeOut(1);
+			AudioManager.FadeIn(1, BGMType.Game2, 1, true);
+		}
+
+	}
+
+	/// <summary>
+	/// 急がせるときに呼ばれる
+	/// </summary>
+	public static void HurryUp() {
+
+
+	}
+
 	/// <summary>
 	/// ゲームオーバー
 	/// </summary>
 	public static void GameOver() {
 		Debug.Log("GameOver");
 
+		myManager.StartCoroutine(myManager.GameOverAnim());
+	}
+	IEnumerator GameOverAnim() {
+
+		//BGMフェード
+		AudioManager.FadeOut(2.0f);
+
 		//爆発
 		AudioManager.Play(SEType.BombExplosion);
-		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5); 
+		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5);
+
+		yield return new WaitForSeconds(2.0f);
+
+		//BGM再生
+		AudioManager.Play(BGMType.Over, 1, true);
+
+		//画面表示
+		Gameview.GameOverView();
+
 	}
+
 
 	/// <summary>
 	/// ゲームクリア
 	/// </summary>
 	public static void GameClear() {
 		Debug.Log("GameClear");
+
+		myManager.StartCoroutine(myManager.GameClearAnim());
 	}
+	IEnumerator GameClearAnim() {
 
+		//BGMフェード
+		AudioManager.FadeOut(2.0f);
 
+		yield return new WaitForSeconds(2.0f);
+
+		//BGM再生
+		AudioManager.Play(BGMType.Clear, 1, true);
+
+		//画面表示
+		Gameview.GameClearView();
+
+	}
 	public static void DebugPause() {
 		Debug.Break();
-	}
-
-	void Update() {
-		if(Input.GetKeyDown(KeyCode.B)) {
-			DebugPause();
-		}
 	}
 }

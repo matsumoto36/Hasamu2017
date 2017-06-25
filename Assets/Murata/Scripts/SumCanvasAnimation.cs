@@ -28,14 +28,19 @@ public class SumCanvasAnimation : MonoBehaviour
     /// <returns></returns>
     IEnumerator MoveSceneAnimation()
     {
-        //閉じるアニメーション
-        DoorClose(nextSceneName);
+
+		//読み込み開始
+		var op = SceneManager.LoadSceneAsync(nextSceneName);
+		op.allowSceneActivation = false;
+
+		//閉じるアニメーション
+		DoorClose(nextSceneName);
         yield return new WaitForSeconds(2.0f);
         Debug.Log("CloseAnimComplete");
 
-        //ステージ移動
-        SceneManager.LoadScene(nextSceneName);
-        Debug.Log("SceneMoved : " + nextSceneName);
+		//ステージ移動
+		op.allowSceneActivation = true;
+		Debug.Log("SceneMoved : " + nextSceneName);
 
         //開くアニメーション
         DoorOpen(nextSceneName);

@@ -44,7 +44,10 @@ public class AudioManager : MonoBehaviour {
 	static AudioClip[] SEclips;										//再生用リスト
 	static AudioClip[] BGMclips;									//再生用リスト
 	static AudioSource nowPlayingBGM;								//現在再生されているBGM
-	static BGMType latestPlayBGMType;                               //再生されているBGMの種類
+	static BGMType latestPlayBGMType = BGMType.Title;               //再生されているBGMの種類
+
+	static Coroutine fadeInCol;                                     //フェードインのコルーチン
+	static AudioSource fadeInAudio;
 
 	/// <summary>
 	/// 一回生成
@@ -164,39 +167,39 @@ public class AudioManager : MonoBehaviour {
 	/// <param name="vol">新しいBGMの大きさ</param>
 	/// <param name="isLoop">新しいBGMがループするか</param>
 	public static void FadeIn(float fadeTime, BGMType type, float vol, bool isLoop) {
-		myManager.StartCoroutine(FadeInAnim(fadeTime, type, vol, isLoop));
+		fadeInCol = myManager.StartCoroutine(FadeInAnim(fadeTime, type, vol, isLoop));
 	}
 	static IEnumerator FadeInAnim(float fadeTime, BGMType type, float vol, bool isLoop) {
 
 		//初期設定
-		AudioSource src = new GameObject("[Audio BGM - " + type.ToString() + " - FadeIn ]").AddComponent<AudioSource>();
-		src.transform.SetParent(myManager.transform);
-		src.clip = BGMclips[(int)type];
-		src.volume = 0;
-		src.outputAudioMixerGroup = mixerGroups[1];
-		src.Play();
+		fadeInAudio = new GameObject("[Audio BGM - " + type.ToString() + " - FadeIn ]").AddComponent<AudioSource>();
+		fadeInAudio.transform.SetParent(myManager.transform);
+		fadeInAudio.clip = BGMclips[(int)type];
+		fadeInAudio.volume = 0;
+		fadeInAudio.outputAudioMixerGroup = mixerGroups[1];
+		fadeInAudio.Play();
 
 		//フェードイン
 		float t = 0;
 		while(t < 1.0f) {
 			t += Time.deltaTime / fadeTime;
-			src.volume = t * vol;
+			fadeInAudio.volume = t * vol;
 			yield return null;
 		}
 
-		src.volume = vol;
-		src.name = "[Audio BGM - " + type.ToString() + "]";
+		fadeInAudio.volume = vol;
+		fadeInAudio.name = "[Audio BGM - " + type.ToString() + "]";
 
 		if(nowPlayingBGM) Destroy(nowPlayingBGM.gameObject);
 
 		if(isLoop) {
-			src.loop = true;
+			fadeInAudio.loop = true;
 		}
 		else {
-			Destroy(src.gameObject, BGMclips[(int)type].length + 0.1f);
+			Destroy(fadeInAudio.gameObject, BGMclips[(int)type].length + 0.1f);
 		}
 
-		nowPlayingBGM = src;
+		nowPlayingBGM = fadeInAudio;
 	}
 
 	/// <summary>
@@ -210,6 +213,14 @@ public class AudioManager : MonoBehaviour {
 
 		//初期設定
 		AudioSource src = nowPlayingBGM;
+
+		//フェードイン中にフェードアウトが呼ばれた場合
+		if (!src) {
+			//フェードイン処理停止
+			myManager.StopCoroutine(fadeInCol);
+			src = fadeInAudio;
+		}
+
 		src.name = "[Audio BGM - " + latestPlayBGMType.ToString() + " - FadeOut ]";
 		nowPlayingBGM = null;
 

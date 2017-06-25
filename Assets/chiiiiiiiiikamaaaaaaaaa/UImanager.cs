@@ -19,7 +19,10 @@ public class UImanager : MonoBehaviour {
 		{
 			Pause.Pauser();
 		}
-		
+
+		//BGMフェードアウト
+		AudioManager.FadeOut(2);
+
 		SumCanvasAnimation.MoveScene("GameScene");
 	}
 

@@ -52,9 +52,6 @@ public class Hole : MonoBehaviour {
 
 		//演出等
 		StartCoroutine(DestroyBombAnim(piece));
-
-		//ステージクリア
-		GameManager.GameClear();
 	}
 
 	IEnumerator DestroyBombAnim(Piece piece) {
@@ -81,5 +78,8 @@ public class Hole : MonoBehaviour {
 		Timebar.StopTimer();
 
 		Destroy(piece.gameObject);
+
+		//ステージクリア
+		GameManager.GameClear();
 	}
 }
