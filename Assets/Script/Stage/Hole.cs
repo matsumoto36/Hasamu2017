@@ -59,6 +59,8 @@ public class Hole : MonoBehaviour {
 
 	IEnumerator DestroyBombAnim(Piece piece) {
 
+		//落ちる音再生
+		AudioManager.Play(SEType.Hole, 1.0f);
 
 		float rotSpeed = 5;
 		float timeSpeed = 1;
@@ -71,6 +73,10 @@ public class Hole : MonoBehaviour {
 
 			yield return null;
 		}
+
+
+		//カウントダウンストップ
+		Timebar.StopTimer();
 
 		Destroy(piece.gameObject);
 	}

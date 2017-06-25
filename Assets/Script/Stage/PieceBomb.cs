@@ -9,12 +9,13 @@ using UnityEngine;
 public class PieceBomb : Piece, IExecutable
 {
 
-    Piece[] p = new Piece[4];
+	Piece[] p = new Piece[4];
 
 	Text timeViewer;
     Canvas canvas;
 
 	void Start() {
+
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
 		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
@@ -97,4 +98,6 @@ public class PieceBomb : Piece, IExecutable
                 break;
         }
     }
+
+
 }

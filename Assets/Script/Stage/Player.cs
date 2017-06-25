@@ -267,8 +267,16 @@ public class Player : MonoBehaviour {
 			int id;
 			id = StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition()).id;
 			currenTentacle[0].SetAnimatonState(Tentacle.GetHoldState(id));
+			if (id == 5) AudioManager.Play(SEType.Hot, 0.5f);
+			if (id == 6) AudioManager.Play(SEType.Cold, 0.5f);
+
 			id = StageGenerator.GetPiece(currenTentacle[1].GetTargetPosition()).id;
 			currenTentacle[1].SetAnimatonState(Tentacle.GetHoldState(id));
+			if (id == 5) AudioManager.Play(SEType.Hot, 0.5f);
+			if (id == 6) AudioManager.Play(SEType.Cold, 0.5f);
+
+			//音再生
+			AudioManager.Play(SEType.HasamuNormal);
 		}
 	}
 

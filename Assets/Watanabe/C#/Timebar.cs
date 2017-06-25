@@ -5,19 +5,33 @@ using UnityEngine.SceneManagement;
 
 public class Timebar : MonoBehaviour
 {
+	static Timebar myTimebar;
+
     //private bool m_isVisibleTimer = false;//フレームカウント
     static bool isStarted = false;
 
     public static float time = 60;//初期値を60
     public static float Decpersec = 1;
 
-    void Start()
-    {
-        //float型からint型へCastし、String型に変換して表示
-        //GetComponent<Text>().text = ((int)time).ToString();
+	int counter = 0;
+	float waitTime = 0;
+	float[,] timerIntervalArray = new float[4, 2] { //タイマーを鳴らす間隔
+		{ 2.0f, 30.0f },
+		{ 1.0f, 10.0f },
+		{ 0.5f, 5.0f },
+		{ 0.2f, 0.0f },
+	};
 
-        //Invoke("DelayMethod", 3.0f);//フレームカウント
-    }
+	void Start()
+    {
+		myTimebar = this;
+
+		//float型からint型へCastし、String型に変換して表示
+		//GetComponent<Text>().text = ((int)time).ToString();
+
+		//Invoke("DelayMethod", 3.0f);//フレームカウント
+
+	}
     void Update()
     {
         //isStartedがfalseならタイムを減らさない
@@ -34,20 +48,31 @@ public class Timebar : MonoBehaviour
             isStarted = false;
             TimeUp();
         }
-        //GetComponent<Text>().text = ((int)time).ToString();
-    }
+		//GetComponent<Text>().text = ((int)time).ToString();
+
+		//音関係
+		waitTime += Time.deltaTime;
+		if(waitTime > timerIntervalArray[counter, 0]) {
+			waitTime -= timerIntervalArray[counter, 0];
+
+			//再生
+			AudioManager.Play(SEType.BombTimer, 0.7f);
+			//再生間隔を減らすか
+			if (timerIntervalArray[counter, 1] > time) counter++;
+		}
+	}
 
     public static void StartTimer()
     {
         isStarted = true;
 
-    }
+	}
 
     public static void StopTimer()
     {
         isStarted = false;
 
-    }
+	}
     void TimeUp()
     {
         Debug.Log("Timeup!!");
@@ -55,9 +80,10 @@ public class Timebar : MonoBehaviour
 		//ゲームオーバーを呼ぶ
 		GameManager.GameOver();
 	}
-    //}
-    //public void DelayMethod()//フレームカウント
-    //{
-    //    m_isVisibleTimer = true;
-    //}
+
+	//}
+	//public void DelayMethod()//フレームカウント
+	//{
+	//    m_isVisibleTimer = true;
+	//}
 }

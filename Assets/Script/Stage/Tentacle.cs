@@ -28,10 +28,18 @@ public class Tentacle : MonoBehaviour {
 	Animator bodyAnimation;
 	Coroutine execCol;
 	SpriteRenderer maskRenderer;
-	
+
+	AudioSource moveAudio;          //移動中の音
+	float volBound = 0.03f;			//ボリュームを上げるかどうかの閾値
+	float volAdd = 0.05f;			//上がる量
+
 	void Awake() {
 		id = idCounter >= 128 ? idCounter = 1 : idCounter = idCounter * 2;
 		bodyAnimation = Instantiate(ResourceLoader.GetPrefab(R_PrefabType.TentacleBody)).GetComponent<Animator>();
+
+		//移動中の音を再生
+		moveAudio = AudioManager.Play(SEType.TentacleMove);
+		moveAudio.volume = 0;
 	}
 
 	void Start () {
@@ -63,7 +71,6 @@ public class Tentacle : MonoBehaviour {
 
 		//生えるアニメーション
 		execCol = StartCoroutine(CreateAnim());
-
 	}
 
 	/// <summary>
@@ -164,6 +171,18 @@ public class Tentacle : MonoBehaviour {
 
 		//デバッグ表示
 		//Debug.DrawLine(position, position + vVec + angleVec);
+
+		float moveLength = (position + vVec + angleVec - (Vector2)transform.position).magnitude;
+
+		//音量調整
+		float newVolume = moveAudio.volume;
+		if (moveLength > volBound) {
+			newVolume += volAdd;
+		} else {
+			newVolume -= volAdd;
+		}
+
+		moveAudio.volume = Mathf.Clamp(newVolume, 0, 0.7f);
 
 		#region 移動
 
@@ -281,6 +300,10 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	/// <returns></returns>
 	IEnumerator CreateAnim() {
+
+		//SEを再生
+		AudioManager.Play(SEType.TentacleSpawn, 1);
+
 		//自分の位置からオフセットまで移動
 		float time = 0.2f;
 		float t = 0;
@@ -303,6 +326,12 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	/// <returns></returns>
 	IEnumerator ReturnAnim() {
+
+		//移動中の音を削除
+		Destroy(moveAudio.gameObject);
+
+		//SEを再生
+		AudioManager.Play(SEType.TentacleSpawn, 1);
 
 		float time = 1f;
 		float t = 0;

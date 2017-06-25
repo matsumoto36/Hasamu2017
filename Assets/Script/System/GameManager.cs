@@ -8,8 +8,9 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour {
 
+	static GameManager myManager;
 	static int stageLevel, stageNum;	//生成するステージ
-	static float limitTime = 100;           //制限時間
+	static float limitTime = 40;           //制限時間
 
 	public Text stageText;
 
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour {
 		//後にほかのところから割り当てられる
 		stageLevel = stageNum = 1;
 
-		AudioManager.Play(BGMType.Title, 1, true);
+		myManager = this;
 
 		GameInitiarize();
 	}
@@ -91,6 +92,9 @@ public class GameManager : MonoBehaviour {
 
 		//テキストの設定
 		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
+
+		//音楽を再生
+		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
 	}
 
 	/// <summary>
@@ -116,6 +120,10 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	public static void GameOver() {
 		Debug.Log("GameOver");
+
+		//爆発
+		AudioManager.Play(SEType.BombExplosion);
+
 	}
 
 	/// <summary>
@@ -123,10 +131,6 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	public static void GameClear() {
 		Debug.Log("GameClear");
-
-		//カウントダウンストップ
-
-
 	}
 
 
