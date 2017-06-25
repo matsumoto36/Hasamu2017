@@ -74,6 +74,8 @@ public class Hole : MonoBehaviour {
 			yield return null;
 		}
 
+		//パーティクル再生
+		ParticleManager.PlayOneShot(ParticleType.BombDestrtoy, transform.position, Quaternion.identity, 5);
 
 		//カウントダウンストップ
 		Timebar.StopTimer();

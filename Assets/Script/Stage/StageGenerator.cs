@@ -58,6 +58,9 @@ public class StageGenerator : MonoBehaviour {
 		//画像をロード
 		if(isGanerate) p.SpriteLoad();
 
+		//ブロック更新
+		//PiecesUpdate(position);
+
 		return p;
 	}
 
@@ -88,6 +91,9 @@ public class StageGenerator : MonoBehaviour {
 	/// <param name="piece">ピース</param>
 	public static void RemovePiece(Piece piece) {
 		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
+
+		//ブロック更新
+		PiecesUpdate(piece.position);
 	}
 
 	/// <summary>
@@ -124,10 +130,37 @@ public class StageGenerator : MonoBehaviour {
 		generatedStage[arrY, arrX] = piece;
 		generatedStage[(int)piece.position.y, (int)piece.position.x] = null;
 
+		//移動前ブロック更新
+		PiecesUpdate(piece.position);
+
 		piece.position = new Vector2(arrX, arrY);
+
+		//移動後ブロック更新
+		PiecesUpdate(piece.position);
 
 		//Debug.Log("Moved" + newPos);
 		return true;
+	}
+
+	/// <summary>
+	/// 特定の座標の周りを更新する
+	/// </summary>
+	static void PiecesUpdate(Vector2 position) {
+
+		Vector2[] checkPos = new Vector2[] {
+				new Vector2(position.x, position.y + 1),
+				new Vector2(position.x - 1, position.y),
+				new Vector2(position.x, position.y - 1),
+				new Vector2(position.x + 1, position.y),
+			};
+
+		for (int i = 0; i < 4; i++) {
+			//触手ならパーティクル更新
+			Piece p = GetPiece(checkPos[i]);
+			if (p && p.id == 1) {
+				((PieceTentacle)p).UpdateParticle();
+			}
+		}
 	}
 
 	/// <summary>
@@ -185,10 +218,16 @@ public class StageGenerator : MonoBehaviour {
 		backGround.transform.position = center;
 		backGround.transform.localScale = center * 3f;
 
+		//環境エフェクト再生
+		var ps = ParticleManager.Play(ParticleType.AmbientEffect, center, Quaternion.identity);
+		var s = ps.shape;
+		s.box = center * 3f;
+
 		Vector3 cameraPos = center;
 		cameraPos.x += 0.6f;
 		cameraPos.z = -1;
 
+		//カメラ位置設定
 		Camera.main.transform.position = cameraPos;
 	}
 

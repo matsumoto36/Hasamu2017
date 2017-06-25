@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ParticleType {
+
 	TentacleSpawn,
 	TentacleSpawnEdge,
 	TentacleStay,
@@ -71,9 +72,8 @@ public class ParticleManager : MonoBehaviour {
 		//生成・位置合わせ
 		var ps = Instantiate(particleArray[(int)type]);
 		ps.name = "[Particle - " + type.ToString() + " ]";
-		ps.transform.SetParent(myManager.transform);
 		ps.transform.position = position;
-		ps.transform.rotation = particleArray[(int)type].transform.rotation * rotation;
+		ps.transform.rotation = rotation;
 
 		ps.Play();
 
@@ -93,13 +93,21 @@ public class ParticleManager : MonoBehaviour {
 		//生成・位置合わせ
 		var ps = Instantiate(particleArray[(int)type]);
 		ps.name = "[Particle - " + type.ToString() + " - Editable]";
-		ps.transform.SetParent(myManager.transform);
 		ps.transform.position = position;
-		ps.transform.rotation = particleArray[(int)type].transform.rotation * rotation;
+		ps.transform.rotation = rotation;
 
 		ps.Play();
 
 		//返却
 		return ps;
+	}
+
+	/// <summary>
+	/// パーティクルを違和感なく削除
+	/// </summary>
+	/// <param name="ps">対象</param>
+	public static void ParticleDestroy(ParticleSystem ps) {
+		ps.Stop(true);
+		Destroy(ps.gameObject, 5.0f);
 	}
 }

@@ -71,6 +71,14 @@ public class Tentacle : MonoBehaviour {
 
 		//生えるアニメーション
 		execCol = StartCoroutine(CreateAnim());
+
+		//生えるパーティクル
+		ParticleManager.PlayOneShot(
+			ParticleType.TentacleSpawn,
+			position + angle / 2,
+			Quaternion.Euler(0, 0, Mathf.Atan2(angle.y, angle.x) * Mathf.Rad2Deg - 90),
+			5);
+
 	}
 
 	/// <summary>

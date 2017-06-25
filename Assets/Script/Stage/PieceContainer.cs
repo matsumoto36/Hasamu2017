@@ -12,6 +12,23 @@ public class PieceContainer : MonoBehaviour {
 
 	public Vector2 containerSize;   //当たり判定用
 
+	ParticleSystem createParticle;
+	ParticleSystem moveParticle;
+
+	private void Start() {
+		//コンテナ作成パーティクル再生
+		createParticle = ParticleManager.Play(ParticleType.ContainerCreate, transform.position, Quaternion.identity);
+		createParticle.transform.SetParent(transform);
+		var s = createParticle.shape;
+		s.box = containerSize;
+
+		//移動用パーティクル再生
+		moveParticle = ParticleManager.Play(ParticleType.ContainerMove, transform.position, Quaternion.identity);
+		moveParticle.transform.SetParent(transform);
+		s = moveParticle.shape;
+		s.box = containerSize;
+	}
+
 	/// <summary>
 	/// 新しくコンテナーを作成
 	/// </summary>
@@ -177,6 +194,16 @@ public class PieceContainer : MonoBehaviour {
 			p.transform.SetParent(null);
 			p.GetComponent<Collider2D>().enabled = true;
 			p.transform.position = p.position;
+		}
+
+		//パーティクル開放
+		if (createParticle) {
+			createParticle.transform.SetParent(null);
+			ParticleManager.ParticleDestroy(createParticle);
+		}
+		if (moveParticle) {
+			moveParticle.transform.SetParent(null);
+			ParticleManager.ParticleDestroy(moveParticle);
 		}
 
 		Debug.Log("DestroyContainer");

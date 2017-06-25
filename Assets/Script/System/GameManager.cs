@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour {
 
 		//爆発
 		AudioManager.Play(SEType.BombExplosion);
-
+		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5); 
 	}
 
 	/// <summary>
