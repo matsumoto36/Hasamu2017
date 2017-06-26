@@ -180,9 +180,17 @@ public class StageGenerator : MonoBehaviour {
 		for(int i = 0;i < height;i++) {
 			for(int j = 0;j < width;j++) {
 
-				int id = map[height - (i + 1), j];
-                Debug.Log(id);
 				Vector2 position = new Vector2(j, i);
+
+				//背景画像を設置
+				SpriteRenderer back = new GameObject("[BackGroundChip]").AddComponent<SpriteRenderer>();
+				back.transform.position = position;
+				back.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[0];
+				back.sortingOrder = 0;
+
+				int id = map[height - (i + 1), j];
+                //Debug.Log(id);
+				
 				//idが0以上のときはピースを作成
 				if(id >= 0) {
 					CreatePiece(position, id);
@@ -213,8 +221,8 @@ public class StageGenerator : MonoBehaviour {
 		//背景画像を設置
 		SpriteRenderer backGround = new GameObject("[BackGround]").AddComponent<SpriteRenderer>();
 		backGround.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
-		backGround.color = new Color32(101, 173, 174, 255);
-		backGround.sortingOrder = 0;
+		backGround.color = new Color(0.2f, 0.2f, 0.2f, 1);
+		backGround.sortingOrder = -1;
 		backGround.transform.position = center;
 		backGround.transform.localScale = center * 3f;
 
