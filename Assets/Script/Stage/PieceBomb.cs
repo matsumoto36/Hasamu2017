@@ -97,4 +97,9 @@ public class PieceBomb : Piece, IExecutable
                 break;
         }
     }
+
+    private void OnDestroy()
+    {
+        Destroy(timeViewer);
+    }
 }
