@@ -200,6 +200,9 @@ public class GameManager : MonoBehaviour {
 		//入力禁止
 		InputManager.isFreeze = true;
 
+		//落ちるアニメーション
+		yield return new WaitForSeconds(1.0f);
+
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
 
