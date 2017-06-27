@@ -150,14 +150,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 急がせるときに呼ばれる
-	/// </summary>
-	public static void HurryUp() {
-
-
-	}
-
-	/// <summary>
 	/// ゲームオーバー
 	/// </summary>
 	public static void GameOver() {
@@ -173,6 +165,9 @@ public class GameManager : MonoBehaviour {
 		//爆発
 		AudioManager.Play(SEType.BombExplosion);
 		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5);
+		PieceBomb pb = FindObjectOfType<PieceBomb>();
+		StageGenerator.RemovePiece(pb);
+		Destroy(pb.gameObject);
 
 		yield return new WaitForSeconds(2.0f);
 

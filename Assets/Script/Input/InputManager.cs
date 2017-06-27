@@ -8,6 +8,8 @@ using UnityEngine.UI;
 /// </summary>
 public class InputManager : MonoBehaviour {
 
+	public static bool isFreeze = false;	//入力をフリーズするか
+
 	static InputManager myManager;			//自分のリファレンス
 	static Transform debug_FalseTouch;			//エディタ用マルチタップ位置
 	static bool[] isTouchArray = new bool[10];  //タッチしているか保持
@@ -26,6 +28,8 @@ public class InputManager : MonoBehaviour {
 	public static bool GetInput(out Vector2 pos) {
 
 		pos = new Vector2();
+
+		if(isFreeze) return false;
 
 		if(Application.isEditor) {
 			if(!Input.GetMouseButton(0)) return false;
@@ -51,6 +55,8 @@ public class InputManager : MonoBehaviour {
 	public static bool GetInputDouble(out Vector2[] pos) {
 
 		pos = new Vector2[2];
+
+		if(isFreeze) return false;
 
 		if(Application.isEditor) {
 			if(!Input.GetMouseButton(0)) return false;
@@ -80,6 +86,8 @@ public class InputManager : MonoBehaviour {
 
 		//初期化
 		pos = new Vector2?[10];
+
+		if(isFreeze) return false;
 
 		//エディタ上かどうか判定
 		if(Application.isEditor) {

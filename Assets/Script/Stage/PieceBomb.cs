@@ -121,9 +121,12 @@ public class PieceBomb : Piece, IExecutable
 		Timebar.StopTimer();
 
 		Destroy(gameObject);
-		Destroy(timeViewer.gameObject);
 
 		//ステージクリア
 		GameManager.GameClear();
+	}
+
+	void OnDestroy() {
+		Destroy(timeViewer.gameObject);
 	}
 }
