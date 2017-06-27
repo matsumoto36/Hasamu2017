@@ -35,14 +35,14 @@ public class Hole : MonoBehaviour {
 
 		Piece p = StageGenerator.GetPiece(checkPosition);
 		if(p && p.id == 3) {
-			DestroyBomb(p);
+			DestroyBomb((PieceBomb)p);
 		}
 	}
 
 	/// <summary>
 	/// 爆弾を落とした時の処理
 	/// </summary>
-	void DestroyBomb(Piece piece) {
+	void DestroyBomb(PieceBomb piece) {
 
 		//コンテナを破壊
 		Player.DestroyCurrentContainer();
@@ -51,35 +51,8 @@ public class Hole : MonoBehaviour {
 		StageGenerator.RemovePiece(piece);
 
 		//演出等
-		StartCoroutine(DestroyBombAnim(piece));
+		StartCoroutine(piece.DestroyBombAnim());
 	}
 
-	IEnumerator DestroyBombAnim(Piece piece) {
 
-		//落ちる音再生
-		AudioManager.Play(SEType.Hole, 1.0f);
-
-		float rotSpeed = 5;
-		float timeSpeed = 1;
-		float t = 0;
-		while(t < 1.0f) {
-			t += Time.deltaTime * timeSpeed;
-
-			piece.transform.localScale = new Vector3(1, 1, 1) * (1 - t);
-			piece.transform.rotation *= Quaternion.AngleAxis(rotSpeed, Vector3.forward);
-
-			yield return null;
-		}
-
-		//パーティクル再生
-		ParticleManager.PlayOneShot(ParticleType.BombDestrtoy, transform.position, Quaternion.identity, 5);
-
-		//カウントダウンストップ
-		Timebar.StopTimer();
-
-		Destroy(piece.gameObject);
-
-		//ステージクリア
-		GameManager.GameClear();
-	}
 }
