@@ -21,7 +21,8 @@ public class PieceBomb : Piece, IExecutable
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
 		timeViewer.transform.SetParent(canvasRect.transform);
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
-        //canvas = FindObjectOfType<Canvas>();
+		timeViewer.font = Resources.Load<Font>("Font/Makinas");
+		//canvas = FindObjectOfType<Canvas>();
 	}
 
     public void Update()
@@ -68,7 +69,6 @@ public class PieceBomb : Piece, IExecutable
 		timeViewer.text = string.Format("{0:000.0}", Timebar.time);
         timeViewer.rectTransform.localScale = Vector3.one;
         timeViewer.rectTransform.sizeDelta = new Vector2(200, 60);
-        timeViewer.font= Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         timeViewer.fontSize = 50;
         timeViewer.alignment = TextAnchor.MiddleCenter;
     }

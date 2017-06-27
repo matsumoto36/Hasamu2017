@@ -51,7 +51,7 @@ public class SumCanvasAnimation : MonoBehaviour
 		isMovingScene = false;
 
 		Destroy(gameObject);
-        Debug.Log("消えろ");
+        Debug.Log("End Move");
     }
 
 
