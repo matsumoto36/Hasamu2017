@@ -112,6 +112,9 @@ public class GameManager : MonoBehaviour {
 
 		//音楽を再生
 		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
+
+		//入力の許可
+		InputManager.isFreeze = false;
 	}
 
 	/// <summary>
@@ -159,12 +162,16 @@ public class GameManager : MonoBehaviour {
 	}
 	IEnumerator GameOverAnim() {
 
+		//入力禁止
+		InputManager.isFreeze = true;
+
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
 
 		//爆発
 		AudioManager.Play(SEType.BombExplosion);
 		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5);
+		Player.DestroyCurrentContainer();
 		PieceBomb pb = FindObjectOfType<PieceBomb>();
 		StageGenerator.RemovePiece(pb);
 		Destroy(pb.gameObject);
@@ -189,6 +196,9 @@ public class GameManager : MonoBehaviour {
 		myManager.StartCoroutine(myManager.GameClearAnim());
 	}
 	IEnumerator GameClearAnim() {
+
+		//入力禁止
+		InputManager.isFreeze = true;
 
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
