@@ -71,13 +71,26 @@ public class GameManager : MonoBehaviour {
 		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
 		//};
 
+		//int[,] map = new int[,] {
+		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
+		//	{1, 0, 0, 3, 0, 0, 0, 0, 1},
+		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
+		//	{1, 0, 4, 5, 6, 0, -1, 0, 1},
+		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
+		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
+		//};
+
+		//14:9
 		int[,] map = new int[,] {
-			{1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 0, 0, 3, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 4, 5, 6, 0, -1, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+			{1, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 4, 5, 6, 0, -1, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
 		Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
@@ -99,6 +112,9 @@ public class GameManager : MonoBehaviour {
 
 		//音楽を再生
 		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
+
+		//入力の許可
+		InputManager.isFreeze = false;
 	}
 
 	/// <summary>
@@ -137,14 +153,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 急がせるときに呼ばれる
-	/// </summary>
-	public static void HurryUp() {
-
-
-	}
-
-	/// <summary>
 	/// ゲームオーバー
 	/// </summary>
 	public static void GameOver() {
@@ -154,12 +162,19 @@ public class GameManager : MonoBehaviour {
 	}
 	IEnumerator GameOverAnim() {
 
+		//入力禁止
+		InputManager.isFreeze = true;
+
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
 
 		//爆発
 		AudioManager.Play(SEType.BombExplosion);
 		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5);
+		Player.DestroyCurrentContainer();
+		PieceBomb pb = FindObjectOfType<PieceBomb>();
+		StageGenerator.RemovePiece(pb);
+		Destroy(pb.gameObject);
 
 		yield return new WaitForSeconds(2.0f);
 
@@ -181,6 +196,12 @@ public class GameManager : MonoBehaviour {
 		myManager.StartCoroutine(myManager.GameClearAnim());
 	}
 	IEnumerator GameClearAnim() {
+
+		//入力禁止
+		InputManager.isFreeze = true;
+
+		//落ちるアニメーション
+		yield return new WaitForSeconds(1.0f);
 
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);

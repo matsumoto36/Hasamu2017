@@ -20,10 +20,24 @@ public class UImanager : MonoBehaviour {
 			Pause.Pauser();
 		}
 
+
 		//BGMフェードアウト
 		AudioManager.FadeOut(2);
 
 		SumCanvasAnimation.MoveScene("GameScene");
+	}
+	public void BackButton()
+	{
+		if (_isPause == false)
+		{
+			Pause.Pauser();
+		}
+
+
+		//BGMフェードアウト
+		AudioManager.FadeOut(2);
+
+		SumCanvasAnimation.MoveScene("StageSelectScene");
 	}
 
 

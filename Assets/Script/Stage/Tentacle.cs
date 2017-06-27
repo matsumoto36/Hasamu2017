@@ -24,7 +24,11 @@ public class Tentacle : MonoBehaviour {
 	public Vector2 position;        //本体のいる位置
 	public int length = 0;          //本体の長さ
 
-	int id;							//触手のid
+	int id;                         //触手のid
+	public TentacleAnimState state
+	{
+		get; private set;
+	}
 	Animator bodyAnimation;
 	Coroutine execCol;
 	SpriteRenderer maskRenderer;
@@ -40,6 +44,8 @@ public class Tentacle : MonoBehaviour {
 		//移動中の音を再生
 		moveAudio = AudioManager.Play(SEType.TentacleMove);
 		moveAudio.volume = 0;
+
+		state = TentacleAnimState.Move;
 	}
 
 	void Start () {
@@ -273,6 +279,7 @@ public class Tentacle : MonoBehaviour {
 	public void SetAnimatonState(TentacleAnimState state) {
 		bodyAnimation.speed = 1;
 		bodyAnimation.SetInteger("anim_int", (int)state);
+		this.state = state;
 	}
 
 	/// <summary>
