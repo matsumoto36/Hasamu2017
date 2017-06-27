@@ -8,17 +8,20 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour {
 
+	static GameManager myManager;
 	static int stageLevel, stageNum;	//生成するステージ
-	static float limitTime = 100;           //制限時間
+	static float limitTime = 40;           //制限時間
 
 	public Text stageText;
+
+	bool isBGMSwitch = false;
 
 	void Start() {
 
 		//後にほかのところから割り当てられる
 		stageLevel = stageNum = 1;
 
-		AudioManager.Play(BGMType.Title, 1, true);
+		myManager = this;
 
 		GameInitiarize();
 	}
@@ -86,11 +89,16 @@ public class GameManager : MonoBehaviour {
 		StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
+		Timebar.StopTimer();
+		Timebar.Decpersec = 1;
 		//Timebar.time = stageData.time;
 		Timebar.time = limitTime;
 
 		//テキストの設定
 		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
+
+		//音楽を再生
+		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
 	}
 
 	/// <summary>
@@ -111,12 +119,58 @@ public class GameManager : MonoBehaviour {
 		Timebar.StartTimer();
 	}
 
+
+	void Update() {
+
+		if (Input.GetKeyDown(KeyCode.B)) {
+			DebugPause();
+		}
+
+		//のこり10秒以下になったらBGM変更
+		if (!isBGMSwitch && Timebar.time <= 10) {
+			isBGMSwitch = true;
+
+			AudioManager.FadeOut(1);
+			AudioManager.FadeIn(1, BGMType.Game2, 1, true);
+		}
+
+	}
+
+	/// <summary>
+	/// 急がせるときに呼ばれる
+	/// </summary>
+	public static void HurryUp() {
+
+
+	}
+
 	/// <summary>
 	/// ゲームオーバー
 	/// </summary>
 	public static void GameOver() {
 		Debug.Log("GameOver");
+
+		myManager.StartCoroutine(myManager.GameOverAnim());
 	}
+	IEnumerator GameOverAnim() {
+
+		//BGMフェード
+		AudioManager.FadeOut(2.0f);
+
+		//爆発
+		AudioManager.Play(SEType.BombExplosion);
+		ParticleManager.PlayOneShot(ParticleType.BombBlast, FindObjectOfType<PieceBomb>().transform.position, Quaternion.identity, 5);
+
+		yield return new WaitForSeconds(2.0f);
+
+		//BGM再生
+		AudioManager.Play(BGMType.Over, 1, true);
+
+		//画面表示
+		Gameview.GameOverView();
+
+	}
+
 
 	/// <summary>
 	/// ゲームクリア
@@ -124,19 +178,23 @@ public class GameManager : MonoBehaviour {
 	public static void GameClear() {
 		Debug.Log("GameClear");
 
-		//カウントダウンストップ
+		myManager.StartCoroutine(myManager.GameClearAnim());
+	}
+	IEnumerator GameClearAnim() {
 
+		//BGMフェード
+		AudioManager.FadeOut(2.0f);
+
+		yield return new WaitForSeconds(2.0f);
+
+		//BGM再生
+		AudioManager.Play(BGMType.Clear, 1, true);
+
+		//画面表示
+		Gameview.GameClearView();
 
 	}
-
-
 	public static void DebugPause() {
 		Debug.Break();
-	}
-
-	void Update() {
-		if(Input.GetKeyDown(KeyCode.B)) {
-			DebugPause();
-		}
 	}
 }

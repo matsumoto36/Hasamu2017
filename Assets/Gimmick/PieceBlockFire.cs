@@ -6,9 +6,15 @@ public class PieceBlockFire : Piece, IExecutable
 {
 
     Piece[] p = new Piece[4];
+	ParticleSystem ps;
 
-    // Update is called once per frame
-    void Update ()
+	void Start() {
+		ps = ParticleManager.Play(ParticleType.HotBlock, transform.position, Quaternion.identity);
+		ps.transform.SetParent(transform);
+	}
+
+	// Update is called once per frame
+	void Update ()
     {
 		//取得用位置を格納
 		Vector2[] checkPos = new Vector2[] {
@@ -55,6 +61,9 @@ public class PieceBlockFire : Piece, IExecutable
         {
             case 6:
 				//id = 4;
+				//パーティクル削除
+				ps.transform.SetParent(null);
+				ParticleManager.ParticleDestroy(ps);
 				StageGenerator.EditPieceID(this, 4);
                 break;
             default:

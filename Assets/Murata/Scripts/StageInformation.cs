@@ -5,26 +5,38 @@ using UnityEngine.SceneManagement;
 
 public class StageInformation : MonoBehaviour
 {
-    private static string nextSceneName;
+	//private static string nextSceneName;
+	bool isMovingScene = false;
 
-    void Start()
-    {
+	void Start() {
+		//BGM再生
+		AudioManager.FadeIn(2, BGMType.Select, 1, true);
+	}
 
-    }
+	public void StageName(string SteageName) {
+		if(isMovingScene) return;
+		isMovingScene = true;
 
-    public void StageName(string SteageName)
-    {
-        
-        string[] SteageLabel = SteageName.Split('-');  
+		string[] SteageLabel = SteageName.Split('-');
 
-        Debug.Log(string.Format("新たなるステージ、{0}",SteageName));
-        GameManager.SetStageData(int.Parse(SteageLabel[0]),int.Parse(SteageLabel[1]));
-        SceneManager.LoadScene(nextSceneName);
+		Debug.Log(string.Format("新たなるステージ、{0}", SteageName));
+		GameManager.SetStageData(int.Parse(SteageLabel[0]), int.Parse(SteageLabel[1]));
 
-    }
-    void Update()
-    {
+		//BGMフェードアウト
+		AudioManager.FadeOut(2);
 
-    }
+		SumCanvasAnimation.MoveScene("GameScene");
+
+	}
+
+	/// <summary>
+	/// タイトル画面に移動
+	/// </summary>
+	public void GotoTitle() {
+
+		//BGMフェードアウト
+		AudioManager.FadeOut(2);
+
+		SumCanvasAnimation.MoveScene("TitleScene");
+	}
 }
-

@@ -9,8 +9,11 @@ using UnityEngine.Audio;
 /// </summary>
 public enum BGMType {
 	Title,
-	Main,
-	Clear
+    Select,
+	Game,
+	Game2,
+	Over,
+	Clear,
 }
 
 /// <summary>
@@ -18,9 +21,16 @@ public enum BGMType {
 /// 以下は例
 /// </summary>
 public enum SEType {
-	Tap,
-	Button,
-	Stat
+	TentacleSpawn,
+	TentacleMove,
+	TentacleReturn,
+	BombTimer,
+	BombExplosion,
+	HasamuNormal,
+	Hot,
+	Cold,
+    Hole,
+    Button,
 }
 
 /// <summary>
@@ -28,20 +38,29 @@ public enum SEType {
 /// </summary>
 public class AudioManager : MonoBehaviour {
 
-	static AudioManager myManager;      //自分のリファレンス
+	static AudioManager myManager;									//自分のリファレンス
 
-	static AudioMixer mixer;			//ミキサー
-	static AudioClip[] SEclips;			//再生用リスト
-	static AudioClip[] BGMclips;		//再生用リスト
-	static AudioSource nowPlayingBGM;   //現在再生されているBGM
-	static BGMType latestPlayBGMType;	//再生されているBGMの種類
+	static AudioMixerGroup[] mixerGroups = new AudioMixerGroup[2];	//ミキサーのグループ [0]SE [1]BGM
+	static AudioClip[] SEclips;										//再生用リスト
+	static AudioClip[] BGMclips;									//再生用リスト
+	static AudioSource nowPlayingBGM;								//現在再生されているBGM
+	static BGMType latestPlayBGMType = BGMType.Title;               //再生されているBGMの種類
+
+	static Coroutine fadeInCol;                                     //フェードインのコルーチン
+	static AudioSource fadeInAudio;
+
+	/// <summary>
+	/// 一回生成
+	/// </summary>
+	static AudioManager() {
+		new GameObject("[AudioManager]").AddComponent<AudioManager>();
+	}
 
 	void Awake() {
 
 		//シングルトン
 		if(!myManager) {
 			myManager = this;
-			transform.SetParent(null);
 			DontDestroyOnLoad(gameObject);
 
 			Initiarize();
@@ -58,17 +77,25 @@ public class AudioManager : MonoBehaviour {
 	public void Initiarize() {
 
 		//LoadMixer
-		mixer = Resources.Load<AudioMixer>("Sounds/NewAudioMixer");
+		var mixer = Resources.Load<AudioMixer>("Sounds/NewAudioMixer");
+		mixerGroups[0] = mixer.FindMatchingGroups("SE")[0];
+		mixerGroups[1] = mixer.FindMatchingGroups("BGM")[0];
 
-		#region LoadBGM
+
+        //BGM読み込み
 		BGMclips = new AudioClip[System.Enum.GetNames(typeof(BGMType)).Length];
-		BGMclips[0] = Resources.Load<AudioClip>("Sounds/BGM/retrogamecenter");
-		#endregion
+		for (int i = 0; i < BGMclips.Length; i++) {
+			//enumで定義された名前と同じものを読み込む
+			BGMclips[i] = Resources.Load<AudioClip>("Sounds/BGM/" + System.Enum.GetName(typeof(BGMType), i));
+		}
 
-		#region LoadSE
-		SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
-		SEclips[0] = Resources.Load<AudioClip>("Sounds/SE/button35");
-		#endregion
+        //SE読み込み
+        SEclips = new AudioClip[System.Enum.GetNames(typeof(SEType)).Length];
+		for (int i = 0; i < SEclips.Length; i++) {
+			//enumで定義された名前と同じものを読み込む
+			SEclips[i] = Resources.Load<AudioClip>("Sounds/SE/" + System.Enum.GetName(typeof(SEType), i));
+		}
+
 	}
 
 	/// <summary>
@@ -82,10 +109,26 @@ public class AudioManager : MonoBehaviour {
 		src.transform.SetParent(myManager.transform);
 		src.clip = SEclips[(int)type];
 		src.volume = vol;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("SE")[0];
+		src.outputAudioMixerGroup = mixerGroups[0];
+		src.Play();
+        
+		Destroy(src.gameObject, SEclips[(int)type].length + 0.1f);
+	}
+
+	/// <summary>
+	/// SEを再生するが、編集可能
+	/// </summary>
+	/// <param name="type">SEの内容</param>
+	/// <returns>再生されているSE</returns>
+	public static AudioSource Play(SEType type) {
+
+		AudioSource src = new GameObject("[Audio SE - " + type.ToString() + " - Editable]").AddComponent<AudioSource>();
+		src.transform.SetParent(myManager.transform);
+		src.clip = SEclips[(int)type];
+		src.outputAudioMixerGroup = mixerGroups[0];
 		src.Play();
 
-		Destroy(src.gameObject, SEclips[(int)type].length + 0.1f);
+		return src;
 	}
 
 	/// <summary>
@@ -102,7 +145,7 @@ public class AudioManager : MonoBehaviour {
 		src.transform.SetParent(myManager.transform);
 		src.clip = BGMclips[(int)type];
 		src.volume = vol;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("BGM")[0];
+		src.outputAudioMixerGroup = mixerGroups[1];
 		src.Play();
 
 		if(isLoop) {
@@ -124,39 +167,39 @@ public class AudioManager : MonoBehaviour {
 	/// <param name="vol">新しいBGMの大きさ</param>
 	/// <param name="isLoop">新しいBGMがループするか</param>
 	public static void FadeIn(float fadeTime, BGMType type, float vol, bool isLoop) {
-		myManager.StartCoroutine(FadeInAnim(fadeTime, type, vol, isLoop));
+		fadeInCol = myManager.StartCoroutine(FadeInAnim(fadeTime, type, vol, isLoop));
 	}
 	static IEnumerator FadeInAnim(float fadeTime, BGMType type, float vol, bool isLoop) {
 
 		//初期設定
-		AudioSource src = new GameObject("[Audio BGM - " + type.ToString() + " - FadeIn ]").AddComponent<AudioSource>();
-		src.transform.SetParent(myManager.transform);
-		src.clip = BGMclips[(int)type];
-		src.volume = 0;
-		src.outputAudioMixerGroup = mixer.FindMatchingGroups("BGM")[0];
-		src.Play();
+		fadeInAudio = new GameObject("[Audio BGM - " + type.ToString() + " - FadeIn ]").AddComponent<AudioSource>();
+		fadeInAudio.transform.SetParent(myManager.transform);
+		fadeInAudio.clip = BGMclips[(int)type];
+		fadeInAudio.volume = 0;
+		fadeInAudio.outputAudioMixerGroup = mixerGroups[1];
+		fadeInAudio.Play();
 
 		//フェードイン
 		float t = 0;
 		while(t < 1.0f) {
 			t += Time.deltaTime / fadeTime;
-			src.volume = t * vol;
+			fadeInAudio.volume = t * vol;
 			yield return null;
 		}
 
-		src.volume = vol;
-		src.name = "[Audio BGM - " + type.ToString() + "]";
+		fadeInAudio.volume = vol;
+		fadeInAudio.name = "[Audio BGM - " + type.ToString() + "]";
 
 		if(nowPlayingBGM) Destroy(nowPlayingBGM.gameObject);
 
 		if(isLoop) {
-			src.loop = true;
+			fadeInAudio.loop = true;
 		}
 		else {
-			Destroy(src.gameObject, BGMclips[(int)type].length + 0.1f);
+			Destroy(fadeInAudio.gameObject, BGMclips[(int)type].length + 0.1f);
 		}
 
-		nowPlayingBGM = src;
+		nowPlayingBGM = fadeInAudio;
 	}
 
 	/// <summary>
@@ -170,6 +213,14 @@ public class AudioManager : MonoBehaviour {
 
 		//初期設定
 		AudioSource src = nowPlayingBGM;
+
+		//フェードイン中にフェードアウトが呼ばれた場合
+		if (!src) {
+			//フェードイン処理停止
+			myManager.StopCoroutine(fadeInCol);
+			src = fadeInAudio;
+		}
+
 		src.name = "[Audio BGM - " + latestPlayBGMType.ToString() + " - FadeOut ]";
 		nowPlayingBGM = null;
 

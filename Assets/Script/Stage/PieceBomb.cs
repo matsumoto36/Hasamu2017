@@ -9,16 +9,20 @@ using UnityEngine;
 public class PieceBomb : Piece, IExecutable
 {
 
-    Piece[] p = new Piece[4];
+	Piece[] p = new Piece[4];
 
 	Text timeViewer;
-    Canvas canvas;
+	RectTransform canvasRect;
 
 	void Start() {
+
+		canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
-		timeViewer.transform.SetParent(GameObject.Find("Canvas").transform);
+		timeViewer.transform.SetParent(canvasRect.transform);
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
-        canvas = FindObjectOfType<Canvas>();
+		timeViewer.font = Resources.Load<Font>("Font/Makinas");
+		//canvas = FindObjectOfType<Canvas>();
 	}
 
     public void Update()
@@ -54,7 +58,6 @@ public class PieceBomb : Piece, IExecutable
             }
         }
 
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
         Vector2 timePos;
 
         //表示時間の移動
@@ -66,7 +69,6 @@ public class PieceBomb : Piece, IExecutable
 		timeViewer.text = string.Format("{0:000.0}", Timebar.time);
         timeViewer.rectTransform.localScale = Vector3.one;
         timeViewer.rectTransform.sizeDelta = new Vector2(200, 60);
-        timeViewer.font= Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         timeViewer.fontSize = 50;
         timeViewer.alignment = TextAnchor.MiddleCenter;
     }
@@ -98,8 +100,12 @@ public class PieceBomb : Piece, IExecutable
         }
     }
 
+<<<<<<< HEAD
     private void OnDestroy()
     {
         Destroy(timeViewer);
     }
+=======
+
+>>>>>>> 941a7a9fcab1b5454c2e3deda5d45ed39620cb5b
 }
