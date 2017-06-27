@@ -22,7 +22,7 @@ public class Tentacle : MonoBehaviour {
 
 	public Vector2 angle;			//生える向き
 	public Vector2 position;        //本体のいる位置
-	public int length = 0;          //本体の長さ
+	float length = 0;				//本体の長さ
 
 	int id;                         //触手のid
 	public TentacleAnimState state
@@ -228,8 +228,8 @@ public class Tentacle : MonoBehaviour {
 	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
 		Vector2 ans = position + angle * length;
-		ans.x = (int)ans.x;
-		ans.y = (int)ans.y;
+		ans.x = (int)(ans.x + 0.5);
+		ans.y = (int)(ans.y + 0.5);
 
 		return ans;
 	}
@@ -239,12 +239,12 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	void SetLength() {
 
-		int l = 0;
+		float l = 0;
 
 		Vector2 v = (Vector2)transform.position - position;
 		float rad = Vector2.Angle(angle, v) * Mathf.Deg2Rad;
 
-		l = (int)(v.magnitude * Mathf.Cos(rad)) + 1;
+		l = (v.magnitude * Mathf.Cos(rad)) + 1;
 
 		if(l < 0) return;
 
