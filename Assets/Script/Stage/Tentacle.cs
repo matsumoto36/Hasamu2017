@@ -8,7 +8,7 @@ public enum TentacleAnimState {
 	Hold_Normal,
 	Hold_Hot,
 	Hold_Cold,
-	Return = 5,
+	Return,
 }
 
 /// <summary>
@@ -16,7 +16,7 @@ public enum TentacleAnimState {
 /// </summary>
 public class Tentacle : MonoBehaviour {
 
-	const float BODY_OFFSET = 3.25f;//
+	const float BODY_OFFSET = 7f;//
 	static int idCounter = 1;		//idを割り当てる用
 
 
@@ -278,7 +278,7 @@ public class Tentacle : MonoBehaviour {
 	/// <param name="state"></param>
 	public void SetAnimatonState(TentacleAnimState state) {
 		bodyAnimation.speed = 1;
-		bodyAnimation.SetInteger("anim_int", (int)state);
+		bodyAnimation.SetInteger("animState", (int)state);
 		this.state = state;
 	}
 

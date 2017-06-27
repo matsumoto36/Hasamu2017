@@ -128,6 +128,6 @@ public class PieceBomb : Piece, IExecutable
 	}
 
 	void OnDestroy() {
-		Destroy(timeViewer.gameObject);
+		if(timeViewer) Destroy(timeViewer.gameObject);
 	}
 }

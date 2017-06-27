@@ -1078,7 +1078,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 187d4ef49b9c8664180c3fc0c4bab1e3, type: 2}
   - {fileID: 2100000, guid: 45353333d83ea1d409261e130294ec59, type: 2}
   prefabSrc:
-  - {fileID: 1601928441505028, guid: ad0b472dbe5e2684bac33278628e81b0, type: 2}
+  - {fileID: 1370463283513294, guid: f6080965405672d4287a861771758fb3, type: 2}
 --- !u!1 &778580921
 GameObject:
   m_ObjectHideFlags: 0
@@ -2094,7 +2094,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 161.3}
+  m_AnchoredPosition: {x: 0, y: 161.29999}
   m_SizeDelta: {x: -20, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1877700770

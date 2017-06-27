@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
 	static int stageLevel, stageNum;	//生成するステージ
-	static float limitTime = 40;           //制限時間
+	static float limitTime = 9999;           //制限時間
 
 	public Text stageText;
 
