@@ -100,5 +100,12 @@ public class PieceBomb : Piece, IExecutable
         }
     }
 
+<<<<<<< HEAD
+    private void OnDestroy()
+    {
+        Destroy(timeViewer);
+    }
+=======
 
+>>>>>>> 941a7a9fcab1b5454c2e3deda5d45ed39620cb5b
 }
