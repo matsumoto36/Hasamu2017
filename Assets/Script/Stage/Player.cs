@@ -7,8 +7,9 @@ using UnityEngine;
 /// </summary>
 public class Player : MonoBehaviour {
 
-	public static bool[] isAction = new bool[2];			//触手を操作しているか
-	public static Vector2?[] pos;							//タッチした座標
+	static Player myPlayer;
+	bool[] isAction = new bool[2];			//触手を操作しているか
+	Vector2?[] pos;							//タッチした座標
 
 	public static PieceContainer currentPieceContainer;		//はさんでいるオブジェクト
 
@@ -22,6 +23,8 @@ public class Player : MonoBehaviour {
 	bool[] isFailAnimPlay = new bool[2];
 
 	void Start() {
+		myPlayer = this;
+
 		//生成失敗時の画像読み込み
 		failCreateSprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[15];
 	}
@@ -371,6 +374,13 @@ public class Player : MonoBehaviour {
 
 		currentPieceContainer.DestroyContainer();
 		currentPieceContainer = null;
+
+		for(int i = 0; i < 2; i++) {
+			Tentacle t = myPlayer.currenTentacle[i];
+			if(t && t.state != TentacleAnimState.Return) {
+				myPlayer.currenTentacle[i].SetAnimatonState(TentacleAnimState.Move);
+			}
+		}
 	}
 
 	/// <summary>
