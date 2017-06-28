@@ -220,11 +220,11 @@ public class StageGenerator : MonoBehaviour {
 
 		//背景画像を設置
 		SpriteRenderer backGround = new GameObject("[BackGround]").AddComponent<SpriteRenderer>();
-		backGround.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.Mask);
-		backGround.color = new Color(0.2f, 0.2f, 0.2f, 1);
+		backGround.sprite = ResourceLoader.GetOtherSprite(R_OtherSpriteType.BackGround);
+		backGround.color = new Color(0.6f, 0.6f, 0.6f, 1);
 		backGround.sortingOrder = -1;
 		backGround.transform.position = center;
-		backGround.transform.localScale = center * 3f;
+		backGround.transform.localScale = new Vector2(1, 1) * 1.5f;
 
 		//環境エフェクト再生
 		var ps = ParticleManager.Play(ParticleType.AmbientEffect, center, Quaternion.identity);

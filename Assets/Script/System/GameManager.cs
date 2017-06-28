@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
 	static int stageLevel, stageNum;	//生成するステージ
-	static float limitTime = 40;           //制限時間
+	static float limitTime = 9999;           //制限時間
 
 	public Text stageText;
 
@@ -199,6 +199,9 @@ public class GameManager : MonoBehaviour {
 
 		//入力禁止
 		InputManager.isFreeze = true;
+
+		//落ちるアニメーション
+		yield return new WaitForSeconds(1.0f);
 
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);

@@ -93,8 +93,14 @@ public class PieceBomb : Piece, IExecutable
 
 	public IEnumerator DestroyBombAnim() {
 
+		//ステージクリア
+		GameManager.GameClear();
+
 		//落ちる音再生
 		AudioManager.Play(SEType.Hole, 1.0f);
+
+		//カウントダウンストップ
+		Timebar.StopTimer();
 
 		float rotSpeed = 5;
 		float timeSpeed = 1;
@@ -117,16 +123,11 @@ public class PieceBomb : Piece, IExecutable
 		//パーティクル再生
 		ParticleManager.PlayOneShot(ParticleType.BombDestrtoy, transform.position, Quaternion.identity, 5);
 
-		//カウントダウンストップ
-		Timebar.StopTimer();
-
 		Destroy(gameObject);
 
-		//ステージクリア
-		GameManager.GameClear();
 	}
 
 	void OnDestroy() {
-		Destroy(timeViewer.gameObject);
+		if(timeViewer) Destroy(timeViewer.gameObject);
 	}
 }

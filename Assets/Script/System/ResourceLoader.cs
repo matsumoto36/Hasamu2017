@@ -11,6 +11,7 @@ public enum R_MapChipType {
 public enum R_OtherSpriteType {
 	Tentacle,
 	Mask,
+	BackGround,
 }
 
 public enum R_MaterialType {

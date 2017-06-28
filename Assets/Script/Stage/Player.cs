@@ -73,19 +73,6 @@ public class Player : MonoBehaviour {
 
 			//二つある場合限定
 			if(currenTentacle[0] && currenTentacle[1]) {
-				//はさむアクション
-				TentacleAction();
-
-				//はさみ続けられるかチェック
-				if(!CheckRetentionContainer()) {
-
-					//アニメーション変更
-					currenTentacle[0].SetAnimatonState(TentacleAnimState.Move);
-					currenTentacle[1].SetAnimatonState(TentacleAnimState.Move);
-
-					//コンテナを破壊
-					DestroyCurrentContainer();
-				}
 
 				//触手が何か挟んでいる場合は、横移動を平均値に
 				if(currentPieceContainer) {
@@ -108,7 +95,22 @@ public class Player : MonoBehaviour {
 					//合わせる座標
 					pos[0] += v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
 					pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
+
+					//はさみ続けられるかチェック
+					if(!CheckRetentionContainer()) {
+
+						//アニメーション変更
+						currenTentacle[0].SetAnimatonState(TentacleAnimState.Move);
+						currenTentacle[1].SetAnimatonState(TentacleAnimState.Move);
+
+						//コンテナを破壊
+						DestroyCurrentContainer();
+					}
 				}
+
+
+				//はさむアクション
+				TentacleAction();
 
 				//移動
 				currenTentacle[0].Move((Vector2)pos[0]);
@@ -116,6 +118,7 @@ public class Player : MonoBehaviour {
 
 				//はさんでいるものがあれば移動
 				MoveContainer();
+
 			}
 			else {
 				//移動
@@ -261,7 +264,12 @@ public class Player : MonoBehaviour {
 		//触手の間のピースを取得
 		Piece[] btwp = GetPiecesBetweenTentacle();
 		if(btwp != null && !currentPieceContainer) {
+		//	if(!(StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition()) ||
+		//		StageGenerator.GetPiece(currenTentacle[1].GetTargetPosition()))) return;
+
 			Debug.Log("はさめたよ");
+
+
 
 			//はさむ
 			currentPieceContainer = PieceContainer.CreateContainer(btwp);
@@ -320,7 +328,7 @@ public class Player : MonoBehaviour {
 
 		if(!currentPieceContainer) return false;
 
-		Vector2 maxLength = new Vector2(0.4f, 0.2f);
+		Vector2 maxLength = new Vector2(0.2f, 0.5f);
 		bool ans = true;
 
 		for(int i = 0;i < 2;i++) {
