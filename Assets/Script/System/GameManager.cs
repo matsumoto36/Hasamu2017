@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour {
         //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
 
 		//ステージの生成
-		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+		StageData stageData = CsvLoader.StageLoad(1, 1);
 		StageGenerator.GenerateMap(stageData.mapData);
 		//StageGenerator.GenerateMap(map);
 

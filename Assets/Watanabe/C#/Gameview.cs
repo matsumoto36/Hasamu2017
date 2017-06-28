@@ -41,7 +41,7 @@ public class Gameview : MonoBehaviour {
         t.text = Timebar.time.ToString();
 
 		//ステージセレクトボタンを押したとき
-		Button select = GameObject.Find("Stage select2").GetComponent<Button>();
+		Button select = GameObject.Find("Stage select").GetComponent<Button>();
 		select.onClick.AddListener(() => {
 			AudioManager.FadeOut(2);
 			SumCanvasAnimation.MoveScene("StageSelectScene");
@@ -68,7 +68,7 @@ public class Gameview : MonoBehaviour {
 		});
 
 		//ステージセレクトボタンを押したとき
-		Button select = GameObject.Find("Stage select1").GetComponent<Button>();
+		Button select = GameObject.Find("Stage select").GetComponent<Button>();
 		select.onClick.AddListener(() => {
 			AudioManager.FadeOut(2);
 			SumCanvasAnimation.MoveScene("StageSelectScene");
