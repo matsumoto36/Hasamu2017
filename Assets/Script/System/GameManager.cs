@@ -93,19 +93,18 @@ public class GameManager : MonoBehaviour {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
 
-		Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
+		//Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
         //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
 
 		//ステージの生成
-		//StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
-		//StageGenerator.GenerateMap(stageData.mapData);
+		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+		StageGenerator.GenerateMap(stageData.mapData);
 		StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
 		Timebar.StopTimer();
 		Timebar.Decpersec = 1;
-		//Timebar.time = stageData.time;
-		Timebar.time = limitTime;
+		Timebar.time = stageData.time;
 
 		//テキストの設定
 		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
