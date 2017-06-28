@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Tentacle_1
   m_EditorClassIdentifier: 
   m_ApiVersion: 3
-  m_Sprite: {fileID: 21300000, guid: 811600e99de07f14c8aae1fb5a138ddf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7a306e3e8ee7e2b4f8b88e865b5ef657, type: 3}
   m_SharedMesh: {fileID: 43089039808901710}
   m_SharedMaterials:
   - {fileID: 21860201661657676}
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 811600e99de07f14c8aae1fb5a138ddf, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7a306e3e8ee7e2b4f8b88e865b5ef657, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
