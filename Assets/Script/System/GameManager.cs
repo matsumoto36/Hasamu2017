@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour {
 		//制限時間の設定
 		Timebar.StopTimer();
 		Timebar.Decpersec = 1;
-		Timebar.time = stageData.time;
+		Timebar.time = limitTime;
 
 		//テキストの設定
 		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
