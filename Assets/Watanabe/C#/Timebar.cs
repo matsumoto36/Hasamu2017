@@ -51,7 +51,7 @@ public class Timebar : MonoBehaviour
 		//GetComponent<Text>().text = ((int)time).ToString();
 
 		//音関係
-		waitTime += Time.deltaTime;
+		waitTime += Time.deltaTime * Decpersec;
 		if(waitTime > timerIntervalArray[counter, 0]) {
 			waitTime -= timerIntervalArray[counter, 0];
 

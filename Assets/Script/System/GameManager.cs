@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
 	void Start() {
 
 		//後にほかのところから割り当てられる
-		stageLevel = stageNum = 1;
+		//stageLevel = stageNum = 1;
 
 		myManager = this;
 
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour {
 		//制限時間の設定
 		Timebar.StopTimer();
 		Timebar.Decpersec = 1;
-		Timebar.time = limitTime;
+		Timebar.time = stageData.time;
 
 		//テキストの設定
 		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);

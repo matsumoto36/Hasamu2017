@@ -16,8 +16,8 @@ public class PieceContainer : MonoBehaviour {
 	ParticleSystem moveParticle;
 
 	//デバッグ用
-	Vector2[] cy;
-	Vector2[] cx;
+	List<Vector2> cy;
+	List<Vector2> cx;
 
 	private void Start() {
 		//コンテナ作成パーティクル再生
@@ -82,21 +82,46 @@ public class PieceContainer : MonoBehaviour {
 	public void Move(Vector2 newPosition, bool isXDir) {
 
 		//角の座標を定義
-		Vector2[] checkPosition = new Vector2[4];
-		checkPosition[0] = new Vector2(-containerSize.x, -containerSize.y);
-		checkPosition[1] = new Vector2(-containerSize.x, containerSize.y - 0.1f);
-		checkPosition[2] = new Vector2(containerSize.x - 0.1f, -containerSize.y);
-		checkPosition[3] = new Vector2(containerSize.x - 0.1f, containerSize.y - 0.1f);
+		//Vector2[] checkPosition = new Vector2[4];
+		//checkPosition[0] = new Vector2(-containerSize.x, -containerSize.y);
+		//checkPosition[1] = new Vector2(-containerSize.x, containerSize.y - 0.1f);
+		//checkPosition[2] = new Vector2(containerSize.x - 0.1f, -containerSize.y);
+		//checkPosition[3] = new Vector2(containerSize.x - 0.1f, containerSize.y - 0.1f);
 
-		for(int i = 0; i < 4; i++) {
-			checkPosition[i] *= 0.5f;
-			checkPosition[i] += newPosition + new Vector2(0.5f, 0.5f);
-			checkPosition[i].x = (int)checkPosition[i].x;
-			checkPosition[i].y = (int)checkPosition[i].y;
-		}
+		//for(int i = 0; i < 4; i++) {
+		//	checkPosition[i] *= 0.5f;
+		//	checkPosition[i] += newPosition + new Vector2(0.5f, 0.5f);
+		//	checkPosition[i].x = (int)checkPosition[i].x;
+		//	checkPosition[i].y = (int)checkPosition[i].y;
+		//}
 
 
+		///* x方向の制限 */
+		////bool isXCollision = false;
+		//for(int i = 0; i < 2; i++) {
 
+		//	cx = new List<Vector2>();
+
+		//	//チェック用の位置を保存
+		//	Vector2 startPosition = checkPosition[i];
+		//	Vector2 endPosition = checkPosition[i + 2];
+
+		//	//同じ座標も対応するので+1する
+		//	endPosition.x += 1;
+
+		//	do {
+		//		cx.Add(startPosition);
+		//		Piece p = StageGenerator.GetPiece(startPosition);
+		//		if(p && !p.noCollision) {
+		//			//isXCollision = true;
+		//			break;
+		//		}
+
+		//		startPosition.x += 1;
+		//	} while(startPosition != endPosition);
+
+		//	//if(isXCollision) break;
+		//}
 
 
 
@@ -154,20 +179,19 @@ public class PieceContainer : MonoBehaviour {
 			checkPosition[i].x = (int)checkPosition[i].x;
 			checkPosition[i].y = (int)checkPosition[i].y;
 
-			Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
+			//Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
 		}
 
 		Gizmos.color = Color.blue;
 
 		//if(isX) {
-		//	if(cx != null) {
-		//		for(int i = 0; i < 4; i++) {
-		//			cx[i].x = (int)cx[i].x;
-		//			cx[i].y = (int)cx[i].y;
-		//			Gizmos.DrawWireCube(cx[i], Vector3.one);
-		//		}
-		//	}
-				
+		if(cx != null) {
+			for(int i = 0; i < cx.Count; i++) {
+				Vector2 ccx = new Vector2((int)cx[i].x, (int)cx[i].y);
+				Gizmos.DrawWireCube(ccx, Vector3.one);
+			}
+		}
+
 		//} else {
 		//	if(cy != null) {
 		//		for(int i = 0; i < 4; i++) {
