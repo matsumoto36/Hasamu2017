@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TitleController : MonoBehaviour {
-
 	bool isMovingScene = false;
 	bool isFreeze = true;
 
@@ -29,7 +28,8 @@ public class TitleController : MonoBehaviour {
 	/// <summary>
 	/// シーン遷移
 	/// </summary>
-	void MoveScene() {
+
+	public void MoveScene() {  //明日やること　タイトルのスタートボタン、終了ボタンの作成
 
 		if (isMovingScene) return;
 		isMovingScene = true;
@@ -39,6 +39,11 @@ public class TitleController : MonoBehaviour {
 
 		//シーン遷移
 		SumCanvasAnimation.MoveScene("StageSelectScene");
+	}
+
+	public void Exit()
+	{
+			Application.Quit();
 	}
 
 	IEnumerator TitleAnim() {
