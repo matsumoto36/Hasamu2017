@@ -162,6 +162,44 @@ public class PieceContainer : MonoBehaviour {
 		Destroy(gameObject);
 	}
 
+	/// <summary>
+	/// ピースを新しいものに入れ替える
+	/// </summary>
+	/// <param name="target"></param>
+	/// <param name="id"></param>
+	public void ReplacementPiece(Piece target, int id) {
+
+		Debug.Log("StartReplace");
+
+		for(int i = 0;i < pieceArray.Length;i++) {
+
+			Debug.Log(pieceArray[i].position + " " + target.position);
+
+			if(pieceArray[i].position == target.position) {
+				//StageGenerator.RemovePiece(target);
+
+				Vector2 position = target.transform.localPosition;
+
+				//Piece newPiece = StageGenerator.CreatePiece(position, id);
+
+				pieceArray[i] = StageGenerator.EditPieceID(target, id);
+				Destroy(target.gameObject);
+
+				if(pieceArray[i]) Debug.Log("NEW");
+
+			
+				pieceArray[i].noCollision = true;
+				pieceArray[i].transform.SetParent(transform);
+				pieceArray[i].GetComponent<BoxCollider2D>().enabled = false;
+				pieceArray[i].transform.localPosition = position;
+
+				Debug.Log("replace");
+
+				return;
+			}
+		}
+	}
+
 	void OnDrawGizmos() {
 
 		Vector2[] checkPosition = new Vector2[4];

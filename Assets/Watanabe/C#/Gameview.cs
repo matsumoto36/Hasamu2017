@@ -38,7 +38,7 @@ public class Gameview : MonoBehaviour {
         GameObject viewObject = Instantiate(viewPrefab, target);
 
         Text t = GameObject.Find("Remaining").GetComponent<Text>();
-        t.text = Timebar.time.ToString();
+        t.text = string.Format("LimitTime : {0:0.0}",Timebar.time);
 
 		//ステージセレクトボタンを押したとき
 		Button select = GameObject.Find("Stage select").GetComponent<Button>();

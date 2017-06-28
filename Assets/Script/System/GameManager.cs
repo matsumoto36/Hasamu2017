@@ -85,10 +85,10 @@ public class GameManager : MonoBehaviour {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 			{1, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
-			{1, 0, 4, 5, 6, 0, 14, 0, 1, 1, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+			{1, 0, 4, 5, 5, 0, 14, 0, 1, 1, 0, 0, 0, 1},
+			{1, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1},
+			{1, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		};
@@ -97,9 +97,9 @@ public class GameManager : MonoBehaviour {
         //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
 
 		//ステージの生成
-		StageData stageData = CsvLoader.StageLoad(1, 1);
-		StageGenerator.GenerateMap(stageData.mapData);
-		//StageGenerator.GenerateMap(map);
+		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+		//StageGenerator.GenerateMap(stageData.mapData);
+		StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
 		Timebar.StopTimer();

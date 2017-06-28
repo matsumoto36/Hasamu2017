@@ -64,8 +64,14 @@ public class PieceBlockFire : Piece, IExecutable
 				//パーティクル削除
 				ps.transform.SetParent(null);
 				ParticleManager.ParticleDestroy(ps);
-				StageGenerator.EditPieceID(this, 4);
-                break;
+
+				//判定がない = コンテナの中にいる
+				if(noCollision) {
+					Player.currentPieceContainer.ReplacementPiece(this, 4);
+				} else {
+					StageGenerator.EditPieceID(this, 4);
+				}
+				break;
             default:
                 break;
         }
