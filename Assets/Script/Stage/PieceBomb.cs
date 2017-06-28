@@ -11,6 +11,10 @@ public class PieceBomb : Piece, IExecutable
 
 	Piece[] p = new Piece[4];
 
+    int VTemp;
+    int HTemp;
+    int TotalTemp;
+
 	Text timeViewer;
 	RectTransform canvasRect;
 
@@ -41,19 +45,49 @@ public class PieceBomb : Piece, IExecutable
 		for(int i = 0; i < checkPos.Length; i++) {
 			p[i] = StageGenerator.GetPiece(checkPos[i]);
 
-			//p[i]がnullであれば判定しない
-			if(!(p[0] == null || p[2] == null)) {
-				if(p[0].id == p[2].id) {
-					Sandwiched(p[0].id);
-				}
-			}
+            //p[i]がnullであれば判定しない
+            if (!(p[0] == null || p[2] == null))
+            {
+                if (p[0].id == p[2].id)
+                {
+                    VSandwiched(p[0].id);
+                }
+            }
+            else
+            {
+                VTemp = 0;
+            }
 
 			if(!(p[1] == null || p[3] == null)) {
 				if(p[1].id == p[3].id) {
-					Sandwiched(p[1].id);
+					HSandwiched(p[1].id);
 				}
 			}
+            else
+            {
+                HTemp = 0;
+            }
 		}
+
+        TotalTemp = VTemp + HTemp;
+        switch(TotalTemp)
+        {
+            case 0:
+                Timebar.Decpersec = 1;
+                break;
+            case 1:
+                Timebar.Decpersec = 2;
+                break;
+            case 2:
+                Timebar.Decpersec = 4;
+                break;
+            case -1:
+                Timebar.Decpersec = .5f;
+                break;
+            case -2:
+                Timebar.Decpersec = .25f;
+                break;
+        }
 
 		Vector2 timePos;
 
@@ -77,19 +111,37 @@ public class PieceBomb : Piece, IExecutable
 	///<summary>
 	///挟まれると呼び出される
 	///</summary>
-	public void Sandwiched(int id) {
-		switch(id) {
+	public void VSandwiched(int id)
+    {
+		switch(id)
+        {
 			case 4:
-				Timebar.Decpersec = 1;
+                VTemp = 0;
 				break;
 			case 5:
-				Timebar.Decpersec = 2;
+                VTemp = 1;
 				break;
 			case 6:
-				Timebar.Decpersec = 0.5f;
+                VTemp = -1;
 				break;
 		}
 	}
+
+    public void HSandwiched(int id)
+    {
+        switch (id)
+        {
+            case 4:
+                HTemp = 0;
+                break;
+            case 5:
+                HTemp = 1;
+                break;
+            case 6:
+                HTemp = -1;
+                break;
+        }
+    }
 
 	public IEnumerator DestroyBombAnim() {
 
