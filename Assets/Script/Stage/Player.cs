@@ -77,16 +77,14 @@ public class Player : MonoBehaviour {
 				//触手が何か挟んでいる場合は、横移動を平均値に
 				if(currentPieceContainer) {
 
-					//0番の位置を基点とする
 					Vector2 tVec = (Vector2)pos[1] - (Vector2)pos[0];
 					Vector2 v;
 
 					//外積で左右判定
 					float side = currenTentacle[0].angle.x * tVec.y - currenTentacle[0].angle.y * tVec.x;
-					if(side < 0) {
+					if (side < 0) {
 						v = (Quaternion.Euler(0, 0, -90) * currenTentacle[0].angle).normalized;
-					}
-					else {
+					} else {
 						v = (Quaternion.Euler(0, 0, 90) * currenTentacle[0].angle).normalized;
 					}
 
@@ -97,7 +95,7 @@ public class Player : MonoBehaviour {
 					pos[1] += -v * Mathf.Cos(r) * tVec.magnitude * 0.5f;
 
 					//はさみ続けられるかチェック
-					if(!CheckRetentionContainer()) {
+					if (!CheckRetentionContainer(new Rect(currentPieceContainer.transform.position, currentPieceContainer.containerSize))) {
 
 						//アニメーション変更
 						currenTentacle[0].SetAnimatonState(TentacleAnimState.Move);
@@ -264,12 +262,11 @@ public class Player : MonoBehaviour {
 		//触手の間のピースを取得
 		Piece[] btwp = GetPiecesBetweenTentacle();
 		if(btwp != null && !currentPieceContainer) {
-		//	if(!(StageGenerator.GetPiece(currenTentacle[0].GetTargetPosition()) ||
-		//		StageGenerator.GetPiece(currenTentacle[1].GetTargetPosition()))) return;
+
+			//遠かったらはさめない
+			if (!CheckRetentionContainer(PieceContainer.GetContainerSize(btwp))) return;
 
 			Debug.Log("はさめたよ");
-
-
 
 			//はさむ
 			currentPieceContainer = PieceContainer.CreateContainer(btwp);
@@ -324,20 +321,18 @@ public class Player : MonoBehaviour {
 	/// はさみ続けられるかチェック
 	/// </summary>
 	/// <returns>はさめる = true</returns>
-	bool CheckRetentionContainer() {
+	bool CheckRetentionContainer(Rect containerRect) {
 
-		if(!currentPieceContainer) return false;
-
-		Vector2 maxLength = new Vector2(0.2f, 0.5f);
+		Vector2 maxLength = new Vector2(0.2f, 0.2f);
 		bool ans = true;
 
 		for(int i = 0;i < 2;i++) {
 
-			Vector2 bound = new Vector2(currenTentacle[i].angle.x * currentPieceContainer.containerSize.x,
-										currenTentacle[i].angle.y * currentPieceContainer.containerSize.y) * 0.5f;
+			Vector2 bound = new Vector2(currenTentacle[i].angle.x * containerRect.size.x,
+										currenTentacle[i].angle.y * containerRect.size.y) * 0.5f;
 
 			Vector2 checkVec = ((Vector2)currenTentacle[i].transform.position + (currenTentacle[i].angle * 0.5f))
-							 - ((Vector2)currentPieceContainer.transform.position - bound);
+							 - (containerRect.position - bound);
 
 			//Debug.DrawLine((Vector2)currentPieceContainer.transform.position, (Vector2)currenTentacle[i].transform.position, Color.black);
 

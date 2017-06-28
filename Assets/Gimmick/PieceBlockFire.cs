@@ -60,17 +60,20 @@ public class PieceBlockFire : Piece, IExecutable
         switch (id)
         {
             case 6:
-				//id = 4;
-				//パーティクル削除
-				ps.transform.SetParent(null);
-				ParticleManager.ParticleDestroy(ps);
+				//遅延して実行
+				StageGenerator.lateExecution += () => {
+					//id = 4;
+					//パーティクル削除
+					ps.transform.SetParent(null);
+					ParticleManager.ParticleDestroy(ps);
 
-				//判定がない = コンテナの中にいる
-				if(noCollision) {
-					Player.currentPieceContainer.ReplacementPiece(this, 4);
-				} else {
-					StageGenerator.EditPieceID(this, 4);
-				}
+					//判定がない = コンテナの中にいる
+					if (noCollision) {
+						Player.currentPieceContainer.ReplacementPiece(this, 4);
+					} else {
+						StageGenerator.EditPieceID(this, 4);
+					}
+				};
 				break;
             default:
                 break;

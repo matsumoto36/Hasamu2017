@@ -35,7 +35,9 @@ public class Tentacle : MonoBehaviour {
 
 	AudioSource moveAudio;          //移動中の音
 	float volBound = 0.03f;			//ボリュームを上げるかどうかの閾値
-	float volAdd = 0.05f;			//上がる量
+	float volAdd = 0.05f;           //上がる量
+
+	Vector2 oldTouchPos;			
 
 	void Awake() {
 		id = idCounter >= 128 ? idCounter = 1 : idCounter = idCounter * 2;
@@ -96,15 +98,22 @@ public class Tentacle : MonoBehaviour {
 		Tentacle t = new GameObject("[Tentacle]").AddComponent<Tentacle>();
 		t.position = position;
 		t.transform.position = position;
+		t.oldTouchPos = position;
 		return t;
 	}
 
 	public void Move(Vector2 touchPosition) {
 
-		bool isHorizonCancel = false;			//横移動キャンセル用
-		Vector2 OVec = touchPosition - position;	//ベースからのベクトル
-		Vector2 v;								//垂直なベクトル
-		float r = Vector3.Angle(angle, OVec);   //角度(deg)
+		//touchPosition 制限
+		Vector2 tvec = touchPosition - ((Vector2)transform.position - angle);
+		touchPosition.x = transform.position.x - angle.x + Mathf.Clamp(tvec.x, -1f, 1f);
+		touchPosition.y = transform.position.y - angle.y + Mathf.Clamp(tvec.y, -1f, 1f);
+
+		bool isHorizonCancel = false;				//横移動キャンセル用
+		Vector2 OVec = touchPosition - position;    //ベースからのベクトル
+
+		Vector2 v;									//垂直なベクトル
+		float r = Vector3.Angle(angle, OVec);		//角度(deg)
 
 		Vector2 cPos;
 		Piece p;
@@ -124,6 +133,7 @@ public class Tentacle : MonoBehaviour {
 		Vector2 vVec = v * OVec.magnitude * Mathf.Cos(Vector2.Angle(OVec, v) * Mathf.Deg2Rad);
 
 		//デバッグ表示
+		Debug.DrawLine(transform.position, touchPosition, Color.red);
 		//Debug.DrawLine(position, touchPosition, Color.red);
 		//Debug.DrawLine(position, position + angleVec, Color.blue);
 		//Debug.DrawLine(position, position + vVec, Color.blue);
@@ -227,7 +237,7 @@ public class Tentacle : MonoBehaviour {
 	/// </summary>
 	/// <returns>場所</returns>
 	public Vector2 GetTargetPosition() {
-		Vector2 ans = position + angle * length;
+		Vector2 ans = position + angle * (length - 0.3f);
 		ans.x = (int)(ans.x + 0.5);
 		ans.y = (int)(ans.y + 0.5);
 
@@ -366,6 +376,6 @@ public class Tentacle : MonoBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		Gizmos.DrawWireCube(GetTargetPosition(), Vector3.one);
+		//Gizmos.DrawWireCube(GetTargetPosition(), Vector3.one);
 	}
 }

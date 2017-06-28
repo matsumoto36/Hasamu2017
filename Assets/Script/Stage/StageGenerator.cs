@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void LateExecution();
+
 public class StageGenerator : MonoBehaviour {
 
 	public static Vector2 stageSize;
+	public static event LateExecution lateExecution = null;
 
 	static Piece[,] generatedStage;
 	static bool isGanerate;
+
+	void LateUpdate() {
+		if(lateExecution != null) {
+			lateExecution();
+			lateExecution = null;
+		}
+	}
 
 	/// <summary>
 	/// ある地点のピースを取得する
