@@ -191,8 +191,8 @@ public class StageGenerator : MonoBehaviour {
 				int id = map[height - (i + 1), j];
                 //Debug.Log(id);
 				
-				//idが0以上のときはピースを作成
-				if(id >= 0) {
+				//idが14以外のときはピースを作成
+				if(id != 14) {
 					CreatePiece(position, id);
 				}
 				else {
