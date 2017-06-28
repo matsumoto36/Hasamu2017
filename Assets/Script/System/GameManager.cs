@@ -83,9 +83,9 @@ public class GameManager : MonoBehaviour {
 		//14:9
 		int[,] map = new int[,] {
 			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-			{1, 0, 4, 5, 6, 0, -1, 0, 1, 0, 0, 0, 0, 1},
+			{1, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1},
+			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
+			{1, 0, 4, 5, 6, 0, -1, 0, 1, 1, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour {
 		//ステージの生成
 		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
 		StageGenerator.GenerateMap(stageData.mapData);
-		StageGenerator.GenerateMap(map);
+		//StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
 		Timebar.StopTimer();
