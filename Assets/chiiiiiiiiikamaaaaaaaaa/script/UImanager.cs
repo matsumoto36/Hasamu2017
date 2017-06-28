@@ -15,12 +15,16 @@ public class UImanager : MonoBehaviour {
 
 	public void RetryButton()
 	{
+		//シーン移動中は実行しない
+		if (SumCanvasAnimation.isMovingScene) return;
+
 		if (_isPause == false)
 		{
 			Pause.Pauser();
 		}
 
-
+		//音の再生
+		AudioManager.Play(SEType.Button, 1);
 		//BGMフェードアウト
 		AudioManager.FadeOut(2);
 
@@ -28,12 +32,16 @@ public class UImanager : MonoBehaviour {
 	}
 	public void BackButton()
 	{
+		//シーン移動中は実行しない
+		if (SumCanvasAnimation.isMovingScene) return;
+
 		if (_isPause == false)
 		{
 			Pause.Pauser();
 		}
 
-
+		//音の再生
+		AudioManager.Play(SEType.Button, 1);
 		//BGMフェードアウト
 		AudioManager.FadeOut(2);
 
@@ -68,8 +76,12 @@ public class UImanager : MonoBehaviour {
 	/// </summary>
 	public void ToggleMenu() {
 		//if(Input.GetKeyDown("4")) {
-			Debug.Log("(/・ω・)/");
-			animator.SetBool("Open", !animator.GetBool("Open"));
+
+		//音の再生
+		AudioManager.Play(SEType.Button, 1);
+
+		Debug.Log("(/・ω・)/");
+		animator.SetBool("Open", !animator.GetBool("Open"));
 		//}
 	}
 

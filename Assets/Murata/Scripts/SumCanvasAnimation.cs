@@ -8,7 +8,9 @@ public class SumCanvasAnimation : MonoBehaviour
     static RectTransform rectTransform;//トランスフォーム(CanvasDoor)
     static private string nextSceneName;    //移動したいシーンの名前
 
-    static bool isMovingScene = false;
+    public static bool isMovingScene {
+		get; private set;
+	}
 
 
     void Awake ()
