@@ -67,6 +67,9 @@ public class PieceBlockCold : Piece, IExecutable
 					ps.transform.SetParent(null);
 					ParticleManager.ParticleDestroy(ps);
 
+					//音再生
+					AudioManager.Play(SEType.Hot, 1);
+
 					//判定がない = コンテナの中にいる
 					if (noCollision) {
 						Player.currentPieceContainer.ReplacementPiece(this, 4);
