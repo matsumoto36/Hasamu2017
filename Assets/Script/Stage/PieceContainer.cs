@@ -227,7 +227,7 @@ public class PieceContainer : MonoBehaviour {
 		transform.position = newPosition;
 
 		//座標を反映
-		foreach (Piece p in pieceArray) {
+		foreach(Piece p in pieceArray) {
 			StageGenerator.SetPiecePosition(p, p.transform.position);
 		}
 	}
@@ -242,6 +242,7 @@ public class PieceContainer : MonoBehaviour {
 			p.noCollision = false;
 			p.transform.SetParent(null);
 			p.GetComponent<Collider2D>().enabled = true;
+			StageGenerator.SetPiecePosition(p, p.transform.position);
 			p.transform.position = p.position;
 		}
 

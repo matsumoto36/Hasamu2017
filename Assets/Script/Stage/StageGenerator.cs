@@ -234,7 +234,7 @@ public class StageGenerator : MonoBehaviour {
 		backGround.color = new Color(0.6f, 0.6f, 0.6f, 1);
 		backGround.sortingOrder = -1;
 		backGround.transform.position = center;
-		backGround.transform.localScale = new Vector2(1, 1) * 1.5f;
+		backGround.transform.localScale = new Vector2(1, 1) * 1.7f;
 
 		//環境エフェクト再生
 		var ps = ParticleManager.Play(ParticleType.AmbientEffect, center, Quaternion.identity);

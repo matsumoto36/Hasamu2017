@@ -24,6 +24,7 @@ public class PieceBomb : Piece, IExecutable
 
 		timeViewer = new GameObject("[Time]").AddComponent<Text>();
 		timeViewer.transform.SetParent(canvasRect.transform);
+		timeViewer.transform.SetAsFirstSibling();
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
 		timeViewer.font = Resources.Load<Font>("Font/Makinas");
 		timeViewer.rectTransform.sizeDelta = new Vector2(200, 60);
