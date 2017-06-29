@@ -9,7 +9,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
-	static int stageLevel, stageNum;	//生成するステージ
+	static int stageLevel = 2, stageNum = 4;	//生成するステージ
 	static float limitTime = 9999;           //制限時間
 
 	public Text stageText;
@@ -98,8 +98,8 @@ public class GameManager : MonoBehaviour {
 
 		//ステージの生成
 		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
-		//StageGenerator.GenerateMap(stageData.mapData);
-		StageGenerator.GenerateMap(map);
+		StageGenerator.GenerateMap(stageData.mapData);
+		//StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
 		Timebar.StopTimer();

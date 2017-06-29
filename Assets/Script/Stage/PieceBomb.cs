@@ -27,7 +27,7 @@ public class PieceBomb : Piece, IExecutable
 		timeViewer.rectTransform.localScale = new Vector2(1, 1);
 		timeViewer.font = Resources.Load<Font>("Font/Makinas");
 		timeViewer.rectTransform.sizeDelta = new Vector2(200, 60);
-		timeViewer.fontSize = 50;
+		timeViewer.fontSize = 35;
 		timeViewer.alignment = TextAnchor.MiddleCenter;
 		//canvas = FindObjectOfType<Canvas>();
 	}
@@ -92,7 +92,7 @@ public class PieceBomb : Piece, IExecutable
 		Vector2 timePos;
 
 		//表示時間の移動
-		Vector2 pos = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
+		Vector2 pos = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position + new Vector3(0, 0.15f, 0));
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, pos, Camera.main, out timePos);
 		timeViewer.rectTransform.anchoredPosition = timePos;
 

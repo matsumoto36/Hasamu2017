@@ -106,8 +106,8 @@ public class Tentacle : MonoBehaviour {
 
 		//touchPosition 制限
 		Vector2 tvec = touchPosition - ((Vector2)transform.position - angle);
-		touchPosition.x = transform.position.x - angle.x + Mathf.Clamp(tvec.x, -1f, 1f);
-		touchPosition.y = transform.position.y - angle.y + Mathf.Clamp(tvec.y, -1f, 1f);
+		touchPosition.x = transform.position.x - angle.x + Mathf.Clamp(tvec.x, -1.2f, 1.2f);
+		touchPosition.y = transform.position.y - angle.y + Mathf.Clamp(tvec.y, -1.2f, 1.2f);
 
 		bool isHorizonCancel = false;				//横移動キャンセル用
 		Vector2 OVec = touchPosition - position;    //ベースからのベクトル

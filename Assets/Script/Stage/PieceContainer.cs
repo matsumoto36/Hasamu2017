@@ -15,6 +15,8 @@ public class PieceContainer : MonoBehaviour {
 	ParticleSystem createParticle;
 	ParticleSystem moveParticle;
 
+	Vector2 np;
+
 	//デバッグ用
 	//List<Vector2> cy;
 	//List<Vector2> cx;
@@ -115,29 +117,36 @@ public class PieceContainer : MonoBehaviour {
 
 		/* x方向の制限 */
 		bool isXCollision = false;
-		for (int i = 0; i < 2; i++) {
 
-			//チェック用の位置を保存
-			Vector2 startPosition = checkPosition[i];
-			Vector2 endPosition = checkPosition[i + 2];
+		if(isXDir) {
 
-			//同じ座標も対応するので+1する
-			endPosition.x += 1;
+			for(int i = 0; i < 2; i++) {
 
-			do {
-				Piece p = StageGenerator.GetPiece(startPosition);
-				if (p && !p.noCollision) {
-					isXCollision = true;
-					break;
-				}
+				//チェック用の位置を保存
+				Vector2 startPosition = checkPosition[i];
+				Vector2 endPosition = checkPosition[i + 2];
 
-				startPosition.x += 1;
-			} while (startPosition != endPosition);
+				//同じ座標も対応するので+1する
+				endPosition.x += 1;
 
-			if (isXCollision) break;
+				do {
+					Piece p = StageGenerator.GetPiece(startPosition);
+					if(p && !p.noCollision) {
+						isXCollision = true;
+						break;
+					}
+
+					startPosition.x += 1;
+				} while(startPosition != endPosition);
+
+				if(isXCollision) break;
+			}
 		}
 
-		//方向がXの場合は+1まで検査
+		np = newPosition;
+
+		Vector2 hitPos = new Vector2();
+		//方向がYの場合は+1まで検査
 		if (!isXDir) {
 			Vector2[] cy = new Vector2[4];
 			cy[0] = newPosition + new Vector2(0.1f, -0.5f - containerSize.y * 0.5f);
@@ -147,39 +156,48 @@ public class PieceContainer : MonoBehaviour {
 
 			foreach (var ccy in cy) {
 				if (StageGenerator.GetPiece(ccy)) {
+					hitPos = StageGenerator.GetPiece(ccy).position;
 					isXCollision = true;
 					break;
 				}
 			}
 		}
 
-		if (isXCollision) newPosition.y = (int)(transform.position.y + 0.5);
+		if(isXCollision) {
+			newPosition.y = (int)((transform.position.y + 0.25) * 2) * 0.5f;
+			//newPosition.y = (int)(transform.position.y + 0.5);
+			//if(!isXDir && pieceArray.Length % 2 == 0) newPosition.y = hitPos.y - 1.5f - containerSize.y * 0.5f;
+		}
 
 
 		/* y方向の制限 */
 		bool isYCollision = false;
-		for (int i = 0; i < 2; i++) {
 
-			//チェック用の位置を保存
-			Vector2 startPosition = checkPosition[i * 2];
-			Vector2 endPosition = checkPosition[i * 2 + 1];
+		if(!isXDir) {
+			for(int i = 0; i < 2; i++) {
 
-			//同じ座標も対応するので+1する
-			endPosition.y += 1;
+				//チェック用の位置を保存
+				Vector2 startPosition = checkPosition[i * 2];
+				Vector2 endPosition = checkPosition[i * 2 + 1];
 
-			do {
-				Piece p = StageGenerator.GetPiece(startPosition);
-				if (p && !p.noCollision) {
-					isYCollision = true;
-					break;
-				}
+				//同じ座標も対応するので+1する
+				endPosition.y += 1;
 
-				startPosition.y += 1;
-			} while (startPosition != endPosition);
+				do {
+					Piece p = StageGenerator.GetPiece(startPosition);
+					if(p && !p.noCollision) {
+						isYCollision = true;
+						break;
+					}
 
-			if (isYCollision) break;
+					startPosition.y += 1;
+				} while(startPosition != endPosition);
+
+				if(isYCollision) break;
+			}
 		}
 
+		hitPos = new Vector2();
 		//方向がXの場合は+1まで検査
 		if (isXDir) {
 			Vector2[] cx = new Vector2[4];
@@ -190,13 +208,19 @@ public class PieceContainer : MonoBehaviour {
 
 			foreach (var ccx in cx) {
 				if (StageGenerator.GetPiece(ccx)) {
+					hitPos = StageGenerator.GetPiece(ccx).position;
 					isYCollision = true;
 					break;
 				}
 			}
 		}
 
-		if (isYCollision) newPosition.x = (int)(transform.position.x + 0.5);
+		if(isYCollision) {
+			newPosition.x = (int)((transform.position.x + 0.25) * 2) * 0.5f;
+			//newPosition.x = (int)(transform.position.x + 0.5);
+			//if(isXDir && pieceArray.Length % 2 == 0) newPosition.x = hitPos.x -1.5f - containerSize.x * 0.5f;
+			//Debug.Log("x " + newPosition.x);
+		}
 
 
 		//移動
@@ -278,39 +302,30 @@ public class PieceContainer : MonoBehaviour {
 		Vector2[] checkPosition = new Vector2[4];
 		Gizmos.color = Color.red;
 
-		checkPosition[0] = new Vector2(-containerSize.x, -containerSize.y);
-		checkPosition[1] = new Vector2(-containerSize.x, containerSize.y - 0.1f);
-		checkPosition[2] = new Vector2(containerSize.x - 0.1f, -containerSize.y);
-		checkPosition[3] = new Vector2(containerSize.x - 0.1f, containerSize.y - 0.1f);
+		//y
+		//checkPosition[0] = np + new Vector2(0.1f, -0.5f - containerSize.y * 0.5f);
+		//checkPosition[1] = np + new Vector2(0.9f, -0.5f - containerSize.y * 0.5f);
+		//checkPosition[2] = np + new Vector2(0.1f, 1.5f + containerSize.y * 0.5f);
+		//checkPosition[3] = np + new Vector2(0.9f, 1.5f + containerSize.y * 0.5f);
+
+		checkPosition[0] = np + new Vector2(-0.5f - containerSize.x * 0.5f, 0.1f);
+		checkPosition[1] = np + new Vector2(-0.5f - containerSize.x * 0.5f, 0.9f);
+		checkPosition[2] = np + new Vector2(1.5f + containerSize.x * 0.5f, 0.1f);
+		checkPosition[3] = np + new Vector2(1.5f + containerSize.x * 0.5f, 0.9f);
 
 		for(int i = 0;i < 4;i++) {
 
-			checkPosition[i] *= 0.5f;
-			checkPosition[i] += (Vector2)transform.position + new Vector2(0.5f, 0.5f);
+			//checkPosition[i] *= 0.5f;
+			//checkPosition[i] += (Vector2)transform.position + new Vector2(0.5f, 0.5f);
 			checkPosition[i].x = (int)checkPosition[i].x;
 			checkPosition[i].y = (int)checkPosition[i].y;
 
-			//Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
+			Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
 		}
 
 		Gizmos.color = Color.blue;
 
-		//if(isX) {
-		//if(cx != null) {
-		//	for(int i = 0; i < cx.Count; i++) {
-		//		Vector2 ccx = new Vector2((int)cx[i].x, (int)cx[i].y);
-		//		Gizmos.DrawWireCube(ccx, Vector3.one);
-		//	}
-		//}
 
-		//} else {
-		//	if(cy != null) {
-		//		for(int i = 0; i < 4; i++) {
-		//			cy[i].x = (int)cy[i].x;
-		//			cy[i].y = (int)cy[i].y;
-		//			Gizmos.DrawWireCube(cy[i], Vector3.one);
-		//		}
-		//	}
-		//}
+
 	}
 }

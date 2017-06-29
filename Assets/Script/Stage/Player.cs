@@ -220,6 +220,7 @@ public class Player : MonoBehaviour {
 					}
 				}
 
+				//3
 				if(checkResult == null) checkResult = checkPiece[0].position;
 			}
 
@@ -323,7 +324,7 @@ public class Player : MonoBehaviour {
 	/// <returns>はさめる = true</returns>
 	bool CheckRetentionContainer(Rect containerRect) {
 
-		Vector2 maxLength = new Vector2(0.2f, 0.2f);
+		Vector2 maxLength = new Vector2(0.3f, 0.2f);
 		bool ans = true;
 
 		for(int i = 0;i < 2;i++) {
