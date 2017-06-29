@@ -9,8 +9,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
-	static int stageLevel = 2, stageNum = 4;	//生成するステージ
-	static float limitTime = 9999;           //制限時間
+	public static int stageLevel = 2, stageNum = 4;	//生成するステージ
+	static float limitTime = 9999;					//制限時間
 
 	public Text stageText;
 

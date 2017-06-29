@@ -8,7 +8,10 @@ public class StageInformation : MonoBehaviour
 {
 	static int lastSelectedFloor = 1;		//最後に選択されたフロア
 	public GameObject[] floorPanels;		//フロアの部屋を表示するパネル
-	public Button[] floorButtons;			//パネルを表示するためのボタン
+	public Button[] floorButtons;           //パネルを表示するためのボタン
+
+
+	static int[] stageCount = new int[] { 5, 9 };
 
 	void Start() {
 
@@ -54,14 +57,57 @@ public class StageInformation : MonoBehaviour
 		AudioManager.Play(SEType.Button, 1);
 	}
 
-	public void StageName(string SteageName) {
+	/// <summary>
+	/// 次のステージを取得する
+	/// </summary>
+	/// <param name="stageLevel">現在のステージのレベル</param>
+	/// <param name="stageNum">現在のステージ</param>
+	/// <param name="stageStr">次のステージの文字列</param>
+	/// <returns>取得できたか</returns>
+	public static bool GetNextFloor(int stageLevel, int stageNum, out string stageStr) {
 
+		//値の初期化
+		stageStr = "";
+
+		//次のステージ
+		stageNum++;
+
+		//そのフロアのステージ数よりも超えたら、次のステージのレベルに
+		int count = stageCount[stageLevel - 1];
+		if (count < stageNum) {
+			if (stageLevel >= stageCount.Length) return false;
+
+			stageLevel++;
+			stageNum = 1;
+			
+		}
+
+		//作成して終了
+		stageStr = stageLevel + "-" + stageNum;
+		return true;
+	}
+
+	/// <summary>
+	/// ボタン用
+	/// </summary>
+	/// <param name="stageName"></param>
+	public void StageName(string stageName) {
+
+		GoGameScene(stageName);
+
+	}
+
+	/// <summary>
+	/// ゲームシーンに行く
+	/// </summary>
+	/// <param name="stageName"></param>
+	public static void GoGameScene(string stageName) {
 		//シーン移動中は実行しない
 		if (SumCanvasAnimation.isMovingScene) return;
 
-		string[] SteageLabel = SteageName.Split('-');
+		string[] SteageLabel = stageName.Split('-');
 
-		Debug.Log(string.Format("新たなるステージ、{0}", SteageName));
+		Debug.Log(string.Format("新たなるステージ、{0}", stageName));
 		GameManager.SetStageData(int.Parse(SteageLabel[0]), int.Parse(SteageLabel[1]));
 
 		//音の再生
@@ -70,7 +116,6 @@ public class StageInformation : MonoBehaviour
 		AudioManager.FadeOut(2);
 
 		SumCanvasAnimation.MoveScene("GameScene");
-
 	}
 
 	/// <summary>
