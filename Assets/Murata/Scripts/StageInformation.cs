@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class StageInformation : MonoBehaviour
 {
+	static int lastSelectedFloor = 1;		//最後に選択されたフロア
 	public GameObject[] floorPanels;		//フロアの部屋を表示するパネル
 	public Button[] floorButtons;			//パネルを表示するためのボタン
 
 	void Start() {
 
-		//1Fを標準で表示
-		FloorView(1);
+		FloorView(lastSelectedFloor);
 
 		//BGM再生
 		AudioManager.FadeIn(2, BGMType.Select, 1, true);
@@ -38,6 +38,9 @@ public class StageInformation : MonoBehaviour
 		//選ばれたものを変更
 		floorButtons[floorNum - 1].interactable = false;
 		floorPanels[floorNum - 1].SetActive(true);
+
+		//次回ロード用に保存
+		lastSelectedFloor = floorNum;
 	}
 
 	/// <summary>
