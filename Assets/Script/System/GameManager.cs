@@ -115,6 +115,9 @@ public class GameManager : MonoBehaviour {
 
 		//入力の許可
 		InputManager.isFreeze = false;
+		//メニューを開けるようにする
+		UImanager.isFreeze = false;
+
 	}
 
 	/// <summary>
@@ -173,6 +176,8 @@ public class GameManager : MonoBehaviour {
 
 		//入力禁止
 		InputManager.isFreeze = true;
+		//メニューを開けなくする
+		UImanager.isFreeze = true;
 
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
@@ -184,7 +189,6 @@ public class GameManager : MonoBehaviour {
 		PieceBomb pb = FindObjectOfType<PieceBomb>();
 		StageGenerator.RemovePiece(pb);
 		Destroy(pb.gameObject);
-
 		yield return new WaitForSeconds(2.0f);
 
 		//BGM再生
@@ -208,15 +212,15 @@ public class GameManager : MonoBehaviour {
 
 		//入力禁止
 		InputManager.isFreeze = true;
+		//メニューを開けなくする
+		UImanager.isFreeze = true;
 
 		//落ちるアニメーション
 		yield return new WaitForSeconds(1.0f);
 
 		//BGMフェード
 		AudioManager.FadeOut(2.0f);
-
 		yield return new WaitForSeconds(2.0f);
-
 		//BGM再生
 		AudioManager.Play(BGMType.Clear, 1, true);
 

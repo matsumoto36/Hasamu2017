@@ -5,6 +5,7 @@ using UnityEngine;
 public class UImanager : MonoBehaviour {
 
 	public bool isPause;
+	public static bool isFreeze = false;
 	bool _isPause;
 
 	Animator animator;
@@ -75,6 +76,9 @@ public class UImanager : MonoBehaviour {
 	/// メニューの表示・非表示を切り替える
 	/// </summary>
 	public void ToggleMenu() {
+
+		if (isFreeze) return;
+
 		//if(Input.GetKeyDown("4")) {
 
 		//音の再生

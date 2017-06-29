@@ -10,8 +10,7 @@ public class StageInformation : MonoBehaviour
 	public GameObject[] floorPanels;		//フロアの部屋を表示するパネル
 	public Button[] floorButtons;           //パネルを表示するためのボタン
 
-
-	static int[] stageCount = new int[] { 5, 9 };
+	static int[] stageCount = new int[] { 5, 10, 5, 4 };
 
 	void Start() {
 
