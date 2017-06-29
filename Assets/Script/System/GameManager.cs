@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour {
 		//Timebar.time = limitTime;
 
 		//テキストの設定
-		stageText.text = string.Format("{0} - {1}", stageLevel, stageNum);
+		stageText.text = string.Format("{0} F  -  R o o m  {1}", stageLevel, stageNum);
 
 		//音楽を再生
 		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
