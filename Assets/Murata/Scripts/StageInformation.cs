@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class StageInformation : MonoBehaviour
 {
-	static int lastSelectedFloor = 1;		//最後に選択されたフロア
-	public GameObject[] floorPanels;		//フロアの部屋を表示するパネル
-	public Button[] floorButtons;           //パネルを表示するためのボタン
+	public static int lastSelectedFloor = 1;	//最後に選択されたフロア
+	public GameObject[] floorPanels;			//フロアの部屋を表示するパネル
+	public Button[] floorButtons;				//パネルを表示するためのボタン
 
 	static int[] stageCount = new int[] { 6, 6, 6, 6 };
 
@@ -40,9 +40,6 @@ public class StageInformation : MonoBehaviour
 		//選ばれたものを変更
 		floorButtons[floorNum - 1].interactable = false;
 		floorPanels[floorNum - 1].SetActive(true);
-
-		//次回ロード用に保存
-		lastSelectedFloor = floorNum;
 	}
 
 	/// <summary>

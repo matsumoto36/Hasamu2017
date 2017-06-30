@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
 
 		//後にほかのところから割り当てられる
 		//stageLevel = stageNum = 1;
+		StageInformation.lastSelectedFloor = stageLevel;
 
 		myManager = this;
 
