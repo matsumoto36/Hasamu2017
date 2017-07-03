@@ -21,63 +21,6 @@ public class InputManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 入力を取る
-	/// </summary>
-	/// <param name="pos">out 位置</param>
-	/// <returns>あるかどうか</returns>
-	public static bool GetInput(out Vector2 pos) {
-
-		pos = new Vector2();
-
-		if(isFreeze) return false;
-
-		if(Application.isEditor) {
-			if(!Input.GetMouseButton(0)) return false;
-
-			pos = Input.mousePosition;
-		}
-		else {
-			if(!(Input.touchCount > 0)) return false; 
-
-			pos = Input.touches[0].position;
-		}
-
-		//Debug.Log("Touch " + pos);
-
-		return isTouchArray[0] = true;
-	}
-
-	/// <summary>
-	/// 入力を取る(2本)
-	/// </summary>
-	/// <param name="pos">out 位置</param>
-	/// <returns>あるかどうか</returns>
-	public static bool GetInputDouble(out Vector2[] pos) {
-
-		pos = new Vector2[2];
-
-		if(isFreeze) return false;
-
-		if(Application.isEditor) {
-			if(!Input.GetMouseButton(0)) return false;
-
-			pos[0] = Input.mousePosition;
-			pos[1] = Camera.main.WorldToScreenPoint(debug_FalseTouch.position);
-		}
-		else {
-			if(!(Input.touchCount > 1)) return false;
-
-			pos[0] = Input.touches[0].position;
-			pos[1] = Input.touches[1].position;
-		}
-
-		//Debug.Log("TouchD " + pos[0] + " " + pos[1]);
-
-		return isTouchArray[0] = isTouchArray[1] = true;
-
-	}
-
-	/// <summary>
 	/// すべてのタッチ入力を取る
 	/// </summary>
 	/// <param name="pos">out 位置(null許容)</param>
@@ -124,39 +67,6 @@ public class InputManager : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// タッチが離されたかとる
-	/// </summary>
-	/// <returns>離されたかどうか</returns>
-	public static bool GetInputUp() {
-
-		Vector2 pos = new Vector2();
-
-		if(isTouchArray[0] && !GetInput(out pos)) {
-			isTouchArray[0] = false;
-			return true;
-		}
-
-		return false;
-	}
-
-	/// <summary>
-	/// タッチが離されたかとる
-	/// </summary>
-	/// <returns>離されたかどうか</returns>
-	public static bool GetInputUpDouble() {
-
-		Vector2[] pos = new Vector2[2];
-
-		if(isTouchArray[0] && isTouchArray[1] && !GetInputDouble(out pos)) {
-
-			isTouchArray[0] = isTouchArray[1] = false;
-			return true;
-		}
-
-		return false;
-	}
-
-	/// <summary>
 	/// すべての入力のうち、離されたものを取る
 	/// </summary>
 	/// <returns>離された番号のbool</returns>
@@ -180,20 +90,4 @@ public class InputManager : MonoBehaviour {
 		}
 		return ans;
 	}
-
-	/// <summary>
-	/// デバッグ用に、すべてのタッチ情報を出力する
-	/// </summary>
-	//public void DebugGetInput() {
-
-	//	if(!debug_text) return;
-
-	//	string result = "";
-	//	result += string.Format("touchCount : {0}\r\n", Input.touchCount);
-	//	for(int i = 0;i < Input.touchCount;i++) {
-	//		result += string.Format("{0} touchPos : {1} , fingerId : {2} \r\n", i, Input.touches[i].position, Input.touches[i].fingerId);
-	//	}
-	//	debug_text.text = result;
-
-	//}
 }

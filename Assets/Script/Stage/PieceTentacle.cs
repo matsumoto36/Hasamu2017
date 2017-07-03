@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// ステージ中の触手ブロック
+/// </summary>
 public class PieceTentacle : Piece {
 
-	ParticleSystem[] ps = new ParticleSystem[4];
+	ParticleSystem[] ps = new ParticleSystem[4];	//4方向に作成するパーティクル
 
 	// Update is called once per frame
 	void Update () {
@@ -34,6 +37,7 @@ public class PieceTentacle : Piece {
 	/// </summary>
 	void SetParticle() {
 
+		//パーティクルを4方向に作成
 		Vector2[] spawnPos = new Vector2[] {
 			new Vector2(position.x, position.y + 0.5f),
 			new Vector2(position.x - 0.5f, position.y),
@@ -65,6 +69,7 @@ public class PieceTentacle : Piece {
 
 		for (int i = 0; i < 4; i++) {
 
+			//触手が生成できる壁のみエフェクト再生
 			if (StageGenerator.CheckStageBound(checkPos[i]) ||
 				StageGenerator.GetPiece(checkPos[i])) {
 

@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class Hole : MonoBehaviour {
 
-	Vector2 checkPosition;
+	Vector2 checkPosition;	//爆弾が存在するか判定する位置
 
 	// Use this for initialization
 	void Start () {
@@ -20,6 +20,7 @@ public class Hole : MonoBehaviour {
 	/// <param name="position">判定する位置</param>
 	/// <returns>本体</returns>
 	public static Hole CreateHole(Vector2 position) {
+
 		Hole hole = new GameObject("[Hole]").AddComponent<Hole>();
 		hole.transform.position = position;
 

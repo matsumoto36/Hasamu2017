@@ -8,20 +8,13 @@ using UnityEngine;
 /// </summary>
 public class PieceContainer : MonoBehaviour {
 
-	Piece[] pieceArray;				//まとめられているピースの配列
-
 	public Vector2 containerSize;   //当たり判定用
 
-	ParticleSystem createParticle;
-	ParticleSystem moveParticle;
+	Piece[] pieceArray;				//まとめられているピースの配列
+	ParticleSystem createParticle;	//作られたときに発生するパーティクル
+	ParticleSystem moveParticle;	//移動中常に発生するパーティクル
 
-	Vector2 np;
-
-	//デバッグ用
-	//List<Vector2> cy;
-	//List<Vector2> cx;
-
-	private void Start() {
+	void Start() {
 		//コンテナ作成パーティクル再生
 		createParticle = ParticleManager.Play(ParticleType.ContainerCreate, transform.position, Quaternion.identity);
 		createParticle.transform.SetParent(transform);
@@ -129,6 +122,7 @@ public class PieceContainer : MonoBehaviour {
 				//同じ座標も対応するので+1する
 				endPosition.x += 1;
 
+				//判定を連続でとる
 				do {
 					Piece p = StageGenerator.GetPiece(startPosition);
 					if(p && !p.noCollision) {
@@ -142,8 +136,6 @@ public class PieceContainer : MonoBehaviour {
 				if(isXCollision) break;
 			}
 		}
-
-		np = newPosition;
 
 		Vector2 hitPos = new Vector2();
 		//方向がYの場合は+1まで検査
@@ -183,6 +175,7 @@ public class PieceContainer : MonoBehaviour {
 				//同じ座標も対応するので+1する
 				endPosition.y += 1;
 
+				//判定を連続でとる
 				do {
 					Piece p = StageGenerator.GetPiece(startPosition);
 					if(p && !p.noCollision) {
@@ -269,23 +262,19 @@ public class PieceContainer : MonoBehaviour {
 
 		Debug.Log("StartReplace");
 
+		//targetが配列中のどの要素なのか検索
 		for(int i = 0;i < pieceArray.Length;i++) {
 
 			Debug.Log(pieceArray[i].position + " " + target.position);
 
 			if(pieceArray[i].position == target.position) {
-				//StageGenerator.RemovePiece(target);
 
 				Vector2 position = target.transform.localPosition;
-
-				//Piece newPiece = StageGenerator.CreatePiece(position, id);
 
 				pieceArray[i] = StageGenerator.EditPieceID(target, id);
 				Destroy(target.gameObject);
 
-				if(pieceArray[i]) Debug.Log("NEW");
-
-			
+				//設定
 				pieceArray[i].noCollision = true;
 				pieceArray[i].transform.SetParent(transform);
 				pieceArray[i].GetComponent<BoxCollider2D>().enabled = false;
@@ -296,37 +285,5 @@ public class PieceContainer : MonoBehaviour {
 				return;
 			}
 		}
-	}
-
-	void OnDrawGizmos() {
-
-		Vector2[] checkPosition = new Vector2[4];
-		Gizmos.color = Color.red;
-
-		//y
-		//checkPosition[0] = np + new Vector2(0.1f, -0.5f - containerSize.y * 0.5f);
-		//checkPosition[1] = np + new Vector2(0.9f, -0.5f - containerSize.y * 0.5f);
-		//checkPosition[2] = np + new Vector2(0.1f, 1.5f + containerSize.y * 0.5f);
-		//checkPosition[3] = np + new Vector2(0.9f, 1.5f + containerSize.y * 0.5f);
-
-		checkPosition[0] = np + new Vector2(-0.5f - containerSize.x * 0.5f, 0.1f);
-		checkPosition[1] = np + new Vector2(-0.5f - containerSize.x * 0.5f, 0.9f);
-		checkPosition[2] = np + new Vector2(1.5f + containerSize.x * 0.5f, 0.1f);
-		checkPosition[3] = np + new Vector2(1.5f + containerSize.x * 0.5f, 0.9f);
-
-		for(int i = 0;i < 4;i++) {
-
-			//checkPosition[i] *= 0.5f;
-			//checkPosition[i] += (Vector2)transform.position + new Vector2(0.5f, 0.5f);
-			checkPosition[i].x = (int)checkPosition[i].x;
-			checkPosition[i].y = (int)checkPosition[i].y;
-
-			Gizmos.DrawWireCube(checkPosition[i], Vector3.one);
-		}
-
-		Gizmos.color = Color.blue;
-
-
-
 	}
 }

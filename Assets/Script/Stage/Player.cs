@@ -7,19 +7,18 @@ using UnityEngine;
 /// </summary>
 public class Player : MonoBehaviour {
 
-	static Player myPlayer;
-	bool[] isAction = new bool[2];			//触手を操作しているか
-	Vector2?[] pos;							//タッチした座標
+	public static PieceContainer currentPieceContainer;     //はさんでいるオブジェクト
 
-	public static PieceContainer currentPieceContainer;		//はさんでいるオブジェクト
+	static Player myPlayer;
+
+	bool[] isAction = new bool[2];							//触手を操作しているか
+	Vector2?[] pos;											//タッチした座標
 
 	bool firstTouch = false;								//ゲームで初めて触手をはやしたとき
 
-	Tentacle[] currenTentacle = new Tentacle[2];			//操作している触手	
-
+	Tentacle[] currenTentacle = new Tentacle[2];			//操作している触手
 
 	Sprite failCreateSprite;
-
 	bool[] isFailAnimPlay = new bool[2];
 
 	void Start() {
