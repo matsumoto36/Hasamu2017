@@ -9,7 +9,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
-	public static int stageLevel = 4, stageNum = 3;	//生成するステージ
+	public static int stageLevel = 1, stageNum = 1; //生成するステージ
+	public string debug_loadStage = "";				//デバッグ用でロードするステージ
 	static float limitTime = 9999;					//制限時間
 
 	public Text stageText;
@@ -96,6 +97,13 @@ public class GameManager : MonoBehaviour {
 
 		//Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
         //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
+
+		//デバッグに何か入ってたら優先する
+		if(debug_loadStage != "") {
+			string[] bff = debug_loadStage.Split('-');
+			stageLevel = int.Parse(bff[0]);
+			stageNum = int.Parse(bff[1]);
+		}
 
 		//ステージの生成
 		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
