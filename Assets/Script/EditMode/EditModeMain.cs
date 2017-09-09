@@ -52,6 +52,11 @@ public class EditModeMain : MonoBehaviour {
 	public Image[] selectableChip;
 
 	//システム系
+	Canvas canvas;
+	CanvasScaler canvasScaler;
+
+	Vector2 canvasScale;
+
 	int[,] editMap;
 	int selectChipID = 1;
 
@@ -85,6 +90,10 @@ public class EditModeMain : MonoBehaviour {
 		//	{1,1,1,1,1,1,1,1,1,1,1,1,1,1 },
 		//};
 
+		//キャンバスを持ってくる
+		canvas = FindObjectOfType<Canvas>();
+		canvasScaler = FindObjectOfType<CanvasScaler>();
+
 		generateViewImage = new Image[MAP_SIZE_Y, MAP_SIZE_X];
 
 		//マップチップのロード
@@ -116,6 +125,10 @@ public class EditModeMain : MonoBehaviour {
 				ChangeSelectChip(d);
 			});
 		}
+
+		//ウィンドウサイズのスケール比を求めておく
+		Vector2 refResolusion = canvasScaler.referenceResolution;
+		canvasScale = new Vector2(refResolusion.x / Screen.width, refResolusion.y / Screen.height);
 
 		//表示領域を生成
 		for(int i = 0;i < MAP_SIZE_Y;i++) {
@@ -275,7 +288,7 @@ public class EditModeMain : MonoBehaviour {
 		rectToolMousePos = startPos;
 
 		rectImage = Instantiate(rectImagePre);
-		rectImage.rectTransform.SetParent(FindObjectOfType<Canvas>().transform);
+		rectImage.rectTransform.SetParent(canvas.transform);
 
 		//zに値が入ってしまっているので初期化する
 		rectImage.rectTransform.position = new Vector3();
@@ -295,7 +308,9 @@ public class EditModeMain : MonoBehaviour {
 			rectImage.enabled = p != null;
 		}
 
-		Rect rect = Vec2Rect(rectToolMousePos, Input.mousePosition);
+		//ウィンドウサイズによってずれないように調整
+		Rect rect = Vec2Rect(rectToolMousePos * canvasScale.x, Input.mousePosition * canvasScale.y);
+
 		rectImage.rectTransform.anchoredPosition = rect.position;
 		rectImage.rectTransform.sizeDelta = rect.size;
 	}
