@@ -12,6 +12,8 @@ public class StageInformation : MonoBehaviour
 
 	static int[] stageCount = new int[] { 6, 6, 6, 6 };
 
+	int editSceneC = 0;
+
 	void Start() {
 
 		FloorView(lastSelectedFloor);
@@ -128,5 +130,15 @@ public class StageInformation : MonoBehaviour
 		AudioManager.FadeOut(2);
 
 		SumCanvasAnimation.MoveScene("TitleScene");
+	}
+
+	public void GotoEditScene() {
+
+		//シーン移動中は実行しない
+		if(SumCanvasAnimation.isMovingScene) return;
+
+		if(editSceneC++ > 4) {
+			SumCanvasAnimation.MoveScene("EditScene");
+		}
 	}
 }

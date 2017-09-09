@@ -9,21 +9,36 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	static GameManager myManager;
-	public static int stageLevel = 1, stageNum = 1; //生成するステージ
-	public string debug_loadStage = "";				//デバッグ用でロードするステージ
-	static float limitTime = 9999;					//制限時間
+
+
+	public static int stageLevel = 1, stageNum = 1;		//生成するステージ
+
+	public string debug_loadStage = "";					//デバッグ用でロードするステージ
+	static float limitTime = 9999;						//制限時間
+
 
 	public Text stageText;
+	public Text editModeText;
+
 
 	bool isBGMSwitch = false;
 
+	//エディットモード系
+	public static bool IsEditMode;
+	EditModeMain editModeMain;
+
+
 	void Start() {
 
-		//後にほかのところから割り当てられる
-		//stageLevel = stageNum = 1;
 		StageInformation.lastSelectedFloor = stageLevel;
 
 		myManager = this;
+
+		//エディットモードお知らせ
+		if(IsEditMode) {
+			editModeMain = FindObjectOfType<EditModeMain>();
+			editModeText.gameObject.SetActive(true);
+		}
 
 		GameInitiarize();
 	}
@@ -36,68 +51,6 @@ public class GameManager : MonoBehaviour {
 		//マップチップのロード
 		FindObjectOfType<ResourceLoader>().LoadAll();
 
-		//後にCSVから読み込む
-		//int[,] map = new int[,] {
-		//	{1, 1, 1, 1, 1, 1, 2, 1, 2},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, 0, -1, 5, 0, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 3, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 0, 6, 0, 1},
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//};
-
-		//int[,] map = new int[,] {
-		//	{1, 1, 1, 1, 1, 1, 2, 1, 2},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, -1, 4, 0, 3, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//};
-
-		//int[,] map = new int[,] {
-		//	{1, 1, 1, 1, 1, 1, 2, 1, 1},
-		//	{1, 0, 0, 0, 2, 0, 0, 0, 1},
-		//	{1, 0, 0, -1, 4, 0, 3, 0, 1},
-		//	{1, 0, 0, 0, 2, 4, 0, 0, 1},
-		//	{1, 0, 0, 0, 2, 0, 0, 0, 1},
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//};
-
-		//int[,] map = new int[,] {
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, 0, -1, 0, 0, 0, 1, 1},
-		//	{1, 0, 4, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 3, 0, 0, 1},
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//};
-
-		//int[,] map = new int[,] {
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//	{1, 0, 0, 3, 0, 0, 0, 0, 1},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 0, 4, 5, 6, 0, -1, 0, 1},
-		//	{1, 0, 0, 0, 0, 0, 0, 0, 1},
-		//	{1, 1, 1, 1, 1, 1, 1, 1, 1},
-		//};
-
-		//14:9
-		int[,] map = new int[,] {
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
-			{1, 0, 4, 5, 5, 0, 14, 0, 1, 1, 0, 0, 0, 1},
-			{1, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		};
-
-		//Timebar.time = CsvLoader.StageLoad(stageLevel, stageNum).time;
-        //int[,] map = CsvLoader.StageLoad(stageLevel, stageNum).mapData;
-
 		//デバッグに何か入ってたら優先する
 		if(debug_loadStage != "") {
 			string[] bff = debug_loadStage.Split('-');
@@ -106,18 +59,21 @@ public class GameManager : MonoBehaviour {
 		}
 
 		//ステージの生成
-		StageData stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+		StageData stageData;
+		if(IsEditMode) {
+			stageData = editModeMain.GenerateStageData();
+			stageText.text = "Preview edit map";
+		}
+		else {
+			stageData = CsvLoader.StageLoad(stageLevel, stageNum);
+			stageText.text = string.Format("{0} F  -  R o o m  {1}", stageLevel, stageNum);
+		}
 		StageGenerator.GenerateMap(stageData.mapData);
-		//StageGenerator.GenerateMap(map);
 
 		//制限時間の設定
 		Timebar.StopTimer();
 		Timebar.Decpersec = 1;
 		Timebar.time = stageData.time;
-		//Timebar.time = limitTime;
-
-		//テキストの設定
-		stageText.text = string.Format("{0} F  -  R o o m  {1}", stageLevel, stageNum);
 
 		//音楽を再生
 		AudioManager.FadeIn(2.0f, BGMType.Game, 1, true);
@@ -162,7 +118,6 @@ public class GameManager : MonoBehaviour {
 		}
 		#endregion
 
-
 		//のこり10秒以下になったらBGM変更
 		if (!isBGMSwitch && Timebar.time <= 10) {
 			isBGMSwitch = true;
@@ -203,9 +158,14 @@ public class GameManager : MonoBehaviour {
 		//BGM再生
 		AudioManager.Play(BGMType.Over, 1, true);
 
-		//画面表示
-		Gameview.GameOverView();
-
+		if(IsEditMode) {
+			//戻る
+			editModeMain.StartCoroutine(editModeMain.UnloadPreview());
+		}
+		else {
+			//画面表示
+			Gameview.GameOverView();
+		}
 	}
 
 
@@ -233,9 +193,14 @@ public class GameManager : MonoBehaviour {
 		//BGM再生
 		AudioManager.Play(BGMType.Clear, 1, true);
 
-		//画面表示
-		Gameview.GameClearView();
-
+		if(IsEditMode) {
+			//戻る
+			editModeMain.StartCoroutine(editModeMain.UnloadPreview());
+		}
+		else {
+			//画面表示
+			Gameview.GameClearView();
+		}
 	}
 	public static void DebugPause() {
 		Debug.Break();

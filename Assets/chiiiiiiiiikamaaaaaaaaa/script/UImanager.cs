@@ -9,9 +9,16 @@ public class UImanager : MonoBehaviour {
 	bool _isPause;
 
 	Animator animator;
+
+	EditModeMain editModeMain;
+
 	public void Awake()
 	{
 		Pause.ClearPauseList();
+
+		if(GameManager.IsEditMode) {
+			editModeMain = FindObjectOfType<EditModeMain>();
+		}
 	}
 
 	public void RetryButton()
@@ -29,7 +36,13 @@ public class UImanager : MonoBehaviour {
 		//BGMフェードアウト
 		AudioManager.FadeOut(2);
 
-		SumCanvasAnimation.MoveScene("GameScene");
+		if(GameManager.IsEditMode) {
+			//リトライ
+			editModeMain.StartCoroutine(editModeMain.RetryPreview());
+		}
+		else {
+			SumCanvasAnimation.MoveScene("GameScene");
+		}
 	}
 	public void BackButton()
 	{
@@ -46,7 +59,14 @@ public class UImanager : MonoBehaviour {
 		//BGMフェードアウト
 		AudioManager.FadeOut(2);
 
-		SumCanvasAnimation.MoveScene("StageSelectScene");
+		if(GameManager.IsEditMode) {
+			//戻る
+			editModeMain.StartCoroutine(editModeMain.UnloadPreview());
+		}
+		else {
+			SumCanvasAnimation.MoveScene("StageSelectScene");
+		}
+
 	}
 
 
@@ -58,12 +78,6 @@ public class UImanager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-		//if (Input.GetMouseButtonDown(0))
-		//{
-		//	AudioManager.Play(SEType.Tap, 1);
-		//	Debug.Break();
-		//}
 
 		if(isPause != _isPause)
 		{
@@ -78,8 +92,6 @@ public class UImanager : MonoBehaviour {
 	public void ToggleMenu() {
 
 		if (isFreeze) return;
-
-		//if(Input.GetKeyDown("4")) {
 
 		//音の再生
 		AudioManager.Play(SEType.Button, 1);

@@ -157,8 +157,6 @@ public class PieceContainer : MonoBehaviour {
 
 		if(isXCollision) {
 			newPosition.y = (int)((transform.position.y + 0.25) * 2) * 0.5f;
-			//newPosition.y = (int)(transform.position.y + 0.5);
-			//if(!isXDir && pieceArray.Length % 2 == 0) newPosition.y = hitPos.y - 1.5f - containerSize.y * 0.5f;
 		}
 
 
@@ -210,9 +208,6 @@ public class PieceContainer : MonoBehaviour {
 
 		if(isYCollision) {
 			newPosition.x = (int)((transform.position.x + 0.25) * 2) * 0.5f;
-			//newPosition.x = (int)(transform.position.x + 0.5);
-			//if(isXDir && pieceArray.Length % 2 == 0) newPosition.x = hitPos.x -1.5f - containerSize.x * 0.5f;
-			//Debug.Log("x " + newPosition.x);
 		}
 
 
