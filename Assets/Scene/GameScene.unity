@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0fb298b59fb3143bed29f65c064806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug_loadStage: 1-1
+  debug_loadStage: 
   stageText: {fileID: 91292257}
   editModeText: {fileID: 1598525424}
 --- !u!1 &91292255

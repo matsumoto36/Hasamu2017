@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System;
 
 public enum EditToolMode { Hand, Pen, FillRect}
 
@@ -22,11 +23,16 @@ public class EditModeMain : MonoBehaviour {
 	public GameObject sceneRoot;
 
 	//各ウィンドウのパネル
+	public RectTransform fileView;
+	public RectTransform saveFileView;
 	public RectTransform mapchipView;
 	public RectTransform setTimeView;
 
 	//メニュー系
 	public Slider viewMagnificationSlider;
+
+	//ファイル系
+	public InputField saveFileName;
 
 	//制限時間系
 	public Text viewTime;
@@ -53,7 +59,6 @@ public class EditModeMain : MonoBehaviour {
 
 	//システム系
 	Canvas canvas;
-	CanvasScaler canvasScaler;
 
 	Vector2 canvasScale;
 
@@ -63,7 +68,8 @@ public class EditModeMain : MonoBehaviour {
 	bool isLoading = false;
 	bool canUseTool = true;
 
-	Vector2 rectToolMousePos;
+	Vector2 rectToolMouseStartPos;
+	Vector2 rectToolMouseEndPos;
 
 	public Image rectImagePre;
 	Image rectImage;
@@ -71,11 +77,14 @@ public class EditModeMain : MonoBehaviour {
 	Sprite[] mapchipSprite;
 	Sprite holeSprite;
 
+	//Debug
+	//public Text _debugText;
+
 	// Use this for initialization
 	void Start () {
 
-		//配列の初期化
 		editMap = new int[MAP_SIZE_Y, MAP_SIZE_X];
+		generateViewImage = new Image[MAP_SIZE_Y, MAP_SIZE_X];
 
 		//テストマップ
 		//editMap = new int[MAP_SIZE_Y, MAP_SIZE_X] {
@@ -92,15 +101,12 @@ public class EditModeMain : MonoBehaviour {
 
 		//キャンバスを持ってくる
 		canvas = FindObjectOfType<Canvas>();
-		canvasScaler = FindObjectOfType<CanvasScaler>();
 
-		generateViewImage = new Image[MAP_SIZE_Y, MAP_SIZE_X];
 
 		//マップチップのロード
 		FindObjectOfType<ResourceLoader>().LoadAll();
-
 		mapchipSprite = ResourceLoader.GetChips(R_MapChipType.MainChip);
-		holeSprite =	ResourceLoader.GetChips(R_MapChipType.Hole)[0];
+		holeSprite =    ResourceLoader.GetChips(R_MapChipType.Hole)[0];
 
 		//画像の割当
 		currentChip.sprite = GetMapchipFromID(selectChipID);
@@ -120,15 +126,12 @@ public class EditModeMain : MonoBehaviour {
 
 			selectableChip[i].sprite = GetMapchipFromID(ConvertSelectChipID(i));
 
+			//ラムダ式内にループ変数を使うために、ダミーに代入
 			int d = i;
 			selectableChip[i].GetComponent<Button>().onClick.AddListener(() => {
 				ChangeSelectChip(d);
 			});
 		}
-
-		//ウィンドウサイズのスケール比を求めておく
-		Vector2 refResolusion = canvasScaler.referenceResolution;
-		canvasScale = new Vector2(refResolusion.x / Screen.width, refResolusion.y / Screen.height);
 
 		//表示領域を生成
 		for(int i = 0;i < MAP_SIZE_Y;i++) {
@@ -153,7 +156,7 @@ public class EditModeMain : MonoBehaviour {
 
 		//ビューポートがおかしくなる問題を修正
 		RectTransform parent = viewMapArea.parent.GetComponent<RectTransform>();
-		parent.anchorMin = new Vector2();
+		parent.anchorMin = new Vector2(0, 0);
 		parent.anchorMax = new Vector2(1, 1);
 
 		ChangeEditTool(EditToolMode.Hand);
@@ -173,6 +176,10 @@ public class EditModeMain : MonoBehaviour {
 			Debug.Break();
 		}
 
+		if(Input.GetKeyDown(KeyCode.S)) {
+			Debug.Log(Application.dataPath);
+		}
+
 		if(!canUseTool) return;
 
 		//ズーム系
@@ -184,44 +191,46 @@ public class EditModeMain : MonoBehaviour {
 		//個別の処理
 		switch(currentTool) {
 			case EditToolMode.Hand:
-
-				if(Application.isEditor) return;
-
-				bool canPinch = Input.touchCount == 2;
-
-				viewScroll.horizontal = !canPinch;
-				viewScroll.vertical = !canPinch;
-
-				if(canPinch) Pinch();
-
+				HandTool();
 				break;
-			case EditToolMode.Pen:
 
+			case EditToolMode.Pen:
 				if(Input.GetMouseButton(0)) {
 					Paint(GetEditModePiceFromRaycast(Input.mousePosition));
 				}
-
 				break;
-			case EditToolMode.FillRect:
 
+			case EditToolMode.FillRect:
 				if(Input.GetMouseButtonDown(0)) {
 					FillToolStart(Input.mousePosition);
 				}
 
 				if(Input.GetMouseButtonUp(0)) {
-					FillToolEnd(Input.mousePosition);
+					FillToolEnd(rectToolMouseEndPos);
 				}
-
+				
 				//範囲の描画
 				FillToolUpdate();
-
 				break;
+
 			default:
 				break;
 		}
 	}
 
 	#region HandTool
+
+	void HandTool() {
+
+		if(Application.isEditor) return;
+
+		bool canPinch = Input.touchCount == 2;
+
+		viewScroll.horizontal = !canPinch;
+		viewScroll.vertical = !canPinch;
+
+		if(canPinch) Pinch();
+	}
 
 	void Pinch() {
 
@@ -258,6 +267,7 @@ public class EditModeMain : MonoBehaviour {
 
 	#endregion
 
+	//改善中
 	#region FillTool
 
 	/// <summary>
@@ -285,7 +295,9 @@ public class EditModeMain : MonoBehaviour {
 	/// <param name="startPos">最初の点</param>
 	void FillToolStart(Vector2 startPos) {
 
-		rectToolMousePos = startPos;
+		if(!GetEditModePiceFromRaycast(startPos)) return;
+
+		rectToolMouseStartPos = startPos;
 
 		rectImage = Instantiate(rectImagePre);
 		rectImage.rectTransform.SetParent(canvas.transform);
@@ -302,14 +314,13 @@ public class EditModeMain : MonoBehaviour {
 
 		if(!rectImage) return;
 
-		//塗りつぶせないときは非表示
-		if(Time.frameCount % 6 == 0) {
-			var p = GetEditModePiceFromRaycast(Input.mousePosition);
-			rectImage.enabled = p != null;
-		}
+		//塗りつぶせないときは更新しない
+		if(!GetEditModePiceFromRaycast(Input.mousePosition)) return;
+
+		rectToolMouseEndPos = Input.mousePosition;
 
 		//ウィンドウサイズによってずれないように調整
-		Rect rect = Vec2Rect(rectToolMousePos * canvasScale.x, Input.mousePosition * canvasScale.y);
+		Rect rect = Vec2Rect(rectToolMouseStartPos / canvas.scaleFactor, rectToolMouseEndPos / canvas.scaleFactor);
 
 		rectImage.rectTransform.anchoredPosition = rect.position;
 		rectImage.rectTransform.sizeDelta = rect.size;
@@ -324,7 +335,7 @@ public class EditModeMain : MonoBehaviour {
 		if(rectImage) Destroy(rectImage.gameObject);
 
 		//範囲からPieceの座標を調べる
-		Rect rect = Vec2Rect(rectToolMousePos, endPos);
+		Rect rect = Vec2Rect(rectToolMouseStartPos, endPos);
 
 		Vector2? startPiecePos = null;
 		Vector2? endPiecePos = null;
@@ -454,6 +465,56 @@ public class EditModeMain : MonoBehaviour {
 	}
 
 	#endregion
+
+	#region FileArea
+
+	public void NewFile() {
+
+		//配列の初期化
+		editMap = new int[MAP_SIZE_Y, MAP_SIZE_X];
+
+		Draw();
+	}
+
+	public void OpenFile() {
+		string path;
+
+		if(Application.isEditor) {
+
+		}
+	}
+
+	public void SaveFile() {
+
+		EditFileIO.SaveFile(saveFileName.text, GenerateStageData());
+		//_debugText.text = "saveComp.";
+
+		//エディットモードに戻る
+		ChangeSaveFileWindowActive(false);
+		ChangeFileWindowActive(false);
+	}
+
+	public void ExitEditMode() {
+		SumCanvasAnimation.MoveScene("SelectScene");
+	}
+
+	public void ChangeFileWindowActive(bool enable) {
+
+		canUseTool = !enable;
+		fileView.gameObject.SetActive(enable);
+	}
+
+	#endregion
+
+	#region SaveFileArea
+
+	public void ChangeSaveFileWindowActive(bool enable) {
+
+		saveFileView.gameObject.SetActive(enable);
+	}
+
+	#endregion
+
 
 	#region ViewArea
 
@@ -603,4 +664,18 @@ public class EditModeMain : MonoBehaviour {
 	}
 
 	#endregion
+
+	public void DebugButton() {
+
+
+#if UNITY_ANDROID
+		using(AndroidJavaClass environment = new AndroidJavaClass("android.os.Environment"))
+		using(AndroidJavaObject exDir = environment.CallStatic<AndroidJavaObject>("getExternalStorageDirectory")) {
+
+			//_debugText.text = exDir.Call<string>("toString");
+		}
+#endif
+
+		//_debugText.text = Environment.GetFolderPath(Environment.SpecialFolder.pu();
+	}
 }

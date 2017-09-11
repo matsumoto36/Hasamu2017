@@ -11,45 +11,67 @@ public class CsvLoader : MonoBehaviour
     public static StageData StageLoad(int stageLevel, int stageNumber)
     {
         TextAsset csv;
-        List<string[]> csvDataS = new List<string[]>(); // CSVの中身を入れるリスト
-        int height = 0; // CSVの行数
 
         //Resources内のCSVフォルダからcsvファイルを読み込んでList<string>に代入
         csv = Resources.Load("CSV/" + stageLevel + "-" + stageNumber) as TextAsset;
-        if (!csv) Debug.Log("ない！");
-        Debug.Log(stageLevel + "-" + stageNumber);
-        StringReader reader = new StringReader(csv.text);
 
-        int counter = 0;
-        int time = 0;
-
-        while (reader.Peek() > -1)
-        {
-            string line = reader.ReadLine();
-            //A1セルとそれ以外を仕分け
-            if (counter == 0)
-            {
-                time = int.Parse(line);
-                counter++;
-            }
-            else
-            {
-                csvDataS.Add(line.Split(',')); // リストに入れる
-                height++; // 行数加算
-            }
-        }
- 
-        int[,] csvData = new int[csvDataS.Count, csvDataS[0].Length];
-
-        //List<string>をint二次元配列に変換
-        for (int i = 0; i < csvData.GetLength(0); i++)
-        {
-            for (int j = 0; j < csvData.GetLength(1); j++)
-            {
-
-                    csvData[i, j] = int.Parse(csvDataS[i][j]);
-            }
-        }
-        return new StageData(time, csvData);
+		return ConvertStageData(csv);
     }
+
+	public static StageData ConvertStageData(TextAsset asset) {
+
+		if(!asset) Debug.Log("ない！");
+
+		List<string[]> csvDataS = new List<string[]>(); // CSVの中身を入れるリスト
+		int height = 0; // CSVの行数
+
+		StringReader reader = new StringReader(asset.text);
+
+		int counter = 0;
+		int time = 0;
+
+		while(reader.Peek() > -1) {
+			string line = reader.ReadLine();
+			//A1セルとそれ以外を仕分け
+			if(counter == 0) {
+				time = int.Parse(line);
+				counter++;
+			}
+			else {
+				csvDataS.Add(line.Split(',')); // リストに入れる
+				height++; // 行数加算
+			}
+		}
+
+		int[,] csvData = new int[csvDataS.Count, csvDataS[0].Length];
+
+		//List<string>をint二次元配列に変換
+		for(int i = 0;i < csvData.GetLength(0);i++) {
+			for(int j = 0;j < csvData.GetLength(1);j++) {
+
+				csvData[i, j] = int.Parse(csvDataS[i][j]);
+			}
+		}
+		return new StageData(time, csvData);
+	}
+
+	public static string ConvertCSV(StageData stageData) {
+
+		string convertData = "";
+
+		convertData += stageData.time + "\n";
+
+		var mapData = stageData.mapData;
+		for(int i = 0;i < mapData.GetLength(0);i++) {
+
+			convertData += mapData[i, 0];
+			for(int j = 1;j < mapData.GetLength(1);j++) {
+				convertData += "," + mapData[i, j];
+			}
+
+			convertData += "\n";
+		}
+
+		return convertData;
+	}
 }
