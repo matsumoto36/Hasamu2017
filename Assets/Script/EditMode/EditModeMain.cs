@@ -495,7 +495,7 @@ public class EditModeMain : MonoBehaviour {
 	}
 
 	public void ExitEditMode() {
-		SumCanvasAnimation.MoveScene("SelectScene");
+		SumCanvasAnimation.MoveScene("StageSelectScene");
 	}
 
 	public void ChangeFileWindowActive(bool enable) {
