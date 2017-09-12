@@ -73,7 +73,7 @@ public class PieceTentacle : Piece {
 					pixels[x + y * width];
 			}
 		}
-		//回転の適用
+		//反転の適用
 		distPixels.CopyTo(pixels, 0);
 
 		/*
@@ -109,10 +109,7 @@ public class PieceTentacle : Piece {
 		//逆
 		[x + y*width] -> [y + ((width - 1) - x) * width]
 
-
-
 		*/
-
 
 		tex.SetPixels(pixels);
 		tex.Apply();
