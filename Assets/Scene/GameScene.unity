@@ -1449,8 +1449,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 628c65e1eaeee1b468c4db95b15acb90, type: 2}
   - {fileID: 2100000, guid: 187d4ef49b9c8664180c3fc0c4bab1e3, type: 2}
   - {fileID: 2100000, guid: 45353333d83ea1d409261e130294ec59, type: 2}
+  - {fileID: 2100000, guid: de6c53b62a3d5b94698f8eecf548035e, type: 2}
   prefabSrc:
   - {fileID: 1370463283513294, guid: f6080965405672d4287a861771758fb3, type: 2}
+  - {fileID: 1559565080277952, guid: 1d8adbbe76cdb954eadba5af5ecfbe66, type: 2}
 --- !u!1 &778580921
 GameObject:
   m_ObjectHideFlags: 0

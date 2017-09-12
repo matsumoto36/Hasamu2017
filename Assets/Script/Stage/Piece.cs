@@ -12,13 +12,15 @@ public class Piece : MonoBehaviour {
 	public bool noCollision = false;	//壁の判定が無いか
     public Vector2 position;            //ステージ上の位置
 
-    public SpriteRenderer _renderer;	//自分の画像
-
+	protected float rotAngle;
 	/// <summary>
 	/// 画像を持ってくる
 	/// </summary>
 	public virtual void SpriteLoad() {
-		_renderer.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[id];
+		var spr = gameObject.AddComponent<SpriteRenderer>();
+		spr.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[id];
+		spr.sortingOrder = GetOrderInLayer(id);
+
 	}
 
 	/// <summary>
@@ -113,7 +115,26 @@ public class Piece : MonoBehaviour {
 		//Debug.Log("rotationCount:" + rotationCount);
 
 		//回転
-		transform.rotation = Quaternion.AngleAxis(rotationCount * 90, Vector3.forward);
+		//transform.rotation = Quaternion.AngleAxis(rotationCount * 90, Vector3.forward);
+		rotAngle = rotationCount * 90;
 	}
 
+	public int GetOrderInLayer(int id) {
+
+		switch(id) {
+			case 0:
+				return id;
+			case 1:
+				return 3;
+			case 2:
+				return 1;
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+				return 4;
+			default:
+				return -1;
+		}
+	}
 }
