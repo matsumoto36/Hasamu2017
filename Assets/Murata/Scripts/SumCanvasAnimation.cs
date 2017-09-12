@@ -37,7 +37,7 @@ public class SumCanvasAnimation : MonoBehaviour
 
 		//閉じるアニメーション
 		DoorClose(nextSceneName);
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.5f);
         Debug.Log("CloseAnimComplete");
 
 		//ステージ移動
@@ -46,7 +46,7 @@ public class SumCanvasAnimation : MonoBehaviour
 
         //開くアニメーション
         DoorOpen(nextSceneName);
-        yield return new WaitForSeconds(2.2f);
+        yield return new WaitForSeconds(1.7f);
         Debug.Log("OpenAnimComplete");
 
 		//移動許可
@@ -69,7 +69,7 @@ public class SumCanvasAnimation : MonoBehaviour
 
 		nextSceneName = sceneName;
         //自分を生成してアニメーションする
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/Door_b");
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Door_c");
         SumCanvasAnimation anim = Instantiate(prefab).GetComponent<SumCanvasAnimation>();
         //CanvasDoor door = anim.transform.GetChild(0).GetComponent<CanvasDoor>();
     }
@@ -78,14 +78,14 @@ public class SumCanvasAnimation : MonoBehaviour
     public static void DoorOpen(string nextScene)
     {
         animator.SetFloat("State", 0);//ドアが開きます
-        animator.SetTrigger("IsOpen");//アニメーション
+        animator.SetTrigger("IsOpen_new");//アニメーション
     }
 
     /// ドア閉まる
     public static void DoorClose(string nextScene)
     {
         animator.SetFloat("State", 1);//ドアが閉まります。
-        animator.SetTrigger("IsClose");//アニメーション
+        animator.SetTrigger("IsClose_new");//アニメーション
     }
 
 }
