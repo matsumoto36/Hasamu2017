@@ -60,18 +60,18 @@ public class EditModeMain : MonoBehaviour {
 	//システム系
 	Canvas canvas;
 
-	Vector2 canvasScale;
-
 	int[,] editMap;
 	int selectChipID = 1;
 
 	bool isLoading = false;
+	bool rectToolCancel = false;
 	bool canUseTool = true;
 
 	Vector2 rectToolMouseStartPos;
 	Vector2 rectToolMouseEndPos;
 
 	public Image rectImagePre;
+	
 	Image rectImage;
 
 	Sprite[] mapchipSprite;
@@ -206,11 +206,13 @@ public class EditModeMain : MonoBehaviour {
 				}
 
 				if(Input.GetMouseButtonUp(0)) {
-					FillToolEnd(rectToolMouseEndPos);
+					if(!rectToolCancel)
+						FillToolEnd(rectToolMouseEndPos);
 				}
 				
 				//範囲の描画
-				FillToolUpdate();
+				if(!rectToolCancel)
+					FillToolUpdate();
 				break;
 
 			default:
@@ -295,8 +297,12 @@ public class EditModeMain : MonoBehaviour {
 	/// <param name="startPos">最初の点</param>
 	void FillToolStart(Vector2 startPos) {
 
-		if(!GetEditModePiceFromRaycast(startPos)) return;
+		rectToolCancel = false;
 
+		if(!GetEditModePiceFromRaycast(startPos)) {
+			FillCancel();
+			return;
+		}
 		rectToolMouseStartPos = startPos;
 
 		rectImage = Instantiate(rectImagePre);
@@ -366,6 +372,13 @@ public class EditModeMain : MonoBehaviour {
 		}
 
 		Draw();
+	}
+
+	void FillCancel() {
+
+		if(rectImage) Destroy(rectImage.gameObject);
+
+		rectToolCancel = true;
 	}
 
 	#endregion
