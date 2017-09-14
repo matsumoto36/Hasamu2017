@@ -7,7 +7,8 @@ using UnityEngine;
 public class EditFileIO : MonoBehaviour {
 
 	static readonly string FILEPATH_EDITOR = Application.dataPath + "/Resources/CSV/";
-	static readonly string FILEPATH_APP    = Application.persistentDataPath;
+	//static readonly string FILEPATH_APP    = Application.persistentDataPath;
+	static readonly string FILEPATH_APP    = "/Tentacroom";
 
 	public static StageData[] GetAllFile() {
 
@@ -29,11 +30,18 @@ public class EditFileIO : MonoBehaviour {
 			using(AndroidJavaClass environment = new AndroidJavaClass("android.os.Environment"))
 			using(AndroidJavaObject exDir = environment.CallStatic<AndroidJavaObject>("getExternalStorageDirectory")) {
 
-				path = exDir.Call<string>("toString") + FILEPATH_APP + fileName + ".csv";
+				path = exDir.Call<string>("toString") + FILEPATH_APP;
+
+				//ファイルがなければ作成
+				if(!Directory.Exists(path)){
+					Directory.CreateDirectory(path);
+				}
+
+				path += "/" + fileName + ".csv";
 			}
 #endif
 
-			path = FILEPATH_APP + fileName + ".csv";
+			//path = FILEPATH_APP + fileName + ".csv";
 
 		}
 
