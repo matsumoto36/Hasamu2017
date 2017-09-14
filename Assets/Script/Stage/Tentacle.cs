@@ -40,7 +40,7 @@ public class Tentacle : MonoBehaviour {
 	Vector2 oldTouchPos;			
 
 	void Awake() {
-		id = idCounter >= 128 ? idCounter = 1 : idCounter = idCounter * 2;
+		id = GetNextMaskID();
 		bodyAnimation = Instantiate(ResourceLoader.GetPrefab(R_PrefabType.TentacleBody)).GetComponent<Animator>();
 
 		//移動中の音を再生
@@ -272,7 +272,7 @@ public class Tentacle : MonoBehaviour {
 		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, position + angle * 0.5f, Color.black);
 
 		float r = Vector2.Angle(vec, angle) * Mathf.Deg2Rad;
-		float vSize = Mathf.Cos(r) * vec.magnitude;
+		float vSize = Mathf.Cos(r) * vec.magnitude + 0.2f;
 
 		//Debug.DrawLine((Vector2)transform.position + angle * 0.5f, (Vector2)transform.position + angle * 0.5f - angle * vSize, Color.black);
 
@@ -377,5 +377,9 @@ public class Tentacle : MonoBehaviour {
 
 	void OnDrawGizmos() {
 		//Gizmos.DrawWireCube(GetTargetPosition(), Vector3.one);
+	}
+
+	public static int GetNextMaskID() {
+		return idCounter >= 128 ? idCounter = 1 : idCounter = idCounter * 2;
 	}
 }

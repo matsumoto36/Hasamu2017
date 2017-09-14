@@ -9,25 +9,33 @@ public class BGMvolume : MonoBehaviour {
 	UnityEngine.Audio.AudioMixer mixer;
 
 	public Animator tentacleAnim;
+	public Image tentacleBlock;
+	public Image stopBlock;
 
 	float animTime = 0;
+	float prevValue;
 
 	void Start()
 	{
 		float bgmVolume;
 		mixer.GetFloat("BGMVolume", out bgmVolume);
-		GetComponent<Slider>().value = bgmVolume;
+		GetComponent<Slider>().value = prevValue = bgmVolume;
 		tentacleAnim.speed = 0;
 
+		tentacleBlock.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[1];
+		stopBlock.sprite = ResourceLoader.GetChips(R_MapChipType.MainChip)[2];
 	}
 
 	public float BGMVolume
 	{
 		set {
-			Debug.Log(value);
 			mixer.SetFloat("BGMVolume", value);
-			tentacleAnim.speed = 1;
+
+			float delta = value - prevValue;
+			tentacleAnim.speed = Mathf.Abs(delta * 2);
 			animTime = 0.1f;
+
+			prevValue = value;
 		}
 		
 	}

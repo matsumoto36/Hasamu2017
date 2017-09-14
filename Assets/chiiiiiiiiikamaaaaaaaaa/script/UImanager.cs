@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Anima2D;
 
 public class UImanager : MonoBehaviour {
 
@@ -9,6 +10,13 @@ public class UImanager : MonoBehaviour {
 	bool _isPause;
 
 	Animator animator;
+
+	public SpriteMeshInstance bgmTentacleInstance;
+	public SpriteRenderer bgmMaskRenderer;
+
+	public SpriteMeshInstance seTentacleInstance;
+	public SpriteRenderer seMaskRenderer;
+
 
 	EditModeMain editModeMain;
 
@@ -97,9 +105,30 @@ public class UImanager : MonoBehaviour {
 		AudioManager.Play(SEType.Button, 1);
 
 		Debug.Log("(/・ω・)/");
-		animator.SetBool("Open", !animator.GetBool("Open"));
-		//}
+		bool isOpen = !animator.GetBool("Open");
+		animator.SetBool("Open", isOpen);
+
+		if(isOpen) {
+			//マスクのIDを設定
+			int bgmID = Tentacle.GetNextMaskID();
+			bgmTentacleInstance.sharedMaterial = ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite);
+			bgmTentacleInstance.sharedMaterial.SetInt("_ID", bgmID);
+
+			bgmMaskRenderer.material = ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite);
+			bgmMaskRenderer.material.SetInt("_ID", bgmID);
+
+			int seID = Tentacle.GetNextMaskID();
+			seTentacleInstance.sharedMaterial = ResourceLoader.GetMaterial(R_MaterialType.MaskableSprite);
+			seTentacleInstance.sharedMaterial.SetInt("_ID", seID);
+
+			seMaskRenderer.material = ResourceLoader.GetMaterial(R_MaterialType.MaskingSprite);
+			seMaskRenderer.material.SetInt("_ID", seID);
+
+			Debug.Log("set");
+		}
 	}
+
+
 
 	void SetPause(bool enable)
 	{

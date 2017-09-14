@@ -42,7 +42,15 @@ public class StageGenerator : MonoBehaviour {
 		//あったらキャンセル
 		if(generatedStage[(int)position.y, (int)position.x]) return null;
 
-		GameObject g = new GameObject("[stage " + position.x + " " + position.y + " ]");
+		GameObject g = null;
+
+		if(id == 1) {
+			g = Instantiate(ResourceLoader.GetPrefab(R_PrefabType.TentaclePiece));
+			g.name = "[stage " + position.x + " " + position.y + " ]";
+		}
+		else {
+			g = new GameObject("[stage " + position.x + " " + position.y + " ]");
+		}
 
 		//指定のクラスを取り付ける
 		Piece p = AttachPiece(g, id);
@@ -51,7 +59,6 @@ public class StageGenerator : MonoBehaviour {
 
 		generatedStage[(int)position.y, (int)position.x] = p;
 
-		SpriteRenderer spr = g.AddComponent<SpriteRenderer>();
 		BoxCollider2D col = g.AddComponent<BoxCollider2D>();
 
 		p.tag = "Piece";
@@ -61,8 +68,6 @@ public class StageGenerator : MonoBehaviour {
 
 		p.id = id;
 		p.position = position;
-		p._renderer = spr;
-		spr.sortingOrder = GetOrderInLayer(p.id);
 		col.size = new Vector2(1, 1);
 
 		//画像をロード
@@ -288,25 +293,5 @@ public class StageGenerator : MonoBehaviour {
 		}
 
 		return piece;
-	}
-
-
-	static int GetOrderInLayer(int id) {
-
-		switch(id) {
-			case 0:
-				return id;
-			case 1:
-				return 3;
-			case 2:
-				return 1;
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-				return 4;
-			default:
-				return -1;
-		}
 	}
 }

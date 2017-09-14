@@ -18,10 +18,12 @@ public enum R_MaterialType {
 	MaskingSprite,
 	MaskableSprite,
 	AdditiveSprite,
+	TentaclePiece,
 }
 
 public enum R_PrefabType {
 	TentacleBody,
+	TentaclePiece,
 }
 
 public class ResourceLoader : MonoBehaviour {
