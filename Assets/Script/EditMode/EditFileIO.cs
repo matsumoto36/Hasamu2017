@@ -7,7 +7,6 @@ using UnityEngine;
 public class EditFileIO : MonoBehaviour {
 
 	static readonly string FILEPATH_EDITOR = Application.dataPath + "/Resources/CSV/";
-	//static readonly string FILEPATH_APP    = Application.persistentDataPath;
 	static readonly string FILEPATH_APP    = "/Tentacroom";
 
 	public static StageData[] GetAllFile() {
@@ -19,7 +18,7 @@ public class EditFileIO : MonoBehaviour {
 	public static void SaveFile(string fileName, StageData data) {
 		StreamWriter sw;
 
-		string path;
+		string path = "";
 
 		if(Application.isEditor) {
 			path = FILEPATH_EDITOR + fileName + ".csv";
@@ -39,9 +38,10 @@ public class EditFileIO : MonoBehaviour {
 
 				path += "/" + fileName + ".csv";
 			}
+#else
+			path = FILEPATH_APP + fileName + ".csv";
 #endif
 
-			//path = FILEPATH_APP + fileName + ".csv";
 
 		}
 

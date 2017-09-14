@@ -303,8 +303,12 @@ public class EditModeMain : MonoBehaviour {
 			FillCancel();
 			return;
 		}
-		rectToolMouseStartPos = startPos;
 
+		if(!canvas) {
+			canvas = FindObjectOfType<Canvas>();
+		}
+
+		rectToolMouseStartPos = startPos;
 		rectImage = Instantiate(rectImagePre);
 		rectImage.rectTransform.SetParent(canvas.transform);
 
