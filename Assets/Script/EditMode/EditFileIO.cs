@@ -7,8 +7,7 @@ using UnityEngine;
 public class EditFileIO : MonoBehaviour {
 
 	static readonly string FILEPATH_EDITOR = Application.dataPath + "/Resources/CSV/";
-	static readonly string FILEPATH_APP    = Application.persistentDataPath + "/StageData/";
-
+	static readonly string FILEPATH_APP    = Application.persistentDataPath;
 
 	public static StageData[] GetAllFile() {
 
