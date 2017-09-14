@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour {
 		StageInformation.lastSelectedFloor = stageLevel;
 
 		myManager = this;
+		editModeText.gameObject.SetActive(false);
+
 
 		//エディットモードお知らせ
 		if(IsEditMode) {
