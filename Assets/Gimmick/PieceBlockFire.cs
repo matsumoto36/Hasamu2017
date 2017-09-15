@@ -70,6 +70,13 @@ public class PieceBlockFire : Piece, IExecutable
 					//音再生
 					AudioManager.Play(SEType.Cold, 1);
 
+					//エフェクト発生
+					ParticleManager.PlayOneShot(
+						ParticleType.ChangeBlockTemp,
+						transform.position,
+						Quaternion.identity,
+						2.0f);
+
 					//判定がない = コンテナの中にいる
 					if (noCollision) {
 						Player.currentPieceContainer.ReplacementPiece(this, 4);

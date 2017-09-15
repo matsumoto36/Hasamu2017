@@ -9,6 +9,7 @@ public enum ParticleType {
 	TentacleStay,
 	HotBlock,
 	ColdBlock,
+	ChangeBlockTemp,
 	ContainerCreate,
 	ContainerMove,
 	AmbientEffect,
