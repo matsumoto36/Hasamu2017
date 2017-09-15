@@ -75,19 +75,24 @@ public class PieceBomb : Piece, IExecutable
         {
             case 0:
                 Timebar.Decpersec = 1;
-                break;
+				timeViewer.color = new Color(1, 1, 1);
+				break;
             case 1:
                 Timebar.Decpersec = 2;
-                break;
+				timeViewer.color = new Color(1, .5f, .5f);
+				break;
             case 2:
                 Timebar.Decpersec = 4;
-                break;
+				timeViewer.color = new Color(1, .25f, .25f);
+				break;
             case -1:
                 Timebar.Decpersec = .5f;
-                break;
+				timeViewer.color = new Color(0, 1, 1);
+				break;
             case -2:
                 Timebar.Decpersec = .25f;
-                break;
+				timeViewer.color = new Color(0, .75f, 1);
+				break;
         }
 
 		Vector2 timePos;
