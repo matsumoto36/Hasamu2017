@@ -46,7 +46,7 @@ public class EditFileIO : MonoBehaviour {
 		}
 
 		FileInfo fi = new FileInfo(path);
-		sw = fi.AppendText();
+		sw = fi.CreateText();
 		sw.Write(CsvLoader.ConvertCSV(data));
 		sw.Flush();
 		sw.Close();
