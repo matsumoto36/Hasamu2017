@@ -172,9 +172,9 @@ public class EditModeMain : MonoBehaviour {
 	void Update() {
 
 		//Debug
-		if(Input.GetKeyDown(KeyCode.A)) {
-			Debug.Break();
-		}
+		//if(Input.GetKeyDown(KeyCode.A)) {
+		//	Debug.Break();
+		//}
 
 		if(Input.GetKeyDown(KeyCode.S)) {
 			Debug.Log(Application.dataPath);
