@@ -19,13 +19,13 @@ public class PieceContainer : MonoBehaviour {
 		createParticle = ParticleManager.Play(ParticleType.ContainerCreate, transform.position, Quaternion.identity);
 		createParticle.transform.SetParent(transform);
 		var s = createParticle.shape;
-		s.box = containerSize;
+		s.scale = containerSize;
 
 		//移動用パーティクル再生
 		moveParticle = ParticleManager.Play(ParticleType.ContainerMove, transform.position, Quaternion.identity);
 		moveParticle.transform.SetParent(transform);
 		s = moveParticle.shape;
-		s.box = containerSize;
+		s.scale = containerSize;
 	}
 
 	/// <summary>

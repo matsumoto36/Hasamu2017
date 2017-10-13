@@ -19,7 +19,7 @@ public class TitleController : MonoBehaviour {
 		//環境エフェクト表示
 		var ps = ParticleManager.Play(ParticleType.AmbientEffect, Vector2.zero, Quaternion.identity);
 		var s = ps.shape;
-		s.box = new Vector2(1.5f, 1) * 10;
+		s.scale = new Vector2(1.5f, 1) * 10;
 	}
 
 	/// <summary>

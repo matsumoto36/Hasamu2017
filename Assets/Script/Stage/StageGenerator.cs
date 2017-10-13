@@ -239,12 +239,12 @@ public class StageGenerator : MonoBehaviour {
 		backGround.color = new Color(0.6f, 0.6f, 0.6f, 1);
 		backGround.sortingOrder = -1;
 		backGround.transform.position = center;
-		backGround.transform.localScale = new Vector2(1, 1) * 1.7f;
+		backGround.transform.localScale = new Vector2(1, 1) * 2f;
 
 		//環境エフェクト再生
 		var ps = ParticleManager.Play(ParticleType.AmbientEffect, center, Quaternion.identity);
 		var s = ps.shape;
-		s.box = center * 3f;
+		s.scale = center * 3f;
 
 		Vector3 cameraPos = center;
 		cameraPos.x += 0.6f;
